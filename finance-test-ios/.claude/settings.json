@@ -1,0 +1,13 @@
+{
+  "enabledPlugins": {
+    "data-layer@ios-claude-skills": true,
+    "security-review@ios-claude-skills": true,
+    "swiftui-reviewer@ios-claude-skills": true,
+    "swiftui-view-gen@ios-claude-skills": true,
+    "unit-testing@ios-claude-skills": true,
+    "create-ipa@ios-claude-skills": true,
+    "create-pull-request-against-development@ios-claude-skills": true,
+    "localization-review@ios-claude-skills": true,
+    "prepare-release@ios-claude-skills": true
+  }
+}

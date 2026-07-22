@@ -6,6 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		92D90ED030106EEE00DCD00C /* CountryKit in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90ECF30106EEE00DCD00C /* CountryKit */; };
+		92D90ED33010715000DCD00C /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90ED23010715000DCD00C /* IQKeyboardManagerSwift */; };
+		92D90ED63010722200DCD00C /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90ED53010722200DCD00C /* Lottie */; };
+		92D90ED9301072CF00DCD00C /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90ED8301072CF00DCD00C /* CombineMoya */; };
+		92D90EDB301072CF00DCD00C /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90EDA301072CF00DCD00C /* Moya */; };
+		92D90EDD301072CF00DCD00C /* ReactiveMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90EDC301072CF00DCD00C /* ReactiveMoya */; };
+		92D90EDF301072CF00DCD00C /* RxMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90EDE301072CF00DCD00C /* RxMoya */; };
+		92D90EE23010732600DCD00C /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90EE13010732600DCD00C /* SDWebImageSwiftUI */; };
+		92D90EEC301074D400DCD00C /* RichText in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90EEB301074D400DCD00C /* RichText */; };
+		92D90F00301077CC00DCD00C /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90EFF301077CC00DCD00C /* SwiftUIIntrospect */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		920743783010673B00FD2C6E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -29,9 +42,22 @@
 		920743813010673B00FD2C6E /* finance-test-iosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "finance-test-iosUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		92D90DC830106DAF00DCD00C /* Exceptions for "finance-test-ios" folder in "finance-test-ios" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 920743673010673800FD2C6E /* finance-test-ios */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		9207436A3010673800FD2C6E /* finance-test-ios */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				92D90DC830106DAF00DCD00C /* Exceptions for "finance-test-ios" folder in "finance-test-ios" target */,
+			);
 			path = "finance-test-ios";
 			sourceTree = "<group>";
 		};
@@ -52,6 +78,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92D90ED030106EEE00DCD00C /* CountryKit in Frameworks */,
+				92D90ED33010715000DCD00C /* IQKeyboardManagerSwift in Frameworks */,
+				92D90ED9301072CF00DCD00C /* CombineMoya in Frameworks */,
+				92D90F00301077CC00DCD00C /* SwiftUIIntrospect in Frameworks */,
+				92D90EDB301072CF00DCD00C /* Moya in Frameworks */,
+				92D90EE23010732600DCD00C /* SDWebImageSwiftUI in Frameworks */,
+				92D90EEC301074D400DCD00C /* RichText in Frameworks */,
+				92D90EDF301072CF00DCD00C /* RxMoya in Frameworks */,
+				92D90ED63010722200DCD00C /* Lottie in Frameworks */,
+				92D90EDD301072CF00DCD00C /* ReactiveMoya in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +148,16 @@
 			);
 			name = "finance-test-ios";
 			packageProductDependencies = (
+				92D90ECF30106EEE00DCD00C /* CountryKit */,
+				92D90ED23010715000DCD00C /* IQKeyboardManagerSwift */,
+				92D90ED53010722200DCD00C /* Lottie */,
+				92D90ED8301072CF00DCD00C /* CombineMoya */,
+				92D90EDA301072CF00DCD00C /* Moya */,
+				92D90EDC301072CF00DCD00C /* ReactiveMoya */,
+				92D90EDE301072CF00DCD00C /* RxMoya */,
+				92D90EE13010732600DCD00C /* SDWebImageSwiftUI */,
+				92D90EEB301074D400DCD00C /* RichText */,
+				92D90EFF301077CC00DCD00C /* SwiftUIIntrospect */,
 			);
 			productName = "finance-test-ios";
 			productReference = 920743683010673800FD2C6E /* finance-test-ios.app */;
@@ -195,6 +241,15 @@
 			);
 			mainGroup = 9207435F3010673800FD2C6E;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				92D90ECE30106EEE00DCD00C /* XCRemoteSwiftPackageReference "CountryKit" */,
+				92D90ED13010715000DCD00C /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
+				92D90ED43010722200DCD00C /* XCRemoteSwiftPackageReference "lottie-spm" */,
+				92D90ED7301072CF00DCD00C /* XCRemoteSwiftPackageReference "Moya" */,
+				92D90EE03010732600DCD00C /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				92D90EEA301074D400DCD00C /* XCRemoteSwiftPackageReference "RichText" */,
+				92D90EFE301077CC00DCD00C /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 920743693010673800FD2C6E /* Products */;
 			projectDirPath = "";
@@ -400,6 +455,7 @@
 				DEVELOPMENT_TEAM = APL5QSXJ32;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "finance-test-ios/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -432,6 +488,7 @@
 				DEVELOPMENT_TEAM = APL5QSXJ32;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "finance-test-ios/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -578,6 +635,118 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		92D90ECE30106EEE00DCD00C /* XCRemoteSwiftPackageReference "CountryKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/alemar11/CountryKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.2;
+			};
+		};
+		92D90ED13010715000DCD00C /* XCRemoteSwiftPackageReference "IQKeyboardManager" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hackiftekhar/IQKeyboardManager.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.3;
+			};
+		};
+		92D90ED43010722200DCD00C /* XCRemoteSwiftPackageReference "lottie-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.6.1;
+			};
+		};
+		92D90ED7301072CF00DCD00C /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.3;
+			};
+		};
+		92D90EE03010732600DCD00C /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.4;
+			};
+		};
+		92D90EEA301074D400DCD00C /* XCRemoteSwiftPackageReference "RichText" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/NuPlay/RichText.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.2;
+			};
+		};
+		92D90EFE301077CC00DCD00C /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/timbersoftware/SwiftUI-Introspect.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 26.0.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		92D90ECF30106EEE00DCD00C /* CountryKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92D90ECE30106EEE00DCD00C /* XCRemoteSwiftPackageReference "CountryKit" */;
+			productName = CountryKit;
+		};
+		92D90ED23010715000DCD00C /* IQKeyboardManagerSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92D90ED13010715000DCD00C /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
+			productName = IQKeyboardManagerSwift;
+		};
+		92D90ED53010722200DCD00C /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92D90ED43010722200DCD00C /* XCRemoteSwiftPackageReference "lottie-spm" */;
+			productName = Lottie;
+		};
+		92D90ED8301072CF00DCD00C /* CombineMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92D90ED7301072CF00DCD00C /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = CombineMoya;
+		};
+		92D90EDA301072CF00DCD00C /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92D90ED7301072CF00DCD00C /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+		92D90EDC301072CF00DCD00C /* ReactiveMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92D90ED7301072CF00DCD00C /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = ReactiveMoya;
+		};
+		92D90EDE301072CF00DCD00C /* RxMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92D90ED7301072CF00DCD00C /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = RxMoya;
+		};
+		92D90EE13010732600DCD00C /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92D90EE03010732600DCD00C /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
+		92D90EEB301074D400DCD00C /* RichText */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92D90EEA301074D400DCD00C /* XCRemoteSwiftPackageReference "RichText" */;
+			productName = RichText;
+		};
+		92D90EFF301077CC00DCD00C /* SwiftUIIntrospect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92D90EFE301077CC00DCD00C /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = SwiftUIIntrospect;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 920743603010673800FD2C6E /* Project object */;
 }
