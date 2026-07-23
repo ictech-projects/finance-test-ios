@@ -5,6 +5,7 @@
 
 import Combine
 import Foundation
+import SwiftUI
 
 @MainActor
 protocol CurrencySelectionDelegate: AnyObject {
@@ -29,7 +30,9 @@ final class CurrencySelectionViewModel: ObservableObject {
 	}
 
 	func select(_ currency: Currency) {
-		selectedCurrency = currency
+		withAnimation(.easeInOut(duration: 0.2)) {
+			selectedCurrency = currency
+		}
 	}
 
 	func confirmSelection() {

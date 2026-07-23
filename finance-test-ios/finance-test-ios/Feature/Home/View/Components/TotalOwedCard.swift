@@ -10,6 +10,8 @@ struct TotalOwedCard: View {
 	let limit: Double
 	let ratio: Double
 
+	@State private var animatedRatio: Double = 0
+
 	var body: some View {
 		VStack(alignment: .leading, spacing: 10) {
 			HStack(spacing: 12) {
@@ -24,7 +26,7 @@ struct TotalOwedCard: View {
 						.font(.baseStyle(size: 14, weight: .medium))
 						.foregroundStyle(.neutral90)
 
-					Text(totalOwed.currencyWholeFormatted())
+					AnimatedAmountText(amount: totalOwed)
 						.font(.baseStyle(size: 16, weight: .bold))
 						.foregroundStyle(.neutral100)
 				}
@@ -39,10 +41,15 @@ struct TotalOwedCard: View {
 
 					Capsule()
 						.fill(.orange)
-						.frame(width: proxy.size.width * ratio)
+						.frame(width: proxy.size.width * animatedRatio)
 				}
 			}
 			.frame(height: 6)
+			.onAppear {
+				withAnimation(.easeOut(duration: 0.8)) {
+					animatedRatio = ratio
+				}
+			}
 
 			HStack {
 				Text("\(Int(ratio * 100))% of limit")

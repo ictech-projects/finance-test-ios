@@ -10,6 +10,8 @@ struct SpendingByCategoryCard: View {
 	let categories: [SpendingCategory]
 	let total: Double
 
+	@State private var displayedCategories: [SpendingCategory] = []
+
 	var body: some View {
 		VStack(alignment: .leading, spacing: 16) {
 			HStack {
@@ -25,7 +27,7 @@ struct SpendingByCategoryCard: View {
 			}
 
 			ZStack {
-				Chart(categories) { category in
+				Chart(displayedCategories) { category in
 					SectorMark(
 						angle: .value("Percent", category.percent),
 						innerRadius: .ratio(0.65),
@@ -36,6 +38,16 @@ struct SpendingByCategoryCard: View {
 				}
 				.chartLegend(.hidden)
 				.frame(height: 180)
+				.onAppear {
+					displayedCategories = categories.map {
+						var zeroed = $0
+						zeroed.percent = 0
+						return zeroed
+					}
+					withAnimation(.easeOut(duration: 0.8)) {
+						displayedCategories = categories
+					}
+				}
 
 				VStack(spacing: 2) {
 					Text("Total")

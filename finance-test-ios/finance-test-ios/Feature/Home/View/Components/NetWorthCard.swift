@@ -14,7 +14,7 @@ struct NetWorthCard: View {
 				.font(.baseStyle(size: 12, weight: .bold))
 				.foregroundStyle(.neutral30)
 
-			Text(amount.currencyWholeFormatted())
+			AnimatedAmountText(amount: amount)
 				.font(.baseStyle(size: 32, weight: .bold))
 				.foregroundStyle(.neutral10)
 

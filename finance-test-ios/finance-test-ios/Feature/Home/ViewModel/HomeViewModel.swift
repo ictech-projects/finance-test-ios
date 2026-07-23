@@ -5,6 +5,7 @@
 
 import Combine
 import Foundation
+import SwiftUI
 
 @MainActor
 final class HomeViewModel: ObservableObject {
@@ -27,13 +28,17 @@ final class HomeViewModel: ObservableObject {
 	}
 
 	func presentCurrencySelection() {
-		isCurrencyDialogPresented = true
+		withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+			isCurrencyDialogPresented = true
+		}
 	}
 }
 
 extension HomeViewModel: CurrencySelectionDelegate {
 	func didSelectCurrency(_ currency: Currency) {
 		selectedCurrency = currency
-		isCurrencyDialogPresented = false
+		withAnimation(.easeInOut(duration: 0.25)) {
+			isCurrencyDialogPresented = false
+		}
 	}
 }

@@ -27,6 +27,7 @@ struct CurrencyRow: View {
 				if isSelected {
 					Image(systemName: "checkmark.circle.fill")
 						.foregroundStyle(.neutral10)
+						.transition(.scale.combined(with: .opacity))
 				}
 			}
 			.padding(.horizontal, 14)

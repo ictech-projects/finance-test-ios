@@ -16,19 +16,26 @@ struct HomeView: View {
 				ScrollView {
 					VStack(spacing: 16) {
 						BalanceCard(amount: viewModel.summary.balanceThisMonth)
+							.staggeredAppear(index: 0)
 						NetWorthCard(amount: viewModel.summary.netWorth)
+							.staggeredAppear(index: 1)
 						IncomeExpenseRow(kind: .income, amount: viewModel.summary.income)
+							.staggeredAppear(index: 2)
 						IncomeExpenseRow(kind: .expense, amount: viewModel.summary.expense)
+							.staggeredAppear(index: 3)
 						TotalOwedCard(
 							totalOwed: viewModel.summary.totalOwed,
 							limit: viewModel.summary.owedLimit,
 							ratio: viewModel.summary.owedRatio
 						)
+						.staggeredAppear(index: 4)
 						SpendingByCategoryCard(
 							categories: viewModel.categories,
 							total: viewModel.summary.expense
 						)
+						.staggeredAppear(index: 5)
 						RecentTransactionsSection(transactions: viewModel.transactions)
+							.staggeredAppear(index: 6)
 					}
 					.padding(16)
 				}

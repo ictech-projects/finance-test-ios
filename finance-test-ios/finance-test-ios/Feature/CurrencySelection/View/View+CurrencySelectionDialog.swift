@@ -15,9 +15,16 @@ struct CurrencySelectionDialogModifier<Delegate: CurrencySelectionDelegate>: Vie
 				Color.black
 					.opacity(0.75)
 					.ignoresSafeArea()
+					.transition(.opacity)
 
 				CurrencySelectionDialogView(delegate: delegate)
 					.padding(24)
+					.transition(
+						.asymmetric(
+							insertion: .scale(scale: 0.9).combined(with: .opacity),
+							removal: .opacity
+						)
+					)
 			}
 		}
 	}

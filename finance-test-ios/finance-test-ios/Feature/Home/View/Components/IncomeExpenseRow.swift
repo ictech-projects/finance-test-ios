@@ -56,7 +56,7 @@ struct IncomeExpenseRow: View {
 
 			Spacer()
 
-			Text(amount.currencyWholeFormatted())
+			AnimatedAmountText(amount: amount)
 				.font(.baseStyle(size: 16, weight: .bold))
 				.foregroundStyle(kind.tint)
 		}

@@ -8,7 +8,7 @@ import SwiftUI
 struct SpendingCategory: Identifiable {
 	let id = UUID()
 	let name: String
-	let percent: Double
+	var percent: Double
 	let color: Color
 }
 
