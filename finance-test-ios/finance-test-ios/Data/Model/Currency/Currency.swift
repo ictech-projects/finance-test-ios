@@ -12,7 +12,7 @@ enum Currency {
 
 extension Currency.Request {
 
-	struct GetCurrencies: Codable {
+	struct GetCurrencies: Codable, Equatable {
 		let since: String?
 	}
 }

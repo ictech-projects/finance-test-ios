@@ -14,7 +14,7 @@ protocol CurrencySelectionDelegate: AnyObject {
 
 @MainActor
 final class CurrencySelectionViewModel: ObservableObject {
-	enum ViewState {
+	enum ViewState: Equatable {
 		case initial
 		case loading
 		case loaded
