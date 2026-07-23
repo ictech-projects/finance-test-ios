@@ -17,7 +17,7 @@ struct IosBaseProjectApp: App {
 	
 	var body: some Scene {
 		WindowGroup {
-			LaunchScreenView()
+			RootTabView()
 		}
 	}
 }
@@ -41,7 +41,7 @@ extension IosBaseProjectApp {
 		
 		appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
 			.font: selectedFont,
-			.foregroundColor: UIColor(resource: .neutral90)
+			.foregroundColor: UIColor(resource: .brandPrimary)
 		]
 		
 		UITabBar.appearance().standardAppearance = appearance

@@ -4,15 +4,15 @@ extension UIFont {
 	static func baseStyle(size: CGFloat, weight: Font.Weight) -> UIFont {
 		switch weight {
 		case .bold:
-			UIFont(name: "TODO:<FONT_NAME>", size: size) ?? UIFont()
+			UIFont(name: "TODO:<FONT_NAME>", size: size) ?? .systemFont(ofSize: size, weight: .bold)
 		case .light:
-			UIFont(name: "TODO:<FONT_NAME>", size: size) ?? UIFont()
+			UIFont(name: "TODO:<FONT_NAME>", size: size) ?? .systemFont(ofSize: size, weight: .light)
 		case .regular:
-			UIFont(name: "TODO:<FONT_NAME>", size: size) ?? UIFont()
+			UIFont(name: "TODO:<FONT_NAME>", size: size) ?? .systemFont(ofSize: size, weight: .regular)
 		case .medium:
-			UIFont(name: "TODO:<FONT_NAME>", size: size) ?? UIFont()
+			UIFont(name: "TODO:<FONT_NAME>", size: size) ?? .systemFont(ofSize: size, weight: .medium)
 		default:
-			UIFont(name: "TODO:<FONT_NAME>", size: size) ?? UIFont()
+			UIFont(name: "TODO:<FONT_NAME>", size: size) ?? .systemFont(ofSize: size, weight: .regular)
 		}
 	}
 }
