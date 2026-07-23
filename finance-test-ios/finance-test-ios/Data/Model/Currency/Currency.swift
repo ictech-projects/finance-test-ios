@@ -19,12 +19,12 @@ extension Currency.Request {
 
 extension Currency.Response {
 
-	struct CurrencyItem: Codable, Equatable, Hashable, Identifiable {
-		let id: String
-		let code: String
-		let name: String
-		let symbol: String
-		let decimalPlaces: Int
+	struct CurrencyItem: Codable, Equatable, Hashable {
+		let id: String?
+		let code: String?
+		let name: String?
+		let symbol: String?
+		let decimalPlaces: Int?
 		let createdAt: String?
 		let updatedAt: String?
 		let deletedAt: String?
@@ -39,7 +39,7 @@ extension Currency.Response {
 	}
 
 	struct CurrencyList: Codable, Equatable, Hashable {
-		let items: [CurrencyItem]
+		let items: [CurrencyItem]?
 		let serverTime: String?
 
 		enum CodingKeys: String, CodingKey {

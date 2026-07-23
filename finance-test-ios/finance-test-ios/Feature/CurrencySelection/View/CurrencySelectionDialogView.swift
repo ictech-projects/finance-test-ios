@@ -31,7 +31,7 @@ struct CurrencySelectionDialogView<Delegate: CurrencySelectionDelegate>: View {
 					.padding(.vertical, 24)
 			case .loaded:
 				VStack(spacing: 4) {
-					ForEach(viewModel.currencies) { currency in
+					ForEach(viewModel.currencies, id: \.self) { currency in
 						CurrencyRow(
 							currency: currency,
 							isSelected: currency == viewModel.selectedCurrency,
