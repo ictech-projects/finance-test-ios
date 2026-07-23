@@ -34,7 +34,7 @@ struct CurrencySelectionDialogView<Delegate: CurrencySelectionDelegate>: View {
 				}
 			}
 
-			PrimaryButton(size: .large, action: viewModel.confirmSelection) {
+			PrimaryButton(size: .large, backgroundColor: .brandPrimary, action: viewModel.confirmSelection) {
 				Text("Confirm")
 			}
 		}

@@ -26,8 +26,8 @@ struct IncomeExpenseRow: View {
 
 		var tint: Color {
 			switch self {
-			case .income: .successMain
-			case .expense: .dangerMain
+			case .income: .homeSuccess
+			case .expense: .homeDanger
 			}
 		}
 

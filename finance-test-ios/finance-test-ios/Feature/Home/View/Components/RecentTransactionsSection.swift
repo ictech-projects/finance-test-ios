@@ -21,7 +21,7 @@ struct RecentTransactionsSection: View {
 				Button(action: onViewAll) {
 					Text("View All")
 						.font(.baseStyle(size: 13, weight: .medium))
-						.foregroundStyle(.brandSecondary)
+						.foregroundStyle(.brandPrimary)
 				}
 			}
 

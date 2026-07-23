@@ -28,7 +28,7 @@ struct BalanceCard: View {
 				Text("Healthy margin")
 					.font(.baseStyle(size: 13, weight: .medium))
 			}
-			.foregroundStyle(.successMain)
+			.foregroundStyle(.homeSuccess)
 			.padding(.top, 2)
 		}
 		.frame(maxWidth: .infinity, alignment: .leading)

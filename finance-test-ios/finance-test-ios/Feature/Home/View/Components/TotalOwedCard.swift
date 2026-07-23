@@ -17,9 +17,9 @@ struct TotalOwedCard: View {
 			HStack(spacing: 12) {
 				Image(systemName: "building.columns.fill")
 					.font(.baseStyle(size: 14, weight: .bold))
-					.foregroundStyle(.orange)
+					.foregroundStyle(.homeOrange)
 					.frame(width: 32, height: 32)
-					.background(RoundedRectangle(cornerRadius: 10).fill(Color.orange.opacity(0.15)))
+					.background(RoundedRectangle(cornerRadius: 10).fill(.homeOrange.opacity(0.15)))
 
 				VStack(alignment: .leading, spacing: 2) {
 					Text("Total Owed")
@@ -28,7 +28,7 @@ struct TotalOwedCard: View {
 
 					AnimatedAmountText(amount: totalOwed)
 						.font(.baseStyle(size: 16, weight: .bold))
-						.foregroundStyle(.neutral100)
+						.foregroundStyle(.homeOrange)
 				}
 
 				Spacer()
@@ -40,7 +40,7 @@ struct TotalOwedCard: View {
 						.fill(.neutral20)
 
 					Capsule()
-						.fill(.orange)
+						.fill(.homeOrange)
 						.frame(width: proxy.size.width * animatedRatio)
 				}
 			}

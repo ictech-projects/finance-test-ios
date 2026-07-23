@@ -34,7 +34,7 @@ struct CurrencyRow: View {
 			.padding(.vertical, 14)
 			.background(
 				RoundedRectangle(cornerRadius: 12)
-					.fill(isSelected ? Color.brandSecondary : Color.clear)
+					.fill(isSelected ? Color.homeAccentBlue : Color.clear)
 			)
 			.contentShape(Rectangle())
 		}

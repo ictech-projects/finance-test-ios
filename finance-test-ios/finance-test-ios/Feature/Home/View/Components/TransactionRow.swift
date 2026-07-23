@@ -31,7 +31,7 @@ struct TransactionRow: View {
 			VStack(alignment: .trailing, spacing: 2) {
 				Text(transaction.amount.currencyFormatted(showsSign: transaction.isCredit))
 					.font(.baseStyle(size: 14, weight: .bold))
-					.foregroundStyle(transaction.isCredit ? .successMain : .dangerMain)
+					.foregroundStyle(transaction.isCredit ? .homeSuccess : .homeDanger)
 
 				Text("\(transaction.account) • \(transaction.dateLabel)")
 					.font(.baseStyle(size: 11, weight: .regular))
