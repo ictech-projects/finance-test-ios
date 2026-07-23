@@ -24,14 +24,25 @@ struct CurrencySelectionDialogView<Delegate: CurrencySelectionDelegate>: View {
 					.foregroundStyle(.neutral60)
 			}
 
-			VStack(spacing: 4) {
-				ForEach(viewModel.currencies) { currency in
-					CurrencyRow(
-						currency: currency,
-						isSelected: currency == viewModel.selectedCurrency,
-						onTap: { viewModel.select(currency) }
-					)
+			switch viewModel.viewState {
+			case .initial, .loading:
+				ProgressView()
+					.frame(maxWidth: .infinity)
+					.padding(.vertical, 24)
+			case .loaded:
+				VStack(spacing: 4) {
+					ForEach(viewModel.currencies, id: \.self) { currency in
+						CurrencyRow(
+							currency: currency,
+							isSelected: currency == viewModel.selectedCurrency,
+							onTap: { viewModel.select(currency) }
+						)
+					}
 				}
+			case .error:
+				Text("Couldn't load currencies. Please try again.")
+					.font(.baseStyle(size: 13, weight: .regular))
+					.foregroundStyle(.neutral60)
 			}
 
 			PrimaryButton(size: .large, backgroundColor: .brandPrimary, action: viewModel.confirmSelection) {
@@ -41,11 +52,14 @@ struct CurrencySelectionDialogView<Delegate: CurrencySelectionDelegate>: View {
 		.padding(24)
 		.background(Color(.systemBackground))
 		.clipShape(RoundedRectangle(cornerRadius: 24))
+		.task {
+			await viewModel.onLoad()
+		}
 	}
 }
 
 private final class PreviewCurrencySelectionDelegate: CurrencySelectionDelegate {
-	func didSelectCurrency(_ currency: Currency) {}
+	func didSelectCurrency(_ currency: Currency.Response.CurrencyItem) {}
 }
 
 #Preview {

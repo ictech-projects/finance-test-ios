@@ -6,19 +6,19 @@
 import SwiftUI
 
 struct CurrencyRow: View {
-	let currency: Currency
+	let currency: Currency.Response.CurrencyItem
 	let isSelected: Bool
 	let onTap: () -> Void
 
 	var body: some View {
 		Button(action: onTap) {
 			HStack(spacing: 12) {
-				Text(currency.symbol)
+				Text(currency.symbol ?? "")
 					.font(.baseStyle(size: 16, weight: .bold))
 					.foregroundStyle(isSelected ? .neutral10 : .neutral90)
 					.frame(width: 24)
 
-				Text("\(currency.code) - \(currency.name)")
+				Text("\(currency.code ?? "") - \(currency.name ?? "")")
 					.font(.baseStyle(size: 15, weight: .medium))
 					.foregroundStyle(isSelected ? .neutral10 : .neutral100)
 
@@ -44,7 +44,7 @@ struct CurrencyRow: View {
 
 #Preview {
 	VStack(spacing: 8) {
-		ForEach(Currency.mocks) { currency in
+		ForEach(Currency.Response.CurrencyItem.mocks, id: \.self) { currency in
 			CurrencyRow(currency: currency, isSelected: currency == .usd) {}
 		}
 	}

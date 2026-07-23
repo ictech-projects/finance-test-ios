@@ -9,27 +9,59 @@ import SwiftUI
 
 @MainActor
 protocol CurrencySelectionDelegate: AnyObject {
-	func didSelectCurrency(_ currency: Currency)
+	func didSelectCurrency(_ currency: Currency.Response.CurrencyItem)
 }
 
 @MainActor
 final class CurrencySelectionViewModel: ObservableObject {
-	@Published var currencies: [Currency]
-	@Published var selectedCurrency: Currency
+	enum ViewState: Equatable {
+		case initial
+		case loading
+		case loaded
+		case error
+	}
 
+	@Published var viewState = ViewState.initial
+	@Published var currencies: [Currency.Response.CurrencyItem] = []
+	@Published var selectedCurrency: Currency.Response.CurrencyItem
+
+	private let currencyRepository: any CurrencyRepository
 	private let delegate: any CurrencySelectionDelegate
 
 	init(
-		currencies: [Currency] = Currency.mocks,
-		selectedCurrency: Currency = .usd,
+		selectedCurrency: Currency.Response.CurrencyItem = .usd,
+		currencyRepository: some CurrencyRepository = CurrencyMockRepository(),
 		delegate: some CurrencySelectionDelegate
 	) {
-		self.currencies = currencies
 		self.selectedCurrency = selectedCurrency
+		self.currencyRepository = currencyRepository
 		self.delegate = delegate
 	}
 
-	func select(_ currency: Currency) {
+	func onLoad() async {
+		await loadCurrencies()
+	}
+
+	private func loadCurrencies() async {
+		viewState = .loading
+
+		do {
+			let state = try await currencyRepository.getCurrencies(request: .init(since: nil))
+			switch state {
+			case .loaded(let response):
+				currencies = response.data?.items ?? []
+				viewState = .loaded
+			case .error:
+				viewState = .error
+			default:
+				break
+			}
+		} catch {
+			viewState = .error
+		}
+	}
+
+	func select(_ currency: Currency.Response.CurrencyItem) {
 		withAnimation(.easeInOut(duration: 0.2)) {
 			selectedCurrency = currency
 		}

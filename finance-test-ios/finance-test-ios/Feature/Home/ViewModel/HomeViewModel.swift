@@ -12,14 +12,14 @@ final class HomeViewModel: ObservableObject {
 	@Published var summary: HomeSummary
 	@Published var transactions: [TransactionItem]
 	@Published var categories: [SpendingCategory]
-	@Published var selectedCurrency: Currency
+	@Published var selectedCurrency: Currency.Response.CurrencyItem
 	@Published var isCurrencyDialogPresented = false
 
 	init(
 		summary: HomeSummary = .mock,
 		transactions: [TransactionItem] = TransactionItem.mocks,
 		categories: [SpendingCategory] = SpendingCategory.mocks,
-		selectedCurrency: Currency = .usd
+		selectedCurrency: Currency.Response.CurrencyItem = .usd
 	) {
 		self.summary = summary
 		self.transactions = transactions
@@ -35,7 +35,7 @@ final class HomeViewModel: ObservableObject {
 }
 
 extension HomeViewModel: CurrencySelectionDelegate {
-	func didSelectCurrency(_ currency: Currency) {
+	func didSelectCurrency(_ currency: Currency.Response.CurrencyItem) {
 		selectedCurrency = currency
 		withAnimation(.easeInOut(duration: 0.25)) {
 			isCurrencyDialogPresented = false
