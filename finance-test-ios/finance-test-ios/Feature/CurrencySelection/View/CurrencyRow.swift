@@ -6,7 +6,7 @@
 import SwiftUI
 
 struct CurrencyRow: View {
-	let currency: Currency
+	let currency: Currency.Response.CurrencyItem
 	let isSelected: Bool
 	let onTap: () -> Void
 
@@ -44,7 +44,7 @@ struct CurrencyRow: View {
 
 #Preview {
 	VStack(spacing: 8) {
-		ForEach(Currency.mocks) { currency in
+		ForEach(Currency.Response.CurrencyItem.mocks) { currency in
 			CurrencyRow(currency: currency, isSelected: currency == .usd) {}
 		}
 	}
