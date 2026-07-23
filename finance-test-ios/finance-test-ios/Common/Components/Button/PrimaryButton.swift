@@ -1,5 +1,13 @@
 import SwiftUI
 
+private struct PressableButtonStyle: ButtonStyle {
+	func makeBody(configuration: ButtonStyleConfiguration) -> some View {
+		configuration.label
+			.scaleEffect(configuration.isPressed ? 0.96 : 1)
+			.animation(.easeOut(duration: 0.15), value: configuration.isPressed)
+	}
+}
+
 struct PrimaryButton<Label: View>: View {
 	let backgroundColor: Color
 	let strokeColor: Color?
@@ -48,6 +56,7 @@ struct PrimaryButton<Label: View>: View {
 			
 				.contentShape(RoundedRectangle(cornerRadius: 12))
 		}
+		.buttonStyle(PressableButtonStyle())
 		.disabled(isDisabled)
 	}
 	
