@@ -4,15 +4,15 @@ extension UIFont {
 	static func baseStyle(size: CGFloat, weight: Font.Weight) -> UIFont {
 		switch weight {
 		case .bold:
-			UIFont(name: "TODO:<FONT_NAME>", size: size) ?? .systemFont(ofSize: size, weight: .bold)
+			UIFont(name: "Inter-Bold", size: size) ?? .systemFont(ofSize: size, weight: .bold)
 		case .light:
-			UIFont(name: "TODO:<FONT_NAME>", size: size) ?? .systemFont(ofSize: size, weight: .light)
+			UIFont(name: "Inter-Light", size: size) ?? .systemFont(ofSize: size, weight: .light)
 		case .regular:
-			UIFont(name: "TODO:<FONT_NAME>", size: size) ?? .systemFont(ofSize: size, weight: .regular)
+			UIFont(name: "Inter-Regular", size: size) ?? .systemFont(ofSize: size, weight: .regular)
 		case .medium:
-			UIFont(name: "TODO:<FONT_NAME>", size: size) ?? .systemFont(ofSize: size, weight: .medium)
+			UIFont(name: "Inter-Medium", size: size) ?? .systemFont(ofSize: size, weight: .medium)
 		default:
-			UIFont(name: "TODO:<FONT_NAME>", size: size) ?? .systemFont(ofSize: size, weight: .regular)
+			UIFont(name: "Inter-Regular", size: size) ?? .systemFont(ofSize: size, weight: .regular)
 		}
 	}
 }
@@ -21,15 +21,15 @@ extension Font {
 	static func baseStyle(size: CGFloat, weight: Font.Weight) -> Font {
 		switch weight {
 		case .bold:
-				.custom("TODO:<FONT_NAME>", size: size)
+				.custom("Inter-Bold", size: size)
 		case .light:
-				.custom("TODO:<FONT_NAME>", size: size)
+				.custom("Inter-Light", size: size)
 		case .regular:
-				.custom("TODO:<FONT_NAME>", size: size)
+				.custom("Inter-Regular", size: size)
 		case .medium:
-				.custom("TODO:<FONT_NAME>", size: size)
+				.custom("Inter-Medium", size: size)
 		default:
-				.custom("TODO:<FONT_NAME>", size: size)
+				.custom("Inter-Regular", size: size)
 		}
 	}
 }
