@@ -42,13 +42,13 @@ struct PrimaryButton<Label: View>: View {
 				.frame(maxWidth: size.shouldStretch ? .infinity : nil)
 				.background(
 					RoundedRectangle(cornerRadius: 12)
-						.fill(isDisabled ? .brandSecondaryDisabled : backgroundColor)
+						.fill(backgroundColor.opacity(isDisabled ? 0.4 : 1))
 				)
 				.overlay {
 					if let strokeColor {
 						RoundedRectangle(cornerRadius: 12)
 							.stroke(
-								isDisabled ? .brandSecondaryDisabled : strokeColor,
+								strokeColor.opacity(isDisabled ? 0.4 : 1),
 								lineWidth: 1
 							)
 					}
