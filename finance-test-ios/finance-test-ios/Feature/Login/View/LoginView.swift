@@ -85,6 +85,21 @@ struct LoginView: View {
 				Task { await viewModel.login() }
 			}
 		}
+		.baseAlert(
+			isPresented: Binding(
+				get: { viewModel.generalErrorMessage != nil },
+				set: { isPresented in
+					if !isPresented {
+						viewModel.dismissGeneralError()
+					}
+				}
+			),
+			type: .error,
+			title: String(localized: "Login Failed"),
+			message: viewModel.generalErrorMessage ?? "",
+			confirmLabel: Text("OK"),
+			confirmAction: { viewModel.dismissGeneralError() }
+		)
 	}
 }
 

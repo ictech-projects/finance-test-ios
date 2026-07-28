@@ -7,9 +7,9 @@ enum BaseEnvironment: String {
 	var baseURL: String {
 		switch self {
 		case .production:
-			"production url"
+			"https://wallet.birchlabs.tech/api/v1"
 		case .development:
-			"https://projectname.itmanage.com.au/api"
+			"https://wallet.birchlabs.tech/api/v1"
 		}
 	}
 }
