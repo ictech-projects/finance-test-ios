@@ -8,6 +8,7 @@ import SwiftUI
 struct RecordsCategoryInfo: Equatable {
 	let name: String
 	let icon: ImageResource
+	let iconTint: Color
 	let iconBackground: Color
 }
 
@@ -27,19 +28,24 @@ struct RecordsAccountInfo: Equatable {
 enum RecordsCatalog {
 	static let categories: [String: RecordsCategoryInfo] = [
 		"01K3CT0000000000000000CT01": RecordsCategoryInfo(
-			name: "Dining & Drinks", icon: .recordsDiningIcon, iconBackground: .recordsDiningIconBackground
+			name: "Dining & Drinks", icon: .recordsDiningIcon,
+			iconTint: .recordsDiningIconTint, iconBackground: .recordsDiningIconBackground
 		),
 		"01K3CT0000000000000000CT02": RecordsCategoryInfo(
-			name: "Freelance Income", icon: .recordsFreelanceIcon, iconBackground: .recordsChipSelectedBackground
+			name: "Freelance Income", icon: .recordsFreelanceIcon,
+			iconTint: .brandPrimary, iconBackground: .recordsChipSelectedBackground
 		),
 		"01K3CT0000000000000000CT03": RecordsCategoryInfo(
-			name: "Transport", icon: .recordsTransportIcon, iconBackground: .recordsNeutralIconBackground
+			name: "Transport", icon: .recordsTransportIcon,
+			iconTint: .recordsNeutralIconTint, iconBackground: .recordsNeutralIconBackground
 		),
 		"01K3CT0000000000000000CT04": RecordsCategoryInfo(
-			name: "Groceries", icon: .recordsGroceriesIcon, iconBackground: .recordsNeutralIconBackground
+			name: "Groceries", icon: .recordsGroceriesIcon,
+			iconTint: .recordsNeutralIconTint, iconBackground: .recordsNeutralIconBackground
 		),
 		"01K3CT0000000000000000CT05": RecordsCategoryInfo(
-			name: "Entertainment", icon: .recordsEntertainmentIcon, iconBackground: .recordsNeutralIconBackground
+			name: "Entertainment", icon: .recordsEntertainmentIcon,
+			iconTint: .recordsNeutralIconTint, iconBackground: .recordsNeutralIconBackground
 		)
 	]
 
@@ -50,7 +56,8 @@ enum RecordsCatalog {
 	]
 
 	static let unknownCategory = RecordsCategoryInfo(
-		name: "Uncategorized", icon: .recordsCategoryIcon, iconBackground: .recordsNeutralIconBackground
+		name: "Uncategorized", icon: .recordsCategoryIcon,
+		iconTint: .recordsNeutralIconTint, iconBackground: .recordsNeutralIconBackground
 	)
 
 	static let unknownAccount = RecordsAccountInfo(name: "Unknown Account", icon: .recordsAccountsIcon)

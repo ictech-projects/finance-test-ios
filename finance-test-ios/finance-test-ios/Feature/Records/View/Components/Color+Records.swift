@@ -13,6 +13,10 @@ extension Color {
 	static let recordsChipSelectedBackground = Color(red: 0xDC / 255, green: 0xDE / 255, blue: 0xF7 / 255)
 	static let recordsDiningIconBackground = Color(red: 0xFF / 255, green: 0xDA / 255, blue: 0xD6 / 255)
 	static let recordsNeutralIconBackground = Color(red: 0xE3 / 255, green: 0xE1 / 255, blue: 0xEA / 255)
+
+	// Icon glyph tints (the SVG `fill` colors), distinct from the pastel circle backgrounds above.
+	static let recordsDiningIconTint = Color(red: 0x93 / 255, green: 0x00 / 255, blue: 0x0A / 255)
+	static let recordsNeutralIconTint = Color(red: 0x45 / 255, green: 0x46 / 255, blue: 0x52 / 255)
 }
 
 extension ShapeStyle where Self == Color {
@@ -21,4 +25,6 @@ extension ShapeStyle where Self == Color {
 	static var recordsChipSelectedBackground: Color { .recordsChipSelectedBackground }
 	static var recordsDiningIconBackground: Color { .recordsDiningIconBackground }
 	static var recordsNeutralIconBackground: Color { .recordsNeutralIconBackground }
+	static var recordsDiningIconTint: Color { .recordsDiningIconTint }
+	static var recordsNeutralIconTint: Color { .recordsNeutralIconTint }
 }

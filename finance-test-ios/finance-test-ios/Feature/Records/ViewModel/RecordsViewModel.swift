@@ -123,6 +123,7 @@ final class RecordsViewModel: ObservableObject {
 			id: id,
 			categoryName: category.name,
 			categoryIcon: category.icon,
+			categoryIconTint: category.iconTint,
 			categoryIconBackground: category.iconBackground,
 			description: item.description ?? "",
 			accountName: account.name,

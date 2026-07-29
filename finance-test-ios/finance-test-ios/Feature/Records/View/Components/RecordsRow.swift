@@ -14,7 +14,7 @@ struct RecordsRow: View {
 				.renderingMode(.template)
 				.resizable()
 				.scaledToFit()
-				.foregroundStyle(.neutral90)
+				.foregroundStyle(item.categoryIconTint)
 				.frame(width: 22, height: 22)
 				.frame(width: 48, height: 48)
 				.background(Circle().fill(item.categoryIconBackground))
