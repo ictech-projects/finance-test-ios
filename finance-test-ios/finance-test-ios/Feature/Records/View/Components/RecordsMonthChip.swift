@@ -11,7 +11,11 @@ struct RecordsMonthChip: View {
 
 	var body: some View {
 		HStack(spacing: 8) {
-			Image(systemName: "calendar")
+			Image(.recordsCalendarIcon)
+				.renderingMode(.template)
+				.resizable()
+				.scaledToFit()
+				.frame(width: 13.5, height: 15)
 			Text(label)
 				.font(.baseStyle(size: 14, weight: .bold))
 			Image(systemName: "chevron.down")

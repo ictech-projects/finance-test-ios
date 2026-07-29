@@ -9,7 +9,8 @@ import SwiftUI
 /// where `nil` selection means "All".
 struct RecordsOptionFilterChip: View {
 	let title: String
-	let iconName: String
+	let icon: ImageResource
+	let iconSize: CGSize
 	let options: [String]
 	@Binding var selection: String?
 
@@ -21,7 +22,11 @@ struct RecordsOptionFilterChip: View {
 			}
 		} label: {
 			HStack(spacing: 8) {
-				Image(systemName: iconName)
+				Image(icon)
+					.renderingMode(.template)
+					.resizable()
+					.scaledToFit()
+					.frame(width: iconSize.width, height: iconSize.height)
 				Text(selection ?? title)
 					.lineLimit(1)
 			}
@@ -38,6 +43,9 @@ struct RecordsOptionFilterChip: View {
 }
 
 #Preview {
-	RecordsOptionFilterChip(title: "Category", iconName: "tag.fill", options: ["Dining & Drinks", "Transport"], selection: .constant(nil))
-		.padding()
+	RecordsOptionFilterChip(
+		title: "Category", icon: .recordsCategoryIcon, iconSize: CGSize(width: 14.25, height: 15),
+		options: ["Dining & Drinks", "Transport"], selection: .constant(nil)
+	)
+	.padding()
 }

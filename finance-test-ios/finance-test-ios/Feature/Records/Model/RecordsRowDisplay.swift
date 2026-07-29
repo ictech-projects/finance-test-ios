@@ -8,11 +8,11 @@ import SwiftUI
 struct RecordsRowDisplay: Identifiable, Equatable {
 	let id: String
 	let categoryName: String
-	let categoryIconName: String
+	let categoryIcon: ImageResource
 	let categoryIconBackground: Color
 	let description: String
 	let accountName: String
-	let accountIconName: String
+	let accountIcon: ImageResource
 	let amountLabel: String
 	let isCredit: Bool
 	let timeLabel: String
@@ -21,15 +21,15 @@ struct RecordsRowDisplay: Identifiable, Equatable {
 extension RecordsRowDisplay {
 	static let mocks: [RecordsRowDisplay] = [
 		RecordsRowDisplay(
-			id: "preview-1", categoryName: "Dining & Drinks", categoryIconName: "fork.knife",
+			id: "preview-1", categoryName: "Dining & Drinks", categoryIcon: .recordsDiningIcon,
 			categoryIconBackground: .recordsDiningIconBackground, description: "Lunch at the Bistro",
-			accountName: "Cash", accountIconName: "banknote.fill",
+			accountName: "Cash", accountIcon: .recordsCashIcon,
 			amountLabel: "-$42.50", isCredit: false, timeLabel: "12:45 PM"
 		),
 		RecordsRowDisplay(
-			id: "preview-2", categoryName: "Freelance Income", categoryIconName: "briefcase.fill",
+			id: "preview-2", categoryName: "Freelance Income", categoryIcon: .recordsFreelanceIcon,
 			categoryIconBackground: .recordsChipSelectedBackground, description: "UI Design Project",
-			accountName: "Main Bank", accountIconName: "building.columns.fill",
+			accountName: "Main Bank", accountIcon: .recordsMainbankIcon,
 			amountLabel: "+$1,200.00", isCredit: true, timeLabel: "09:15 AM"
 		)
 	]

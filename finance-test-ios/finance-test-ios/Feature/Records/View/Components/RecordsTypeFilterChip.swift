@@ -15,7 +15,11 @@ struct RecordsTypeFilterChip: View {
 			}
 		} label: {
 			HStack(spacing: 8) {
-				Image(systemName: "line.3.horizontal.decrease")
+				Image(.recordsTypeIcon)
+					.renderingMode(.template)
+					.resizable()
+					.scaledToFit()
+					.frame(width: 13.5, height: 9)
 				Text(selection == .all ? "Type" : selection.rawValue)
 					.lineLimit(1)
 			}

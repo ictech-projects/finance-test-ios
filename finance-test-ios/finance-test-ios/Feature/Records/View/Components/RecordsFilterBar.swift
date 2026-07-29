@@ -18,11 +18,11 @@ struct RecordsFilterBar: View {
 				RecordsMonthChip(label: "This Month")
 				RecordsTypeFilterChip(selection: $typeFilter)
 				RecordsOptionFilterChip(
-					title: "Category", iconName: "tag.fill",
+					title: "Category", icon: .recordsCategoryIcon, iconSize: CGSize(width: 14.25, height: 15),
 					options: availableCategoryNames, selection: $categoryFilter
 				)
 				RecordsOptionFilterChip(
-					title: "Accounts", iconName: "rectangle.stack.fill",
+					title: "Accounts", icon: .recordsAccountsIcon, iconSize: CGSize(width: 14.25, height: 13.5),
 					options: availableAccountNames, selection: $accountFilter
 				)
 			}

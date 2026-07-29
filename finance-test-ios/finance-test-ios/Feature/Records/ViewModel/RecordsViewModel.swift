@@ -122,11 +122,11 @@ final class RecordsViewModel: ObservableObject {
 		let display = RecordsRowDisplay(
 			id: id,
 			categoryName: category.name,
-			categoryIconName: category.iconName,
+			categoryIcon: category.icon,
 			categoryIconBackground: category.iconBackground,
 			description: item.description ?? "",
 			accountName: account.name,
-			accountIconName: account.iconName,
+			accountIcon: account.icon,
 			amountLabel: signedAmount.currencyFormatted(showsSign: isCredit),
 			isCredit: isCredit,
 			timeLabel: timeFormatter.string(from: timestamp)
