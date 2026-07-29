@@ -26,7 +26,7 @@ enum RecordsCatalog {
 			name: "Dining & Drinks", iconName: "fork.knife", iconBackground: .recordsDiningIconBackground
 		),
 		"01K3CT0000000000000000CT02": RecordsCategoryInfo(
-			name: "Freelance Income", iconName: "briefcase.fill", iconBackground: .recordsChipSelectedBackground
+			name: "Freelance Income", iconName: "camera.fill", iconBackground: .recordsChipSelectedBackground
 		),
 		"01K3CT0000000000000000CT03": RecordsCategoryInfo(
 			name: "Transport", iconName: "car.fill", iconBackground: .recordsNeutralIconBackground
@@ -35,7 +35,7 @@ enum RecordsCatalog {
 			name: "Groceries", iconName: "bag.fill", iconBackground: .recordsNeutralIconBackground
 		),
 		"01K3CT0000000000000000CT05": RecordsCategoryInfo(
-			name: "Entertainment", iconName: "tv.fill", iconBackground: .recordsNeutralIconBackground
+			name: "Entertainment", iconName: "play.rectangle.fill", iconBackground: .recordsNeutralIconBackground
 		)
 	]
 

@@ -22,7 +22,7 @@ struct RecordsFilterBar: View {
 					options: availableCategoryNames, selection: $categoryFilter
 				)
 				RecordsOptionFilterChip(
-					title: "Accounts", iconName: "building.columns.fill",
+					title: "Accounts", iconName: "rectangle.stack.fill",
 					options: availableAccountNames, selection: $accountFilter
 				)
 			}
