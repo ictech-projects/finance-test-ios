@@ -21,6 +21,14 @@ final class LoginViewModel: ObservableObject {
 	@Published var viewState = ViewState.initial
 	@Published var emailErrorMessage: String?
 	@Published var passwordErrorMessage: String?
+	@Published var generalErrorMessage: String?
+	@Published private(set) var isLoggedIn = false
+
+	private let authRepository: any AuthRepository
+
+	init(authRepository: some AuthRepository = AuthDefaultRepository()) {
+		self.authRepository = authRepository
+	}
 
 	var isSubmitDisabled: Bool {
 		email.isEmpty || password.isEmpty || viewState == .loading
@@ -35,20 +43,30 @@ final class LoginViewModel: ObservableObject {
 	}
 
 	func emailDidChange() {
-		guard emailErrorMessage != nil else { return }
+		guard emailErrorMessage != nil || generalErrorMessage != nil else { return }
 		withAnimation(.easeOut(duration: 0.2)) {
 			emailErrorMessage = nil
+			generalErrorMessage = nil
 		}
 	}
 
 	func passwordDidChange() {
-		guard passwordErrorMessage != nil else { return }
+		guard passwordErrorMessage != nil || generalErrorMessage != nil else { return }
 		withAnimation(.easeOut(duration: 0.2)) {
 			passwordErrorMessage = nil
+			generalErrorMessage = nil
+		}
+	}
+
+	func dismissGeneralError() {
+		generalErrorMessage = nil
+		if viewState == .error {
+			viewState = .initial
 		}
 	}
 
 	func login() async {
+		generalErrorMessage = nil
 		var hasError = false
 
 		if email.isEmpty {
@@ -77,10 +95,50 @@ final class LoginViewModel: ObservableObject {
 
 		viewState = .loading
 
-		// TODO: Replace with a call into the Auth data layer (Repository) once it exists.
-		try? await Task.sleep(nanoseconds: 400_000_000)
+		do {
+			let state = try await authRepository.login(
+				request: Auth.Request.Login(email: email, password: password)
+			)
 
-		viewState = .initial
+			switch state {
+			case .loaded:
+				isLoggedIn = true
+				viewState = .initial
+			case .error(let error):
+				handleLoginError(error)
+			default:
+				break
+			}
+		} catch {
+			handleLoginError(error)
+		}
+	}
+
+	/// Maps a login failure to either field-specific errors (422 validation, e.g. "email must be
+	/// a valid email address") or a general error (401 "Invalid credentials." — deliberately
+	/// non-field-specific so the API doesn't reveal whether the email or the password was wrong).
+	private func handleLoginError(_ error: Error) {
+		emailErrorMessage = nil
+		passwordErrorMessage = nil
+		generalErrorMessage = nil
+
+		if let errorResponse = error as? ErrorResponse {
+			let emailError = errorResponse.errors?.email?.first
+			let passwordError = errorResponse.errors?.password?.first
+
+			if emailError != nil || passwordError != nil {
+				emailErrorMessage = emailError
+				passwordErrorMessage = passwordError
+			} else {
+				generalErrorMessage = errorResponse.message ?? String(localized: "Invalid email or password.")
+			}
+		} else {
+			generalErrorMessage = String(localized: "Something went wrong. Please try again.")
+		}
+
+		withAnimation(.easeOut(duration: 0.2)) {
+			viewState = .error
+		}
 	}
 
 	private static func isValidEmail(_ email: String) -> Bool {

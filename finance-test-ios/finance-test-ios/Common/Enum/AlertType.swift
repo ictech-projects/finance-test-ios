@@ -2,66 +2,47 @@ import Foundation
 import SwiftUI
 
 enum AlertType {
-    case error
-    case success
-    case locationNotSet
-    case leaveSubmitted
-	case messageSend
-	case passwordUpdate
-	case deleteAccount
-	case deleteAccountSuccess
-	case profileUpdated
-	case clockOut
-	case clockIn
-	case removeConnectedDevice
-	case logout
-	
+	case success
+	case error
+	case warning
+	case info
 }
 
 extension AlertType {
-	var icon: Image {
+	var iconSystemName: String {
 		switch self {
-		case .error:
-			Image(.errorAlertIcon)
-		case .success, .profileUpdated:
-			Image(.successAlertIcon)
-		case .locationNotSet:
-			Image(.locationErrorAlertIcon)
-		case .leaveSubmitted:
-			Image(.leaveRequestSuccessAlertIcon)
-		case .messageSend:
-			Image(.sendMessageAlertIcon)
-		case .passwordUpdate:
-			Image(.updatePasswordSuccessAlertIcon)
-		case .deleteAccount:
-			Image(.deleteAccountAlertIcon)
-		case .deleteAccountSuccess:
-			Image(.sendMessageAlertIcon)
-		case .clockOut:
-			Image(.checkOutIndicator)
-		case .clockIn:
-			Image(.clockInAlertIcon)
-		case .removeConnectedDevice:
-			Image(.removeAlertIcon)
-		case .logout:
-			Image(.logoutAlertIcon)
+		case .success:
+			"checkmark"
+		case .error, .warning:
+			"exclamationmark.triangle.fill"
+		case .info:
+			"info"
 		}
 	}
-	
-	var titleColor: Color {
+
+	var iconColor: Color {
 		switch self {
-		case .error, .deleteAccount, .removeConnectedDevice, .logout:
-			Color.dangerMain
 		case .success:
-			Color.successMain
-		case .clockOut, .clockIn, .passwordUpdate, .deleteAccountSuccess:
-			Color.infoMain
-		case .messageSend:
-			Color.infoMain
-		case .leaveSubmitted:
-			Color.infoMain
-		default:
-			Color.neutral90
+			.successMain
+		case .error:
+			.dangerMain
+		case .warning:
+			.warningMain
+		case .info:
+			.infoMain
+		}
+	}
+
+	var badgeColor: Color {
+		switch self {
+		case .success:
+			.successSurface
+		case .error:
+			.dangerSurface
+		case .warning:
+			.warningSurface
+		case .info:
+			.infoSurface
 		}
 	}
 }

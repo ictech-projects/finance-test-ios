@@ -12,14 +12,16 @@ struct PrimaryButton<Label: View>: View {
 	let backgroundColor: Color
 	let strokeColor: Color?
 	let size: CustomButtonSize
+	let cornerRadius: CGFloat
 	let action: () -> Void
 	let label: () -> Label
 	let isDisabled: Bool
-	
+
 	init(
 		size: CustomButtonSize = .medium,
 		backgroundColor: Color = .brandSecondary,
 		strokeColor: Color? = nil,
+		cornerRadius: CGFloat = 12,
 		isDisabled: Bool = false,
 		action: @escaping () -> Void,
 		@ViewBuilder label: @escaping () -> Label
@@ -27,11 +29,12 @@ struct PrimaryButton<Label: View>: View {
 		self.size = size
 		self.backgroundColor = backgroundColor
 		self.strokeColor = strokeColor
+		self.cornerRadius = cornerRadius
 		self.isDisabled = isDisabled
 		self.action = action
 		self.label = label
 	}
-	
+
 	var body: some View {
 		Button(action: action) {
 			label()
@@ -41,20 +44,20 @@ struct PrimaryButton<Label: View>: View {
 				.frame(height: size.height)
 				.frame(maxWidth: size.shouldStretch ? .infinity : nil)
 				.background(
-					RoundedRectangle(cornerRadius: 12)
+					RoundedRectangle(cornerRadius: cornerRadius)
 						.fill(backgroundColor.opacity(isDisabled ? 0.4 : 1))
 				)
 				.overlay {
 					if let strokeColor {
-						RoundedRectangle(cornerRadius: 12)
+						RoundedRectangle(cornerRadius: cornerRadius)
 							.stroke(
 								strokeColor.opacity(isDisabled ? 0.4 : 1),
 								lineWidth: 1
 							)
 					}
 				}
-			
-				.contentShape(RoundedRectangle(cornerRadius: 12))
+
+				.contentShape(RoundedRectangle(cornerRadius: cornerRadius))
 		}
 		.buttonStyle(PressableButtonStyle())
 		.disabled(isDisabled)

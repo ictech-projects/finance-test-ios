@@ -5,19 +5,21 @@ struct BaseAlert: ViewModifier {
 	let type: AlertType
 	let title: String
 	let message: String
-	let confirmButtonColor: (text: Color, background: Color, stroke: Color)
+	let confirmButtonColor: Color
 	let confirmLabel: Text
+	let confirmIcon: String?
 	let cancelLabel: Text?
 	let confirmAction: () -> Void
 	let cancelAction: (() -> Void)?
-	
+
 	init(
 		isPresented: Binding<Bool>,
 		type: AlertType,
 		title: String,
 		message: String,
-		confirmButtonColor: (text: Color, background: Color, stroke: Color) = (text: .neutral10, background: .brandSecondary, stroke: .clear),
+		confirmButtonColor: Color = .brandPrimary,
 		confirmLabel: Text,
+		confirmIcon: String? = nil,
 		cancelLabel: Text? = nil,
 		confirmAction: @escaping () -> Void,
 		cancelAction: (() -> Void)? = nil
@@ -28,84 +30,79 @@ struct BaseAlert: ViewModifier {
 		self.message = message
 		self.confirmButtonColor = confirmButtonColor
 		self.confirmLabel = confirmLabel
+		self.confirmIcon = confirmIcon
 		self.cancelLabel = cancelLabel
 		self.confirmAction = confirmAction
 		self.cancelAction = cancelAction
 	}
-	
+
 	func body(content: Content) -> some View {
 		content.overlay {
 			if isPresented {
-					Color.black
-						.opacity(0.75)
-						.ignoresSafeArea()
-					
-					HStack {
-						Spacer()
-						
-						VStack {
-							Spacer()
-							
-							VStack(spacing: 24) {
-								type.icon
-									.resizable()
-									.scaledToFit()
-									.frame(width: 44)
-								
-								VStack(spacing: 10) {
-									Text(title)
-										.font(.baseStyle(size: 16, weight: .bold))
-										.foregroundStyle(type.titleColor)
-										.multilineTextAlignment(.center)
-									
-									Text(message)
-										.font(.baseStyle(size: 14, weight: .regular))
-										.foregroundStyle(.neutral70)
-										.multilineTextAlignment(.center)
+				ZStack {
+					Rectangle()
+						.fill(.thinMaterial)
+
+					Color.black.opacity(0.25)
+				}
+				.ignoresSafeArea()
+				.transition(.opacity)
+
+				VStack(spacing: 24) {
+					ZStack {
+						Circle()
+							.fill(type.badgeColor)
+							.frame(width: 80, height: 80)
+
+						Image(systemName: type.iconSystemName)
+							.font(.system(size: 32, weight: .bold))
+							.foregroundStyle(type.iconColor)
+					}
+
+					VStack(spacing: 8) {
+						Text(title)
+							.font(.baseStyle(size: 22, weight: .bold))
+							.foregroundStyle(.neutral100)
+							.multilineTextAlignment(.center)
+
+						Text(message)
+							.font(.baseStyle(size: 14, weight: .regular))
+							.foregroundStyle(.neutral70)
+							.multilineTextAlignment(.center)
+					}
+
+					VStack(spacing: 12) {
+						PrimaryButton(
+							size: .large,
+							backgroundColor: confirmButtonColor,
+							cornerRadius: 999,
+							action: confirmAction
+						) {
+							HStack(spacing: 8) {
+								if let confirmIcon {
+									Image(systemName: confirmIcon)
 								}
-								
-								HStack {
-									
-									if let cancelLabel, let cancelAction {
-										PrimaryButton(
-											size: .medium,
-											backgroundColor: .clear,
-											strokeColor: Color.neutral90,
-											isDisabled: false,
-											action: cancelAction
-										) {
-											cancelLabel
-												.font(.baseStyle(size: 16, weight: .medium))
-												.foregroundStyle(.neutral90)
-										}
-									}
-									
-									PrimaryButton(
-										size: .medium,
-										backgroundColor: confirmButtonColor.background,
-										strokeColor: confirmButtonColor.stroke,
-										isDisabled: false,
-										action: confirmAction
-									) {
-										confirmLabel
-											.font(.baseStyle(size: 16, weight: .medium))
-											.foregroundStyle(confirmButtonColor.text)
-									}
-								}
+								confirmLabel
 							}
-							.padding(.top, 24)
-							.padding([.horizontal, .bottom], 20)
-							.background(Color(.systemBackground))
-							.clipShape(RoundedRectangle(cornerRadius: 12))
-							.padding()
-							
-							Spacer()
 						}
-						
-						Spacer()
+
+						if let cancelLabel, let cancelAction {
+							Button(action: cancelAction) {
+								cancelLabel
+									.font(.baseStyle(size: 14, weight: .medium))
+									.foregroundStyle(confirmButtonColor)
+							}
+						}
 					}
 				}
+				.padding(24)
+				.background(Color(.systemBackground))
+				.clipShape(RoundedRectangle(cornerRadius: 28))
+				.padding(24)
+				.transition(.scale(scale: 0.9).combined(with: .opacity))
+			}
 		}
+		.animation(.spring(response: 0.35, dampingFraction: 0.85), value: isPresented)
 	}
 }
 
@@ -115,8 +112,9 @@ extension View {
 		type: AlertType,
 		title: String,
 		message: String,
-		confirmButtonColor: (text: Color, background: Color, stroke: Color),
+		confirmButtonColor: Color = .brandPrimary,
 		confirmLabel: Text,
+		confirmIcon: String? = nil,
 		cancelLabel: Text? = nil,
 		confirmAction: @escaping () -> Void,
 		cancelAction: (() -> Void)? = nil
@@ -129,6 +127,7 @@ extension View {
 				message: message,
 				confirmButtonColor: confirmButtonColor,
 				confirmLabel: confirmLabel,
+				confirmIcon: confirmIcon,
 				cancelLabel: cancelLabel,
 				confirmAction: confirmAction,
 				cancelAction: cancelAction
@@ -137,58 +136,59 @@ extension View {
 	}
 }
 
-#Preview {
-	Color.white
+#Preview("Error") {
+	Color.neutral20
+		.ignoresSafeArea()
 		.baseAlert(
 			isPresented: .constant(true),
 			type: .error,
-			title: "Send request to delete account?",
-			message: "We’ll submit your request to permanently delete your account and data.",
-			confirmButtonColor: (text: .neutral10, background: .dangerMain, stroke: .clear),
-			confirmLabel: Text("Send Request"),
-			confirmAction: {}
-		)
-}
-
-#Preview("Warning – Confirm & Cancel") {
-	Color.white
-		.baseAlert(
-			isPresented: .constant(true),
-			type: .clockOut,
-			title: "Are you sure?",
-			message: "This action cannot be undone.",
-			confirmButtonColor: (text: .neutral10, background: .brandSecondary, stroke: .clear),
-			confirmLabel: Text("Continue"),
+			title: "Something Went Wrong",
+			message: "We couldn't complete the request. Please check your connection or try again.",
+			confirmLabel: Text("Try Again"),
+			confirmIcon: "arrow.clockwise",
 			cancelLabel: Text("Cancel"),
 			confirmAction: {},
 			cancelAction: {}
 		)
 }
 
-#Preview("Success – Confirm Only") {
-	Color.white
+#Preview("Success") {
+	Color.neutral20
+		.ignoresSafeArea()
 		.baseAlert(
 			isPresented: .constant(true),
 			type: .success,
-			title: "Request sent",
-			message: "Your request has been successfully submitted.",
-			confirmButtonColor: (text: .neutral10, background: .successMain, stroke: .clear),
-			confirmLabel: Text("OK"),
+			title: "Action Successful",
+			message: "Your changes have been saved with precision.",
+			confirmLabel: Text("Done"),
 			confirmAction: {}
 		)
 }
 
-#Preview("Info – Confirm & Cancel") {
-	Color.white
+#Preview("Warning") {
+	Color.neutral20
+		.ignoresSafeArea()
 		.baseAlert(
 			isPresented: .constant(true),
-			type: .clockOut,
-			title: "Enable notifications?",
-			message: "You can change this later in Settings.",
-			confirmButtonColor: (text: .neutral10, background: .brandPrimary, stroke: .clear),
-			confirmLabel: Text("Enable"),
-			cancelLabel: Text("Not Now"),
+			type: .warning,
+			title: "Unsaved Changes",
+			message: "You have unsaved changes that will be lost if you leave this screen.",
+			confirmLabel: Text("Leave"),
+			cancelLabel: Text("Stay"),
 			confirmAction: {},
 			cancelAction: {}
+		)
+}
+
+#Preview("Info") {
+	Color.neutral20
+		.ignoresSafeArea()
+		.baseAlert(
+			isPresented: .constant(true),
+			type: .info,
+			title: "New Feature Available",
+			message: "You can now sync currencies automatically from Settings.",
+			confirmLabel: Text("Got It"),
+			confirmAction: {}
 		)
 }
