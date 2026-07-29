@@ -18,7 +18,7 @@ final class RecordsViewModelTests: MemoryLeakTrackingSuite {
 	func onLoad_success_groupsByDayAndSetsLoadedState() async {
 		let today = anyTransactionItem(
 			id: "t1", accountId: "01K3AC0000000000000000AC01", categoryId: "01K3CT0000000000000000CT01",
-			type: "expense", amount: "10.00"
+			type: .expense, amount: "10.00"
 		)
 		let repository = TransactionMockRepository(
 			result: .loaded(anyTransactionListSuccessResponse(items: [today]))
@@ -75,7 +75,7 @@ final class RecordsViewModelTests: MemoryLeakTrackingSuite {
 		let items = (0..<itemCount).map { index in
 			anyTransactionItem(
 				id: "t\(index)", accountId: "01K3AC0000000000000000AC01",
-				categoryId: "01K3CT0000000000000000CT01", type: "expense", amount: "5.00"
+				categoryId: "01K3CT0000000000000000CT01", type: .expense, amount: "5.00"
 			)
 		}
 		let repository = TransactionMockRepository(
@@ -93,11 +93,11 @@ final class RecordsViewModelTests: MemoryLeakTrackingSuite {
 	func typeFilter_expense_hidesIncomeRows() async {
 		let expense = anyTransactionItem(
 			id: "expense", accountId: "01K3AC0000000000000000AC01",
-			categoryId: "01K3CT0000000000000000CT01", type: "expense", amount: "10.00"
+			categoryId: "01K3CT0000000000000000CT01", type: .expense, amount: "10.00"
 		)
 		let income = anyTransactionItem(
 			id: "income", accountId: "01K3AC0000000000000000AC02",
-			categoryId: "01K3CT0000000000000000CT02", type: "income", amount: "20.00"
+			categoryId: "01K3CT0000000000000000CT02", type: .income, amount: "20.00"
 		)
 		let repository = TransactionMockRepository(
 			result: .loaded(anyTransactionListSuccessResponse(items: [expense, income]))
@@ -115,11 +115,11 @@ final class RecordsViewModelTests: MemoryLeakTrackingSuite {
 	func categoryFilter_specificCategory_onlyShowsMatchingRows() async {
 		let dining = anyTransactionItem(
 			id: "dining", accountId: "01K3AC0000000000000000AC01",
-			categoryId: "01K3CT0000000000000000CT01", type: "expense", amount: "10.00"
+			categoryId: "01K3CT0000000000000000CT01", type: .expense, amount: "10.00"
 		)
 		let transport = anyTransactionItem(
 			id: "transport", accountId: "01K3AC0000000000000000AC03",
-			categoryId: "01K3CT0000000000000000CT03", type: "expense", amount: "20.00"
+			categoryId: "01K3CT0000000000000000CT03", type: .expense, amount: "20.00"
 		)
 		let repository = TransactionMockRepository(
 			result: .loaded(anyTransactionListSuccessResponse(items: [dining, transport]))

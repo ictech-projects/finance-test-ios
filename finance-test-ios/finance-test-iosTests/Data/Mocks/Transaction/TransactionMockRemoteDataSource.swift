@@ -35,7 +35,7 @@ func anyTransactionItem(
 	id: String = "01K3TX0000000000000000TX01",
 	accountId: String = "01K3AC0000000000000000AC01",
 	categoryId: String = "01K3CT0000000000000000CT01",
-	type: String = "expense",
+	type: TransactionType = .expense,
 	amount: String = "42.50"
 ) -> TransactionRecord.Response.TransactionItem {
 	TransactionRecord.Response.TransactionItem(
@@ -49,6 +49,32 @@ func anyTransactionItem(
 
 func anyGetTransactionsRequest() -> TransactionRecord.Request.GetTransactions {
 	TransactionRecord.Request.GetTransactions(since: nil)
+}
+
+func anyCreateTransactionRequest(
+	accountId: String = "01K3AC0000000000000000AC01",
+	categoryId: String = "01K3CT0000000000000000CT01",
+	type: TransactionType = .expense,
+	amount: String = "42.50",
+	exchangeRateToAnchor: String = "1",
+	description: String? = "Lunch at the Bistro",
+	transactionDate: String = "2026-07-27"
+) -> TransactionRecord.Request.CreateTransaction {
+	TransactionRecord.Request.CreateTransaction(
+		accountId: accountId, categoryId: categoryId, type: type, amount: amount,
+		exchangeRateToAnchor: exchangeRateToAnchor, description: description, transactionDate: transactionDate
+	)
+}
+
+func anyAppliedTransactionChangeResult(
+	clientChangeId: String? = "c1",
+	id: String? = "01K3TX0000000000000000TX01",
+	item: TransactionRecord.Response.TransactionItem = anyTransactionItem()
+) -> Sync.Response.ChangeResult {
+	Sync.Response.ChangeResult(
+		clientChangeId: clientChangeId, id: id, entity: "transaction", status: "applied",
+		record: try? JSONValue(encoding: item), error: nil
+	)
 }
 
 func anyTransactionListSuccessResponse(
