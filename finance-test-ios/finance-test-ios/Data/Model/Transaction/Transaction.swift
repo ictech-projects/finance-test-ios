@@ -66,7 +66,7 @@ extension TransactionRecord.Response.TransactionItem {
 		accountId: "01K3AC0000000000000000AC01", categoryId: "01K3CT0000000000000000CT01",
 		currencyId: "usd", exchangeRateToAnchor: "1",
 		type: "expense", amount: "42.50", description: "Lunch at the Bistro",
-		transactionDate: "2026-07-27", createdAt: nil, updatedAt: nil, deletedAt: nil
+		transactionDate: "2026-07-27", createdAt: "2026-07-27T12:45:00Z", updatedAt: nil, deletedAt: nil
 	)
 
 	static let mocks: [TransactionRecord.Response.TransactionItem] = [
@@ -76,14 +76,28 @@ extension TransactionRecord.Response.TransactionItem {
 			accountId: "01K3AC0000000000000000AC02", categoryId: "01K3CT0000000000000000CT02",
 			currencyId: "usd", exchangeRateToAnchor: "1",
 			type: "income", amount: "1200.00", description: "UI Design Project",
-			transactionDate: "2026-07-27", createdAt: nil, updatedAt: nil, deletedAt: nil
+			transactionDate: "2026-07-27", createdAt: "2026-07-27T09:15:00Z", updatedAt: nil, deletedAt: nil
 		),
 		TransactionRecord.Response.TransactionItem(
 			id: "01K3TX0000000000000000TX03", userId: "01K3US0000000000000000US01",
 			accountId: "01K3AC0000000000000000AC03", categoryId: "01K3CT0000000000000000CT03",
 			currencyId: "usd", exchangeRateToAnchor: "1",
 			type: "expense", amount: "65.00", description: "Fuel Refill",
-			transactionDate: "2026-07-26", createdAt: nil, updatedAt: nil, deletedAt: nil
+			transactionDate: "2026-07-26", createdAt: "2026-07-26T18:20:00Z", updatedAt: nil, deletedAt: nil
+		),
+		TransactionRecord.Response.TransactionItem(
+			id: "01K3TX0000000000000000TX04", userId: "01K3US0000000000000000US01",
+			accountId: "01K3AC0000000000000000AC02", categoryId: "01K3CT0000000000000000CT04",
+			currencyId: "usd", exchangeRateToAnchor: "1",
+			type: "expense", amount: "128.45", description: "Weekly Supplies",
+			transactionDate: "2026-07-26", createdAt: "2026-07-26T11:00:00Z", updatedAt: nil, deletedAt: nil
+		),
+		TransactionRecord.Response.TransactionItem(
+			id: "01K3TX0000000000000000TX05", userId: "01K3US0000000000000000US01",
+			accountId: "01K3AC0000000000000000AC03", categoryId: "01K3CT0000000000000000CT05",
+			currencyId: "usd", exchangeRateToAnchor: "1",
+			type: "expense", amount: "15.99", description: "Streaming Service",
+			transactionDate: "2026-07-24", createdAt: "2026-07-24T15:30:00Z", updatedAt: nil, deletedAt: nil
 		)
 	]
 }
