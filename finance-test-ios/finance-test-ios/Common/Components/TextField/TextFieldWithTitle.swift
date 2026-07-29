@@ -92,12 +92,12 @@ struct TextFieldWithTitle: ViewModifier {
 			.frame(height: 48)
 			.background {
 				RoundedRectangle(cornerRadius: 8)
-					.foregroundStyle(hasError ? Color.dangerMain : backgroundColor)
+					.foregroundStyle(backgroundColor)
 			}
 			.overlay {
 				RoundedRectangle(cornerRadius: 8)
 					.stroke(lineWidth: 1)
-					.foregroundStyle(strokeColor)
+					.foregroundStyle(hasError ? Color.dangerMain : strokeColor)
 			}
 			.font(.baseStyle(size: 16, weight: .regular))
 			.tint(.neutral90)
