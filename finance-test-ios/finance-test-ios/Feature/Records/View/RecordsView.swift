@@ -59,6 +59,7 @@ struct RecordsView: View {
 					availableCategoryNames: viewModel.availableCategoryNames,
 					availableAccountNames: viewModel.availableAccountNames
 				)
+				.staggeredAppear(index: 0)
 
 				if viewModel.sections.isEmpty {
 					ContentUnavailableView(
@@ -69,12 +70,22 @@ struct RecordsView: View {
 					.frame(maxWidth: .infinity)
 					.padding(.top, 40)
 				} else {
-					ForEach(viewModel.sections) { section in
-						RecordsSectionView(section: section)
+					ForEach(indexedSections, id: \.section.id) { entry in
+						RecordsSectionView(section: entry.section, startIndex: entry.startIndex)
 					}
 				}
 			}
 			.padding(16)
+			.animation(.easeInOut(duration: 0.25), value: viewModel.sections)
+		}
+	}
+
+	private var indexedSections: [(section: RecordsSection, startIndex: Int)] {
+		var index = 0
+		return viewModel.sections.map { section in
+			let start = index
+			index += section.items.count
+			return (section, start)
 		}
 	}
 }

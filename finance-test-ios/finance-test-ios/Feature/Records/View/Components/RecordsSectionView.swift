@@ -7,6 +7,7 @@ import SwiftUI
 
 struct RecordsSectionView: View {
 	let section: RecordsSection
+	var startIndex: Int = 0
 
 	var body: some View {
 		VStack(alignment: .leading, spacing: 8) {
@@ -24,8 +25,9 @@ struct RecordsSectionView: View {
 			.padding(.horizontal, 8)
 
 			VStack(spacing: 4) {
-				ForEach(section.items) { item in
+				ForEach(Array(section.items.enumerated()), id: \.element.id) { offset, item in
 					RecordsRow(item: item)
+						.staggeredAppear(index: startIndex + offset)
 				}
 			}
 		}
