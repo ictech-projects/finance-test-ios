@@ -117,18 +117,18 @@ struct AddTransactionView: View {
 					detailsSection
 						.staggeredAppear(index: 3)
 
-					AddTransactionNumericKeypad(onKeyTapped: viewModel.handleKeypadInput)
-						.staggeredAppear(index: 4)
-
 					PrimaryButton(
 						size: .large,
 						backgroundColor: .addTransactionFabBackground,
 						isDisabled: viewModel.isSaveDisabled,
 						action: submit
 					) {
-						Text("Save Transaction")
+						HStack(spacing: 8) {
+							Image(systemName: "checkmark.circle.fill")
+							Text("Save Transaction")
+						}
 					}
-					.staggeredAppear(index: 5)
+					.staggeredAppear(index: 4)
 				}
 				.padding(16)
 				.padding(.bottom, 24)
@@ -145,10 +145,15 @@ struct AddTransactionView: View {
 			HStack(spacing: 0) {
 				Text("$")
 					.foregroundStyle(.recordsCardBorder)
-				Text(viewModel.amountText.isEmpty ? "0.00" : viewModel.amountText)
-					.foregroundStyle(viewModel.type == .expense ? .dangerMain : .successMain)
+				TextField("0.00", text: $viewModel.amountText)
+					.keyboardType(.decimalPad)
+					.fixedSize()
+					.onChange(of: viewModel.amountText) {
+						viewModel.amountDidChange()
+					}
 			}
 			.font(.system(size: 57, weight: .regular))
+			.foregroundStyle(viewModel.type == .expense ? .dangerMain : .successMain)
 			.tracking(-0.25)
 
 			if let amountErrorMessage = viewModel.amountErrorMessage {

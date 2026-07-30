@@ -103,73 +103,18 @@ final class AddTransactionViewModelTests: MemoryLeakTrackingSuite {
 		#expect(sut.categoryErrorMessage == nil)
 	}
 
-	// MARK: - handleKeypadInput
+	// MARK: - amountDidChange
 
 	@Test
-	func handleKeypadInput_digits_appendsToAmountText() async {
-		let sut = makeSUT()
-
-		sut.handleKeypadInput(.digit(4))
-		sut.handleKeypadInput(.digit(2))
-
-		#expect(sut.amountText == "42")
-	}
-
-	@Test
-	func handleKeypadInput_decimalPoint_onlyAppendsOnce() async {
-		let sut = makeSUT()
-
-		sut.handleKeypadInput(.digit(4))
-		sut.handleKeypadInput(.decimalPoint)
-		sut.handleKeypadInput(.digit(2))
-		sut.handleKeypadInput(.decimalPoint)
-		sut.handleKeypadInput(.digit(5))
-
-		#expect(sut.amountText == "4.25")
-	}
-
-	@Test
-	func handleKeypadInput_decimalPoint_capsAtTwoDecimalDigits() async {
-		let sut = makeSUT()
-
-		sut.handleKeypadInput(.digit(1))
-		sut.handleKeypadInput(.decimalPoint)
-		sut.handleKeypadInput(.digit(2))
-		sut.handleKeypadInput(.digit(3))
-		sut.handleKeypadInput(.digit(4))
-
-		#expect(sut.amountText == "1.23")
-	}
-
-	@Test
-	func handleKeypadInput_delete_removesLastCharacter() async {
-		let sut = makeSUT()
-		sut.handleKeypadInput(.digit(4))
-		sut.handleKeypadInput(.digit(2))
-
-		sut.handleKeypadInput(.delete)
-
-		#expect(sut.amountText == "4")
-	}
-
-	@Test
-	func handleKeypadInput_delete_onEmptyAmount_doesNothing() async {
-		let sut = makeSUT()
-
-		sut.handleKeypadInput(.delete)
-
-		#expect(sut.amountText == "")
-	}
-
-	@Test
-	func handleKeypadInput_digit_clearsExistingAmountError() async {
+	func amountDidChange_clearsExistingAmountError() async {
 		let transactionRepository = TransactionMockRepository()
 		let sut = makeSUT(transactionRepository: transactionRepository)
 		await sut.onLoad()
 		await sut.save()
 		#expect(sut.amountErrorMessage != nil)
 
-		sut.handleKeypadInput(.digit(5))
+		sut.amountText = "5"
+		sut.amountDidChange()
 
 		#expect(sut.amountErrorMessage == nil)
 	}

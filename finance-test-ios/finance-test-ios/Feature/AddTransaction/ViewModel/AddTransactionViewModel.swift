@@ -12,13 +12,6 @@ protocol AddTransactionDelegate: AnyObject {
 	func didCreateTransaction(_ item: TransactionRecord.Response.TransactionItem)
 }
 
-/// A key on the calculator-style keypad used to enter the transaction amount.
-enum NumericKeypadKey: Hashable {
-	case digit(Int)
-	case decimalPoint
-	case delete
-}
-
 @MainActor
 final class AddTransactionViewModel: ObservableObject {
 	enum ViewState: Equatable {
@@ -141,33 +134,11 @@ final class AddTransactionViewModel: ObservableObject {
 		}
 	}
 
-	/// Handles a tap on the calculator-style numeric keypad — the amount has no system keyboard,
-	/// per the Figma design (`Numeric Display` + `Overlay+OverlayBlur` keypad grid).
-	func handleKeypadInput(_ key: NumericKeypadKey) {
-		switch key {
-		case .digit(let digit):
-			appendToAmount(String(digit))
-		case .decimalPoint:
-			guard !amountText.contains(".") else { return }
-			appendToAmount(amountText.isEmpty ? "0." : ".")
-		case .delete:
-			guard !amountText.isEmpty else { return }
-			amountText.removeLast()
+	func amountDidChange() {
+		guard amountErrorMessage != nil else { return }
+		withAnimation(.easeOut(duration: 0.2)) {
+			amountErrorMessage = nil
 		}
-
-		if amountErrorMessage != nil {
-			withAnimation(.easeOut(duration: 0.2)) {
-				amountErrorMessage = nil
-			}
-		}
-	}
-
-	private func appendToAmount(_ characters: String) {
-		if let dotIndex = amountText.firstIndex(of: "."),
-			amountText.distance(from: dotIndex, to: amountText.endIndex) > 2 {
-			return
-		}
-		amountText += characters
 	}
 
 	func save() async {
