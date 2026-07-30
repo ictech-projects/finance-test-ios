@@ -115,7 +115,7 @@ final class RecordsViewModel: ObservableObject {
 
 		let category = RecordsCatalog.categories[categoryId] ?? RecordsCatalog.unknownCategory
 		let account = RecordsCatalog.accounts[accountId] ?? RecordsCatalog.unknownAccount
-		let isCredit = type == "income"
+		let isCredit = type == .income
 		let signedAmount = isCredit ? amount : -amount
 		let timestamp = item.createdAt.flatMap(timestampFormatter.date(from:)) ?? dayKey
 

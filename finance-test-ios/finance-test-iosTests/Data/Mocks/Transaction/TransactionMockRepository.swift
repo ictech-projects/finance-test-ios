@@ -12,14 +12,20 @@ final class TransactionMockRepository: TransactionRepository {
 
 	enum Invocation: Equatable {
 		case getTransactions(TransactionRecord.Request.GetTransactions)
+		case createTransaction(TransactionRecord.Request.CreateTransaction)
 	}
 
 	private(set) var invocations: [Invocation] = []
 
 	private let result: RequestState<GeneralResponse<TransactionRecord.Response.TransactionList>>
+	private let createTransactionResult: RequestState<GeneralResponse<TransactionRecord.Response.TransactionItem>>
 
-	init(result: RequestState<GeneralResponse<TransactionRecord.Response.TransactionList>> = .idle) {
+	init(
+		result: RequestState<GeneralResponse<TransactionRecord.Response.TransactionList>> = .idle,
+		createTransactionResult: RequestState<GeneralResponse<TransactionRecord.Response.TransactionItem>> = .idle
+	) {
 		self.result = result
+		self.createTransactionResult = createTransactionResult
 	}
 
 	func getTransactions(
@@ -27,5 +33,12 @@ final class TransactionMockRepository: TransactionRepository {
 	) async throws -> RequestState<GeneralResponse<TransactionRecord.Response.TransactionList>> {
 		invocations.append(.getTransactions(request))
 		return result
+	}
+
+	func createTransaction(
+		request: TransactionRecord.Request.CreateTransaction
+	) async throws -> RequestState<GeneralResponse<TransactionRecord.Response.TransactionItem>> {
+		invocations.append(.createTransaction(request))
+		return createTransactionResult
 	}
 }

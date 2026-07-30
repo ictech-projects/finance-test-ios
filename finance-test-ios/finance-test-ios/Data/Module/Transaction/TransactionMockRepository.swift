@@ -27,4 +27,35 @@ struct TransactionMockRepository: TransactionRepository {
 			)
 		)
 	}
+
+	func createTransaction(
+		request: TransactionRecord.Request.CreateTransaction
+	) async -> RequestState<GeneralResponse<TransactionRecord.Response.TransactionItem>> {
+		try? await Task.sleep(nanoseconds: 400_000_000)
+
+		let now = ISO8601DateFormatter().string(from: Date())
+
+		return .loaded(
+			GeneralResponse(
+				success: true,
+				statusCode: 200,
+				message: "Transaction created.",
+				data: TransactionRecord.Response.TransactionItem(
+					id: ULIDGenerator.generate(),
+					userId: "01K3US0000000000000000US01",
+					accountId: request.accountId,
+					categoryId: request.categoryId,
+					currencyId: nil,
+					exchangeRateToAnchor: request.exchangeRateToAnchor,
+					type: request.type,
+					amount: request.amount,
+					description: request.description,
+					transactionDate: request.transactionDate,
+					createdAt: now,
+					updatedAt: now,
+					deletedAt: nil
+				)
+			)
+		)
+	}
 }
