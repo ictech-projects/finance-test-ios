@@ -31,15 +31,6 @@ struct AddTransactionView: View {
 		) { account, isSelected in
 			AccountPickerRow(account: account, isSelected: isSelected)
 		}
-		.entityPickerSheet(
-			isPresented: $viewModel.isCategoryPickerPresented,
-			title: "Select Category",
-			items: viewModel.categoriesForCurrentType,
-			selection: viewModel.selectedCategory,
-			onSelect: viewModel.selectCategory
-		) { category, isSelected in
-			CategoryPickerRow(category: category, isSelected: isSelected)
-		}
 		.sheet(isPresented: $viewModel.isDatePickerPresented) {
 			SingleDatePickerView(
 				selection: $viewModel.date,
@@ -72,7 +63,7 @@ struct AddTransactionView: View {
 					dismiss()
 				} label: {
 					Image(systemName: "xmark")
-						.font(.baseStyle(size: 18, weight: .semibold))
+						.font(.baseStyle(size: 16, weight: .semibold))
 						.foregroundStyle(.brandPrimary)
 						.frame(width: 30, height: 30)
 				}
@@ -85,7 +76,7 @@ struct AddTransactionView: View {
 		.background(
 			Color(.systemBackground)
 				.overlay(alignment: .bottom) {
-					Rectangle().fill(Color.neutral50).frame(height: 1)
+					Rectangle().fill(Color.recordsCardBorder).frame(height: 1)
 				}
 		)
 	}
@@ -110,94 +101,136 @@ struct AddTransactionView: View {
 
 	private var formContent: some View {
 		ScrollView {
-			VStack(alignment: .leading, spacing: 20) {
+			VStack(spacing: 0) {
 				AddTransactionTypeToggle(selection: viewModel.type, onSelect: viewModel.selectType)
+					.padding(.horizontal, 16)
+					.padding(.vertical, 24)
 					.staggeredAppear(index: 0)
 
-				amountField
+				numericDisplay
 					.staggeredAppear(index: 1)
 
-				optionField(
-					title: "Category",
-					value: viewModel.selectedCategory?.name ?? "Select category",
-					errorMessage: viewModel.categoryErrorMessage,
-					action: viewModel.presentCategoryPicker
-				)
-				.staggeredAppear(index: 2)
+				VStack(alignment: .leading, spacing: 16) {
+					categorySection
+						.staggeredAppear(index: 2)
 
-				optionField(
-					title: "Account",
-					value: viewModel.selectedAccount?.name ?? "Select account",
-					errorMessage: viewModel.accountErrorMessage,
-					action: viewModel.presentAccountPicker
-				)
-				.staggeredAppear(index: 3)
+					detailsSection
+						.staggeredAppear(index: 3)
 
-				dateField
-					.staggeredAppear(index: 4)
+					AddTransactionNumericKeypad(onKeyTapped: viewModel.handleKeypadInput)
+						.staggeredAppear(index: 4)
 
-				noteField
+					PrimaryButton(
+						size: .large,
+						backgroundColor: .addTransactionFabBackground,
+						isDisabled: viewModel.isSaveDisabled,
+						action: submit
+					) {
+						Text("Save Transaction")
+					}
 					.staggeredAppear(index: 5)
-
-				PrimaryButton(size: .large, isDisabled: viewModel.isSaveDisabled, action: submit) {
-					Text("Save Transaction")
 				}
-				.padding(.top, 8)
-				.staggeredAppear(index: 6)
+				.padding(16)
+				.padding(.bottom, 24)
 			}
-			.padding(16)
-			.padding(.bottom, 24)
 		}
 	}
 
-	private var amountField: some View {
-		TextField("0.00", text: $viewModel.amountText)
-			.keyboardType(.decimalPad)
-			.onChange(of: viewModel.amountText) {
-				viewModel.amountDidChange()
+	private var numericDisplay: some View {
+		VStack(spacing: 4) {
+			Text("Enter Amount")
+				.font(.baseStyle(size: 14, weight: .semibold))
+				.foregroundStyle(.addTransactionMutedLabel)
+
+			HStack(spacing: 0) {
+				Text("$")
+					.foregroundStyle(.recordsCardBorder)
+				Text(viewModel.amountText.isEmpty ? "0.00" : viewModel.amountText)
+					.foregroundStyle(viewModel.type == .expense ? .dangerMain : .successMain)
 			}
-			.modifier(
-				TextFieldWithTitle(
-					title: Text("Amount"),
-					keyboardType: .decimalPad,
-					errorDescription: viewModel.amountErrorMessage.map(Text.init)
-				)
-			)
-	}
+			.font(.system(size: 57, weight: .regular))
+			.tracking(-0.25)
 
-	private var dateField: some View {
-		VStack(alignment: .leading, spacing: 12) {
-			Text("Date")
-				.font(.baseStyle(size: 16, weight: .medium))
-				.foregroundStyle(.neutral90)
-
-			DatePickerField(
-				selectedDateText: Text(viewModel.date.formatted(date: .abbreviated, time: .omitted)),
-				action: viewModel.presentDatePicker
-			)
-		}
-	}
-
-	private var noteField: some View {
-		TextField("Add a note (optional)", text: $viewModel.note)
-			.modifier(TextFieldWithTitle(title: Text("Note")))
-	}
-
-	private func optionField(
-		title: String,
-		value: String,
-		errorMessage: String?,
-		action: @escaping () -> Void
-	) -> some View {
-		VStack(alignment: .leading, spacing: 8) {
-			TitledOptionField(title: Text(title), value: value, height: 48, action: action)
-
-			if let errorMessage {
-				Text(errorMessage)
+			if let amountErrorMessage = viewModel.amountErrorMessage {
+				Text(amountErrorMessage)
 					.font(.baseStyle(size: 14, weight: .regular))
 					.foregroundStyle(.dangerMain)
 			}
 		}
+		.padding(.horizontal, 16)
+		.padding(.vertical, 8)
+	}
+
+	private var categorySection: some View {
+		VStack(alignment: .leading, spacing: 12) {
+			Text("Category")
+				.font(.baseStyle(size: 14, weight: .semibold))
+				.foregroundStyle(.recordsNeutralIconTint)
+
+			LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 16) {
+				ForEach(viewModel.categoriesForCurrentType, id: \.self) { category in
+					CategoryGridItem(
+						category: category,
+						isSelected: category == viewModel.selectedCategory,
+						action: { viewModel.selectCategory(category) }
+					)
+				}
+			}
+
+			if let categoryErrorMessage = viewModel.categoryErrorMessage {
+				Text(categoryErrorMessage)
+					.font(.baseStyle(size: 14, weight: .regular))
+					.foregroundStyle(.dangerMain)
+			}
+		}
+	}
+
+	private var detailsSection: some View {
+		VStack(alignment: .leading, spacing: 16) {
+			HStack(spacing: 16) {
+				BentoInfoCard(
+					systemImageName: "creditcard",
+					label: "Account",
+					value: viewModel.selectedAccount?.name ?? "Select account",
+					action: viewModel.presentAccountPicker
+				)
+
+				BentoInfoCard(
+					systemImageName: "calendar",
+					label: "Date",
+					value: viewModel.date.formatted(date: .abbreviated, time: .omitted),
+					action: viewModel.presentDatePicker
+				)
+			}
+
+			if let accountErrorMessage = viewModel.accountErrorMessage {
+				Text(accountErrorMessage)
+					.font(.baseStyle(size: 14, weight: .regular))
+					.foregroundStyle(.dangerMain)
+			}
+
+			noteField
+		}
+	}
+
+	private var noteField: some View {
+		HStack(spacing: 12) {
+			Image(systemName: "pencil.line")
+				.font(.baseStyle(size: 14, weight: .medium))
+				.foregroundStyle(.recordsNeutralIconTint)
+
+			TextField("Add a note...", text: $viewModel.note)
+				.font(.baseStyle(size: 14, weight: .regular))
+				.foregroundStyle(.addTransactionValueText)
+		}
+		.padding(.horizontal, 17)
+		.padding(.vertical, 15)
+		.background(Color(.systemBackground))
+		.overlay {
+			RoundedRectangle(cornerRadius: 8)
+				.stroke(Color.recordsCardBorder, lineWidth: 1)
+		}
+		.clipShape(RoundedRectangle(cornerRadius: 8))
 	}
 
 	private func submit() {

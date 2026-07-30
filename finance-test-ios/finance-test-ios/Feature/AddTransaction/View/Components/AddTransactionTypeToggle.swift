@@ -5,45 +5,47 @@
 
 import SwiftUI
 
+/// Matches the Figma "Income/Expense Toggle" component — a 3-segment pill (Expense/Income/
+/// Transfer). Transfer has no data layer yet (see `TransactionType`, which is income/expense
+/// only), so it's shown for visual fidelity but disabled rather than silently doing nothing.
 struct AddTransactionTypeToggle: View {
 	let selection: TransactionType
 	let onSelect: (TransactionType) -> Void
 
 	var body: some View {
-		HStack(spacing: 4) {
-			option(.expense, title: "Expense")
-			option(.income, title: "Income")
+		HStack(spacing: 0) {
+			option(title: "Expense", isSelected: selection == .expense) {
+				onSelect(.expense)
+			}
+			option(title: "Income", isSelected: selection == .income) {
+				onSelect(.income)
+			}
+			option(title: "Transfer", isSelected: false, isDisabled: true) {}
 		}
 		.padding(4)
 		.background(
-			RoundedRectangle(cornerRadius: 12)
-				.fill(Color.neutral30)
+			Capsule().fill(Color.neutral30)
 		)
 	}
 
-	private func option(_ type: TransactionType, title: String) -> some View {
-		let isSelected = selection == type
-
-		return Button {
-			onSelect(type)
-		} label: {
+	private func option(
+		title: String,
+		isSelected: Bool,
+		isDisabled: Bool = false,
+		action: @escaping () -> Void
+	) -> some View {
+		Button(action: action) {
 			Text(title)
-				.font(.baseStyle(size: 14, weight: .bold))
-				.foregroundStyle(isSelected ? .white : .neutral70)
+				.font(.baseStyle(size: 14, weight: .semibold))
+				.foregroundStyle(isSelected ? .addTransactionToggleSelectedText : .recordsNeutralIconTint)
 				.frame(maxWidth: .infinity)
-				.padding(.vertical, 10)
+				.padding(.vertical, 8)
 				.background(
-					RoundedRectangle(cornerRadius: 9)
-						.fill(isSelected ? backgroundColor(for: type) : .clear)
+					Capsule().fill(isSelected ? Color.recordsChipSelectedBackground : .clear)
 				)
 		}
-	}
-
-	private func backgroundColor(for type: TransactionType) -> Color {
-		switch type {
-		case .expense: .dangerMain
-		case .income: .successMain
-		}
+		.disabled(isDisabled)
+		.opacity(isDisabled ? 0.5 : 1)
 	}
 }
 

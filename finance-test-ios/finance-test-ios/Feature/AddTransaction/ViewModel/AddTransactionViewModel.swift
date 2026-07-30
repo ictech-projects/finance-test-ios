@@ -12,6 +12,13 @@ protocol AddTransactionDelegate: AnyObject {
 	func didCreateTransaction(_ item: TransactionRecord.Response.TransactionItem)
 }
 
+/// A key on the calculator-style keypad used to enter the transaction amount.
+enum NumericKeypadKey: Hashable {
+	case digit(Int)
+	case decimalPoint
+	case delete
+}
+
 @MainActor
 final class AddTransactionViewModel: ObservableObject {
 	enum ViewState: Equatable {
@@ -32,7 +39,6 @@ final class AddTransactionViewModel: ObservableObject {
 	@Published private(set) var categories: [TransactionCategory.Response.CategoryItem] = []
 	@Published var isDatePickerPresented = false
 	@Published var isAccountPickerPresented = false
-	@Published var isCategoryPickerPresented = false
 	@Published var amountErrorMessage: String?
 	@Published var accountErrorMessage: String?
 	@Published var categoryErrorMessage: String?
@@ -108,12 +114,6 @@ final class AddTransactionViewModel: ObservableObject {
 		}
 	}
 
-	func presentCategoryPicker() {
-		withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
-			isCategoryPickerPresented = true
-		}
-	}
-
 	func presentDatePicker() {
 		withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
 			isDatePickerPresented = true
@@ -129,11 +129,10 @@ final class AddTransactionViewModel: ObservableObject {
 	}
 
 	func selectCategory(_ category: TransactionCategory.Response.CategoryItem) {
-		selectedCategory = category
-		categoryErrorMessage = nil
-		withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
-			isCategoryPickerPresented = false
+		withAnimation(.easeInOut(duration: 0.15)) {
+			selectedCategory = category
 		}
+		categoryErrorMessage = nil
 	}
 
 	func dismissDatePicker() {
@@ -142,11 +141,33 @@ final class AddTransactionViewModel: ObservableObject {
 		}
 	}
 
-	func amountDidChange() {
-		guard amountErrorMessage != nil else { return }
-		withAnimation(.easeOut(duration: 0.2)) {
-			amountErrorMessage = nil
+	/// Handles a tap on the calculator-style numeric keypad — the amount has no system keyboard,
+	/// per the Figma design (`Numeric Display` + `Overlay+OverlayBlur` keypad grid).
+	func handleKeypadInput(_ key: NumericKeypadKey) {
+		switch key {
+		case .digit(let digit):
+			appendToAmount(String(digit))
+		case .decimalPoint:
+			guard !amountText.contains(".") else { return }
+			appendToAmount(amountText.isEmpty ? "0." : ".")
+		case .delete:
+			guard !amountText.isEmpty else { return }
+			amountText.removeLast()
 		}
+
+		if amountErrorMessage != nil {
+			withAnimation(.easeOut(duration: 0.2)) {
+				amountErrorMessage = nil
+			}
+		}
+	}
+
+	private func appendToAmount(_ characters: String) {
+		if let dotIndex = amountText.firstIndex(of: "."),
+			amountText.distance(from: dotIndex, to: amountText.endIndex) > 2 {
+			return
+		}
+		amountText += characters
 	}
 
 	func save() async {

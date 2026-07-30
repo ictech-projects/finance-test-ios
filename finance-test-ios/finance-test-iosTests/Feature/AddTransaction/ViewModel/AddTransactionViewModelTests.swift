@@ -92,7 +92,7 @@ final class AddTransactionViewModelTests: MemoryLeakTrackingSuite {
 	}
 
 	@Test
-	func selectCategory_updatesSelectionClearsErrorAndDismissesPicker() async {
+	func selectCategory_updatesSelectionAndClearsError() async {
 		let sut = makeSUT()
 		await sut.onLoad()
 		let newCategory = anyCategoryItem(id: "cat2", type: .expense)
@@ -101,7 +101,77 @@ final class AddTransactionViewModelTests: MemoryLeakTrackingSuite {
 
 		#expect(sut.selectedCategory == newCategory)
 		#expect(sut.categoryErrorMessage == nil)
-		#expect(sut.isCategoryPickerPresented == false)
+	}
+
+	// MARK: - handleKeypadInput
+
+	@Test
+	func handleKeypadInput_digits_appendsToAmountText() async {
+		let sut = makeSUT()
+
+		sut.handleKeypadInput(.digit(4))
+		sut.handleKeypadInput(.digit(2))
+
+		#expect(sut.amountText == "42")
+	}
+
+	@Test
+	func handleKeypadInput_decimalPoint_onlyAppendsOnce() async {
+		let sut = makeSUT()
+
+		sut.handleKeypadInput(.digit(4))
+		sut.handleKeypadInput(.decimalPoint)
+		sut.handleKeypadInput(.digit(2))
+		sut.handleKeypadInput(.decimalPoint)
+		sut.handleKeypadInput(.digit(5))
+
+		#expect(sut.amountText == "4.25")
+	}
+
+	@Test
+	func handleKeypadInput_decimalPoint_capsAtTwoDecimalDigits() async {
+		let sut = makeSUT()
+
+		sut.handleKeypadInput(.digit(1))
+		sut.handleKeypadInput(.decimalPoint)
+		sut.handleKeypadInput(.digit(2))
+		sut.handleKeypadInput(.digit(3))
+		sut.handleKeypadInput(.digit(4))
+
+		#expect(sut.amountText == "1.23")
+	}
+
+	@Test
+	func handleKeypadInput_delete_removesLastCharacter() async {
+		let sut = makeSUT()
+		sut.handleKeypadInput(.digit(4))
+		sut.handleKeypadInput(.digit(2))
+
+		sut.handleKeypadInput(.delete)
+
+		#expect(sut.amountText == "4")
+	}
+
+	@Test
+	func handleKeypadInput_delete_onEmptyAmount_doesNothing() async {
+		let sut = makeSUT()
+
+		sut.handleKeypadInput(.delete)
+
+		#expect(sut.amountText == "")
+	}
+
+	@Test
+	func handleKeypadInput_digit_clearsExistingAmountError() async {
+		let transactionRepository = TransactionMockRepository()
+		let sut = makeSUT(transactionRepository: transactionRepository)
+		await sut.onLoad()
+		await sut.save()
+		#expect(sut.amountErrorMessage != nil)
+
+		sut.handleKeypadInput(.digit(5))
+
+		#expect(sut.amountErrorMessage == nil)
 	}
 
 	// MARK: - save (validation)
