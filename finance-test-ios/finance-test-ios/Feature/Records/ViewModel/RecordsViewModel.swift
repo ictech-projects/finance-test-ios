@@ -29,6 +29,7 @@ final class RecordsViewModel: ObservableObject {
 	@Published var accountFilter: String? {
 		didSet { rebuildSections() }
 	}
+	@Published var isAddTransactionPresented = false
 
 	private(set) var availableCategoryNames: [String] = []
 	private(set) var availableAccountNames: [String] = []
@@ -38,6 +39,10 @@ final class RecordsViewModel: ObservableObject {
 
 	init(transactionRepository: some TransactionRepository = TransactionMockRepository()) {
 		self.transactionRepository = transactionRepository
+	}
+
+	func presentAddTransaction() {
+		isAddTransactionPresented = true
 	}
 
 	func onLoad() async {
@@ -175,4 +180,11 @@ final class RecordsViewModel: ObservableObject {
 		formatter.dateFormat = "EEEE"
 		return formatter
 	}()
+}
+
+extension RecordsViewModel: AddTransactionDelegate {
+	func didCreateTransaction(_ item: TransactionRecord.Response.TransactionItem) {
+		isAddTransactionPresented = false
+		Task { await onLoad() }
+	}
 }

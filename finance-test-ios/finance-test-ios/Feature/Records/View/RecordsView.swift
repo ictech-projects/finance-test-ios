@@ -20,15 +20,33 @@ struct RecordsView: View {
 		.task {
 			await viewModel.onLoad()
 		}
+		.sheet(isPresented: $viewModel.isAddTransactionPresented) {
+			AddTransactionView(delegate: viewModel)
+		}
 	}
 
 	private var header: some View {
-		Text("Records")
-			.font(.baseStyle(size: 24, weight: .bold))
-			.foregroundStyle(.brandPrimary)
-			.frame(maxWidth: .infinity)
-			.padding(.vertical, 16)
-			.background(Color.neutral10)
+		ZStack {
+			Text("Records")
+				.font(.baseStyle(size: 24, weight: .bold))
+				.foregroundStyle(.brandPrimary)
+
+			HStack {
+				Spacer()
+
+				Button {
+					viewModel.presentAddTransaction()
+				} label: {
+					Image(systemName: "plus.circle.fill")
+						.font(.baseStyle(size: 22, weight: .semibold))
+						.foregroundStyle(.brandPrimary)
+				}
+			}
+			.padding(.trailing, 16)
+		}
+		.frame(maxWidth: .infinity)
+		.padding(.vertical, 16)
+		.background(Color.neutral10)
 	}
 
 	@ViewBuilder
