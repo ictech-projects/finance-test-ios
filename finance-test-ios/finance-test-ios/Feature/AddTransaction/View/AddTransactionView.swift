@@ -17,6 +17,9 @@ struct AddTransactionView: View {
 		VStack(spacing: 0) {
 			header
 			content
+			if case .loaded = viewModel.viewState {
+				saveButtonBar
+			}
 		}
 		.background(Color.neutral20.ignoresSafeArea())
 		.task {
@@ -116,24 +119,34 @@ struct AddTransactionView: View {
 
 					detailsSection
 						.staggeredAppear(index: 3)
-
-					PrimaryButton(
-						size: .large,
-						backgroundColor: .addTransactionFabBackground,
-						isDisabled: viewModel.isSaveDisabled,
-						action: submit
-					) {
-						HStack(spacing: 8) {
-							Image(systemName: "checkmark.circle.fill")
-							Text("Save Transaction")
-						}
-					}
-					.staggeredAppear(index: 4)
 				}
 				.padding(16)
-				.padding(.bottom, 24)
 			}
 		}
+	}
+
+	private var saveButtonBar: some View {
+		PrimaryButton(
+			size: .large,
+			backgroundColor: .addTransactionFabBackground,
+			isDisabled: viewModel.isSaveDisabled,
+			action: submit
+		) {
+			HStack(spacing: 8) {
+				Image(systemName: "checkmark.circle.fill")
+				Text("Save Transaction")
+			}
+		}
+		.padding(.horizontal, 16)
+		.padding(.top, 12)
+		.padding(.bottom, 24)
+		.background(
+			Color(.systemBackground)
+				.overlay(alignment: .top) {
+					Rectangle().fill(Color.recordsCardBorder).frame(height: 1)
+				}
+				.ignoresSafeArea(edges: .bottom)
+		)
 	}
 
 	private var numericDisplay: some View {
