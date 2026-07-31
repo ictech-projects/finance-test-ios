@@ -29,6 +29,12 @@ final class RegisterViewModel: ObservableObject {
 	@Published var generalErrorMessage: String?
 	@Published private(set) var isRegistered = false
 
+	private let authRepository: any AuthRepository
+
+	init(authRepository: some AuthRepository = AuthDefaultRepository()) {
+		self.authRepository = authRepository
+	}
+
 	var isSubmitDisabled: Bool {
 		fullName.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty || viewState == .loading
 	}
@@ -138,14 +144,60 @@ final class RegisterViewModel: ObservableObject {
 
 		viewState = .loading
 
-		// TODO: Replace with a call into the Auth data layer (Repository) once wired.
-		// When wired, a non-field failure (e.g. duplicate email) should set `generalErrorMessage`
-		// and `viewState = .error`, mirroring LoginViewModel.handleLoginError — the alert plumbing
-		// in RegisterView is already wired to `generalErrorMessage` and ready to surface it.
-		try? await Task.sleep(nanoseconds: 400_000_000)
+		do {
+			let state = try await authRepository.register(
+				request: Auth.Request.Register(
+					name: fullName,
+					email: email,
+					password: password,
+					passwordConfirmation: confirmPassword
+				)
+			)
 
-		isRegistered = true
-		viewState = .initial
+			switch state {
+			case .loaded:
+				isRegistered = true
+				viewState = .initial
+			case .error(let error):
+				handleRegisterError(error)
+			default:
+				break
+			}
+		} catch {
+			handleRegisterError(error)
+		}
+	}
+
+	/// Maps a register failure to field-specific errors (422 validation, e.g. "email has already
+	/// been taken") or a general error (any other failure not tied to a specific field).
+	private func handleRegisterError(_ error: Error) {
+		fullNameErrorMessage = nil
+		emailErrorMessage = nil
+		passwordErrorMessage = nil
+		confirmPasswordErrorMessage = nil
+		generalErrorMessage = nil
+
+		if let errorResponse = error as? ErrorResponse {
+			let nameError = errorResponse.errors?.name?.first
+			let emailError = errorResponse.errors?.email?.first
+			let passwordError = errorResponse.errors?.password?.first
+			let confirmPasswordError = errorResponse.errors?.passwordConfirmation?.first
+
+			if nameError != nil || emailError != nil || passwordError != nil || confirmPasswordError != nil {
+				fullNameErrorMessage = nameError
+				emailErrorMessage = emailError
+				passwordErrorMessage = passwordError
+				confirmPasswordErrorMessage = confirmPasswordError
+			} else {
+				generalErrorMessage = errorResponse.message ?? String(localized: "Unable to create your account. Please try again.")
+			}
+		} else {
+			generalErrorMessage = String(localized: "Something went wrong. Please try again.")
+		}
+
+		withAnimation(.easeOut(duration: 0.2)) {
+			viewState = .error
+		}
 	}
 
 	private static func isValidEmail(_ email: String) -> Bool {
