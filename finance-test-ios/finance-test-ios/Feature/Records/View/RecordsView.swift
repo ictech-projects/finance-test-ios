@@ -10,15 +10,24 @@ struct RecordsView: View {
 
 	var body: some View {
 		NavigationStack {
-			VStack(spacing: 0) {
-				header
-				content
+			ZStack(alignment: .bottomTrailing) {
+				VStack(spacing: 0) {
+					header
+					content
+				}
+
+				addTransactionFAB
+					.padding(.trailing, 24)
+					.padding(.bottom, 24)
 			}
 			.background(Color.neutral20.ignoresSafeArea())
 			.navigationBarHidden(true)
 		}
 		.task {
 			await viewModel.onLoad()
+		}
+		.sheet(isPresented: $viewModel.isAddTransactionPresented) {
+			AddTransactionView(delegate: viewModel)
 		}
 	}
 
@@ -29,6 +38,30 @@ struct RecordsView: View {
 			.frame(maxWidth: .infinity)
 			.padding(.vertical, 16)
 			.background(Color.neutral10)
+	}
+
+	/// Matches Figma's "Button - FAB: Add Transaction" — a floating, icon+label pill, not a bare
+	/// plus icon inline in the header.
+	private var addTransactionFAB: some View {
+		Button {
+			viewModel.presentAddTransaction()
+		} label: {
+			HStack(spacing: 12) {
+				Image(systemName: "plus")
+					.font(.baseStyle(size: 14, weight: .bold))
+
+				Text("Add Transaction")
+					.font(.baseStyle(size: 14, weight: .semibold))
+			}
+			.foregroundStyle(.addTransactionFabText)
+			.padding(.horizontal, 24)
+			.frame(height: 56)
+			.background(
+				RoundedRectangle(cornerRadius: 16)
+					.fill(Color.addTransactionFabBackground)
+			)
+			.shadow(color: .black.opacity(0.15), radius: 8, y: 4)
+		}
 	}
 
 	@ViewBuilder
