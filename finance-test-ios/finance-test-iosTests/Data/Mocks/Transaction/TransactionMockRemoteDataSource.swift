@@ -36,14 +36,15 @@ func anyTransactionItem(
 	accountId: String = "01K3AC0000000000000000AC01",
 	categoryId: String = "01K3CT0000000000000000CT01",
 	type: TransactionType = .expense,
-	amount: String = "42.50"
+	amount: String = "42.50",
+	transactionDate: String = "2026-07-27"
 ) -> TransactionRecord.Response.TransactionItem {
 	TransactionRecord.Response.TransactionItem(
 		id: id, userId: "01K3US0000000000000000US01",
 		accountId: accountId, categoryId: categoryId,
 		currencyId: "usd", exchangeRateToAnchor: "1",
 		type: type, amount: amount, description: "Lunch at the Bistro",
-		transactionDate: "2026-07-27", createdAt: nil, updatedAt: nil, deletedAt: nil
+		transactionDate: transactionDate, createdAt: nil, updatedAt: nil, deletedAt: nil
 	)
 }
 

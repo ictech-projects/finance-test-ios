@@ -9,6 +9,8 @@ import Charts
 struct SpendingByCategoryCard: View {
 	let categories: [SpendingCategory]
 	let total: Double
+	var totalLabel: String = "Total"
+	var periodLabel: String? = "This Month"
 
 	@State private var displayedCategories: [SpendingCategory] = []
 
@@ -21,9 +23,11 @@ struct SpendingByCategoryCard: View {
 
 				Spacer()
 
-				Text("This Month")
-					.font(.baseStyle(size: 12, weight: .regular))
-					.foregroundStyle(.neutral60)
+				if let periodLabel {
+					Text(periodLabel)
+						.font(.baseStyle(size: 12, weight: .regular))
+						.foregroundStyle(.neutral60)
+				}
 			}
 
 			ZStack {
@@ -50,7 +54,7 @@ struct SpendingByCategoryCard: View {
 				}
 
 				VStack(spacing: 2) {
-					Text("Total")
+					Text(totalLabel)
 						.font(.baseStyle(size: 12, weight: .regular))
 						.foregroundStyle(.neutral60)
 
