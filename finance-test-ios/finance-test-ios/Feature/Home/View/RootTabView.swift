@@ -14,7 +14,7 @@ struct RootTabView: View {
 					Text("Home")
 				}
 
-			ComingSoonPlaceholderView(title: "Records", iconName: "list.bullet.rectangle.fill")
+			RecordsView()
 				.tabItem {
 					Image(systemName: "list.bullet.rectangle.fill")
 					Text("Records")

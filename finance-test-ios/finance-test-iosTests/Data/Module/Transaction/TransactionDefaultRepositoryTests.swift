@@ -85,13 +85,106 @@ struct TransactionDefaultRepositoryTests {
 		#expect(error.code == 999)
 	}
 
+	// MARK: - createTransaction
+
+	// There is no `POST /transactions` — creation is submitted as a single-item `/sync/push`
+	// batch, so these tests exercise the Sync collaborator rather than `TransactionRemoteDataSource`.
+
+	@Test func createTransaction_callsSyncWithCorrectChange() async throws {
+		let sync = SyncMockRepository(result: .loaded(anyPushSuccessResponse(results: [anyAppliedTransactionChangeResult()])))
+		let sut = makeSUT(sync: sync)
+
+		_ = try await sut.createTransaction(request: anyCreateTransactionRequest())
+
+		guard sync.invocations.count == 1, case .push(let pushRequest) = sync.invocations[0] else {
+			Issue.record("Expected exactly one push invocation but got \(sync.invocations)")
+			return
+		}
+		let change = try #require(pushRequest.changes.first)
+		#expect(pushRequest.changes.count == 1)
+		#expect(change.entity == "transaction")
+		#expect(change.op == "create")
+		let decodedData = try change.data?.decoded(as: TransactionRecord.Request.CreateTransaction.self)
+		#expect(decodedData == anyCreateTransactionRequest())
+	}
+
+	@Test func createTransaction_success_returnsCreatedItem() async throws {
+		let item = anyTransactionItem(id: "01K3TX0000000000000000TX09")
+		let sync = SyncMockRepository(
+			result: .loaded(anyPushSuccessResponse(results: [anyAppliedTransactionChangeResult(id: item.id, item: item)]))
+		)
+		let sut = makeSUT(sync: sync)
+
+		let result = try await sut.createTransaction(request: anyCreateTransactionRequest())
+
+		guard case .loaded(let response) = result else {
+			Issue.record("Expected .loaded but got \(result)")
+			return
+		}
+		#expect(response.success == true)
+		#expect(response.data == item)
+	}
+
+	@Test func createTransaction_whenChangeFails_returnsErrorState() async throws {
+		let failedResult = Sync.Response.ChangeResult(
+			clientChangeId: "c1", id: "01K3TX0000000000000000TX01", entity: "transaction", status: "failed",
+			record: nil,
+			error: Sync.Response.ChangeError(
+				message: "The selected account or category is invalid.", errors: ["data": ["invalid"]]
+			)
+		)
+		let sync = SyncMockRepository(result: .loaded(anyPushSuccessResponse(results: [failedResult])))
+		let sut = makeSUT(sync: sync)
+
+		let result = try await sut.createTransaction(request: anyCreateTransactionRequest())
+
+		guard case .error(let error as ErrorResponse) = result else {
+			Issue.record("Expected .error(ErrorResponse)")
+			return
+		}
+		#expect(error.statusCode == 422)
+		#expect(error.message == "The selected account or category is invalid.")
+	}
+
+	@Test(arguments: [401, 404, 500])
+	func createTransaction_whenSyncThrowsErrorResponse_returnsErrorState(statusCode: Int) async throws {
+		let expectedError = ErrorResponse(success: false, statusCode: statusCode, message: "Request failed", errors: nil)
+		let sync = SyncMockRepository(result: .error(expectedError))
+		let sut = makeSUT(sync: sync)
+
+		let result = try await sut.createTransaction(request: anyCreateTransactionRequest())
+
+		guard case .error(let error as ErrorResponse) = result else {
+			Issue.record("Expected .error(ErrorResponse)")
+			return
+		}
+		#expect(error.statusCode == statusCode)
+		#expect(error.message == "Request failed")
+	}
+
+	@Test func createTransaction_whenSyncThrowsGenericError_returnsErrorState() async throws {
+		let dummyError = NSError(domain: "TestError", code: 999)
+		let sync = SyncMockRepository(result: .error(dummyError))
+		let sut = makeSUT(sync: sync)
+
+		let result = try await sut.createTransaction(request: anyCreateTransactionRequest())
+
+		guard case .error(let error as NSError) = result else {
+			Issue.record("Expected .error(NSError)")
+			return
+		}
+		#expect(error.domain == "TestError")
+		#expect(error.code == 999)
+	}
+
 	// MARK: - Helpers
 
 	// `TransactionDefaultRepository` is a struct (per the codebase's Repository convention), so
 	// there's no reference to leak — `trackForMemoryLeak` doesn't apply here.
 	private func makeSUT(
-		remote: TransactionMockRemoteDataSource = TransactionMockRemoteDataSource()
+		remote: TransactionMockRemoteDataSource = TransactionMockRemoteDataSource(),
+		sync: SyncMockRepository = SyncMockRepository()
 	) -> TransactionDefaultRepository {
-		TransactionDefaultRepository(remote: remote)
+		TransactionDefaultRepository(remote: remote, sync: sync)
 	}
 }
