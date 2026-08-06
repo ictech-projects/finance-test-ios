@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "retry-pass-icon.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

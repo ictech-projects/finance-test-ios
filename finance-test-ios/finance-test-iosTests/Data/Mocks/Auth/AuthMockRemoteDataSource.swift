@@ -127,9 +127,15 @@ func anyProfileSuccessResponse(user: Auth.Response.User = anyUser()) -> GeneralR
 	GeneralResponse(success: true, statusCode: 200, message: "Profile fetched.", data: Auth.Response.Profile(user: user))
 }
 
-func anyErrorField(email: [String]? = nil, password: [String]? = nil) -> ErrorField {
+func anyErrorField(
+	email: [String]? = nil,
+	password: [String]? = nil,
+	name: [String]? = nil,
+	passwordConfirmation: [String]? = nil
+) -> ErrorField {
 	ErrorField(
 		email: email, password: password,
+		name: name, passwordConfirmation: passwordConfirmation,
 		title: nil, firstName: nil, lastName: nil, preferredFirstName: nil, personalEmail: nil,
 		dateOfBirth: nil, gender: nil, personalPhone: nil, personalPhoneCountryCode: nil,
 		residentialAddress: nil, isAboriginalOrTorresStraitIslander: nil, emergencyContactName: nil,

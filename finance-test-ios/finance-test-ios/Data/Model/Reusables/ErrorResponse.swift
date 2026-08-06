@@ -25,7 +25,11 @@ struct ErrorField: Codable {
 	// MARK: - Login Related Errors
 	let email: [String]?
 	let password: [String]?
-	
+
+	// MARK: - Register Related Errors
+	let name: [String]?
+	let passwordConfirmation: [String]?
+
 	// MARK: - Update Profile related Errors
 	let title: [String]?
 	let firstName: [String]?
@@ -70,7 +74,11 @@ struct ErrorField: Codable {
 		// MARK: - Login Related Errors
 		case email
 		case password
-		
+
+		// MARK: - Register Related Errors
+		case name
+		case passwordConfirmation = "password_confirmation"
+
 		// MARK: - Update Profile related Errors
 		case title
 		case firstName = "first_name"
