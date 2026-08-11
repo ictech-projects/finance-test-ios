@@ -11,9 +11,9 @@ import Moya
 extension MoyaProvider {
 	static func dynamicProvider() -> MoyaProvider {
 #if DEBUG
-		return MoyaProvider(plugins: [NetworkLoggerPlugin(), DynamicTokenPlugin()])
+		return MoyaProvider(plugins: [NetworkLoggerPlugin(), DynamicTokenPlugin(), UnauthorizedResponsePlugin()])
 #else
-		return MoyaProvider(plugins: [DynamicTokenPlugin()])
+		return MoyaProvider(plugins: [DynamicTokenPlugin(), UnauthorizedResponsePlugin()])
 #endif
 	}
 }

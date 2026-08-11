@@ -18,9 +18,9 @@ extension MoyaProvider {
         })
 		
 #if DEBUG
-        return MoyaProvider(plugins: [NetworkLoggerPlugin(), accessTokenPlugin])
+        return MoyaProvider(plugins: [NetworkLoggerPlugin(), accessTokenPlugin, UnauthorizedResponsePlugin()])
 #else
-		return MoyaProvider(plugins: [accessTokenPlugin])
+		return MoyaProvider(plugins: [accessTokenPlugin, UnauthorizedResponsePlugin()])
 #endif
     }
 }
