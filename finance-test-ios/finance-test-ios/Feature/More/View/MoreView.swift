@@ -7,6 +7,7 @@ import SwiftUI
 
 struct MoreView: View {
 	@StateObject private var viewModel = MoreViewModel()
+	@State private var isLogOutConfirmationPresented = false
 
 	var body: some View {
 		NavigationStack {
@@ -23,6 +24,20 @@ struct MoreView: View {
 		.task {
 			await viewModel.onLoad()
 		}
+		.baseAlert(
+			isPresented: $isLogOutConfirmationPresented,
+			type: .warning,
+			title: "Log Out",
+			message: "Are you sure you want to log out?",
+			confirmButtonColor: .dangerMain,
+			confirmLabel: Text("Log Out"),
+			cancelLabel: Text("Cancel"),
+			confirmAction: {
+				isLogOutConfirmationPresented = false
+				Task { await viewModel.logOutTapped() }
+			},
+			cancelAction: { isLogOutConfirmationPresented = false }
+		)
 	}
 
 	private var header: some View {
@@ -90,8 +105,29 @@ struct MoreView: View {
 					}
 					.background(RoundedRectangle(cornerRadius: 12).fill(.moreSectionCardBackground))
 				}
+
+				logOutButton
 			}
 			.padding(16)
+		}
+	}
+
+	private var logOutButton: some View {
+		PrimaryButton(
+			size: .large,
+			backgroundColor: .dangerSurface,
+			strokeColor: .dangerBorder,
+			isDisabled: viewModel.isLoggingOut,
+			action: { isLogOutConfirmationPresented = true }
+		) {
+			if viewModel.isLoggingOut {
+				ProgressView()
+					.tint(.dangerMain)
+			} else {
+				Text("Log Out")
+					.font(.baseStyle(size: 16, weight: .bold))
+					.foregroundStyle(.dangerMain)
+			}
 		}
 	}
 }
