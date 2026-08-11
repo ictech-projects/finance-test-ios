@@ -25,9 +25,11 @@ final class LoginViewModel: ObservableObject {
 	@Published private(set) var isLoggedIn = false
 
 	private let authRepository: any AuthRepository
+	private let sessionStore: SessionStore
 
-	init(authRepository: some AuthRepository = AuthDefaultRepository()) {
+	init(authRepository: some AuthRepository = AuthDefaultRepository(), sessionStore: SessionStore = .shared) {
 		self.authRepository = authRepository
+		self.sessionStore = sessionStore
 	}
 
 	var isSubmitDisabled: Bool {
@@ -103,6 +105,7 @@ final class LoginViewModel: ObservableObject {
 			switch state {
 			case .loaded:
 				isLoggedIn = true
+				sessionStore.markLoggedIn()
 				viewState = .initial
 			case .error(let error):
 				handleLoginError(error)

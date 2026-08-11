@@ -17,7 +17,7 @@ struct IosBaseProjectApp: App {
 	
 	var body: some Scene {
 		WindowGroup {
-			RootTabView()
+			LaunchScreenView()
 		}
 	}
 }
