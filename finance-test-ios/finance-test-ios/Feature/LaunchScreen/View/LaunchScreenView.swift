@@ -21,7 +21,22 @@ struct LaunchScreenView: View {
 			if viewModel.isLaunching {
 				Color.splashSurface
 					.ignoresSafeArea()
-					.overlay { ProgressView() }
+					.overlay {
+						VStack(spacing: 16) {
+							Image(.mainIcon)
+								.resizable()
+								.scaledToFit()
+								.frame(width: 49, height: 54)
+								.shadow(color: .cardShadow, radius: 4, x: 0, y: 2)
+
+							Text("SpendWise")
+								.font(.baseStyle(size: 28, weight: .bold))
+								.foregroundStyle(.brandPrimary)
+
+							ProgressView()
+								.padding(.top, 24)
+						}
+					}
 			} else if viewModel.isLoggedIn {
 				RootTabView()
 			} else {
