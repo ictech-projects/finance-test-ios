@@ -217,7 +217,7 @@ struct AuthDefaultRepositoryTests {
 	}
 
 	@Test(arguments: [401, 404, 500])
-	func logout_whenThrowsErrorResponse_returnsErrorStateAndKeepsSession(statusCode: Int) async throws {
+	func logout_whenThrowsErrorResponse_returnsErrorStateButStillClearsSession(statusCode: Int) async throws {
 		let expectedError = ErrorResponse(success: false, statusCode: statusCode, message: "Logout failed", errors: nil)
 		let remote = AuthMockRemoteDataSource(logoutResult: .failure(expectedError))
 		let local = AuthMockLocalDataSource(accessToken: "stale-token", refreshToken: "stale-refresh")
@@ -230,13 +230,15 @@ struct AuthDefaultRepositoryTests {
 			return
 		}
 		#expect(error.statusCode == statusCode)
-		#expect(local.invocations.filter { $0 == .clearSession }.isEmpty)
+		#expect(local.invocations == [.clearSession])
+		#expect(local.getAccessToken() == nil)
 	}
 
-	@Test func logout_whenThrowsGenericError_returnsErrorState() async throws {
+	@Test func logout_whenThrowsGenericError_stillClearsLocalSession() async throws {
 		let dummyError = NSError(domain: "TestError", code: 999)
 		let remote = AuthMockRemoteDataSource(logoutResult: .failure(dummyError))
-		let sut = makeSUT(remote: remote)
+		let local = AuthMockLocalDataSource(accessToken: "stale-token", refreshToken: "stale-refresh")
+		let sut = makeSUT(remote: remote, local: local)
 
 		let result = try await sut.logout()
 
@@ -246,6 +248,8 @@ struct AuthDefaultRepositoryTests {
 		}
 		#expect(error.domain == "TestError")
 		#expect(error.code == 999)
+		#expect(local.invocations == [.clearSession])
+		#expect(local.getAccessToken() == nil)
 	}
 
 	// MARK: - logoutAll
@@ -274,10 +278,11 @@ struct AuthDefaultRepositoryTests {
 	}
 
 	@Test(arguments: [401, 404, 500])
-	func logoutAll_whenThrowsErrorResponse_returnsErrorState(statusCode: Int) async throws {
+	func logoutAll_whenThrowsErrorResponse_returnsErrorStateButStillClearsSession(statusCode: Int) async throws {
 		let expectedError = ErrorResponse(success: false, statusCode: statusCode, message: "Logout failed", errors: nil)
 		let remote = AuthMockRemoteDataSource(logoutAllResult: .failure(expectedError))
-		let sut = makeSUT(remote: remote)
+		let local = AuthMockLocalDataSource(accessToken: "stale-token", refreshToken: "stale-refresh")
+		let sut = makeSUT(remote: remote, local: local)
 
 		let result = try await sut.logoutAll()
 
@@ -286,12 +291,15 @@ struct AuthDefaultRepositoryTests {
 			return
 		}
 		#expect(error.statusCode == statusCode)
+		#expect(local.invocations == [.clearSession])
+		#expect(local.getAccessToken() == nil)
 	}
 
-	@Test func logoutAll_whenThrowsGenericError_returnsErrorState() async throws {
+	@Test func logoutAll_whenThrowsGenericError_stillClearsLocalSession() async throws {
 		let dummyError = NSError(domain: "TestError", code: 999)
 		let remote = AuthMockRemoteDataSource(logoutAllResult: .failure(dummyError))
-		let sut = makeSUT(remote: remote)
+		let local = AuthMockLocalDataSource(accessToken: "stale-token", refreshToken: "stale-refresh")
+		let sut = makeSUT(remote: remote, local: local)
 
 		let result = try await sut.logoutAll()
 
@@ -301,6 +309,8 @@ struct AuthDefaultRepositoryTests {
 		}
 		#expect(error.domain == "TestError")
 		#expect(error.code == 999)
+		#expect(local.invocations == [.clearSession])
+		#expect(local.getAccessToken() == nil)
 	}
 
 	// MARK: - getProfile

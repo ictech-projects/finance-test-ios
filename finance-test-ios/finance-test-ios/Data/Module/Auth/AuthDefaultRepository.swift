@@ -67,9 +67,9 @@ struct AuthDefaultRepository: AuthRepository {
 	}
 
 	func logout() async throws -> RequestState<GeneralResponse<EmptyData>> {
+		defer { local.clearSession() }
 		do {
 			let result = try await remote.logout()
-			local.clearSession()
 			return .loaded(result)
 		} catch let error as ErrorResponse {
 			return .error(error)
@@ -79,9 +79,9 @@ struct AuthDefaultRepository: AuthRepository {
 	}
 
 	func logoutAll() async throws -> RequestState<GeneralResponse<EmptyData>> {
+		defer { local.clearSession() }
 		do {
 			let result = try await remote.logoutAll()
-			local.clearSession()
 			return .loaded(result)
 		} catch let error as ErrorResponse {
 			return .error(error)
