@@ -49,7 +49,7 @@ final class LaunchScreenViewModelTests: MemoryLeakTrackingSuite {
 		file: StaticString = #filePath,
 		line: UInt = #line
 	) -> LaunchScreenViewModel {
-		let sut = LaunchScreenViewModel(sessionStore: sessionStore)
+		let sut = LaunchScreenViewModel(sessionStore: sessionStore, minimumDisplayDuration: .zero)
 		trackForMemoryLeak(sut, file: file, line: line)
 		return sut
 	}
