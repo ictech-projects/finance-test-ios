@@ -49,31 +49,6 @@ final class MoreViewModelTests: MemoryLeakTrackingSuite {
 	}
 
 	@Test
-	func logOutTapped_onRepositorySuccess_flipsSessionStoreIsLoggedInFalse() async {
-		let repository = AuthMockRepository(logoutResult: .loaded(anyEmptySuccessResponse()))
-		let sessionStore = SessionStore(localDataSource: AuthMockLocalDataSource(accessToken: "token"))
-		let sut = makeSUT(authRepository: repository, sessionStore: sessionStore)
-		#expect(sessionStore.isLoggedIn == true)
-
-		await sut.logOutTapped()
-
-		#expect(sessionStore.isLoggedIn == false)
-	}
-
-	@Test
-	func logOutTapped_onRepositoryFailure_stillFlipsSessionStoreIsLoggedInFalse() async {
-		let errorResponse = ErrorResponse(success: false, statusCode: 500, message: "Logout failed", errors: nil)
-		let repository = AuthMockRepository(logoutResult: .error(errorResponse))
-		let sessionStore = SessionStore(localDataSource: AuthMockLocalDataSource(accessToken: "token"))
-		let sut = makeSUT(authRepository: repository, sessionStore: sessionStore)
-		#expect(sessionStore.isLoggedIn == true)
-
-		await sut.logOutTapped()
-
-		#expect(sessionStore.isLoggedIn == false)
-	}
-
-	@Test
 	func logOutTapped_setsIsLoggingOutDuringCallThenResetsAfter() async {
 		let repository = AuthMockRepository(logoutResult: .loaded(anyEmptySuccessResponse()))
 		let sut = makeSUT(authRepository: repository)
@@ -88,12 +63,10 @@ final class MoreViewModelTests: MemoryLeakTrackingSuite {
 
 	private func makeSUT(
 		authRepository: AuthMockRepository = AuthMockRepository(),
-		sessionStore: SessionStore? = nil,
 		file: StaticString = #filePath,
 		line: UInt = #line
 	) -> MoreViewModel {
-		let sessionStore = sessionStore ?? SessionStore(localDataSource: AuthMockLocalDataSource())
-		let sut = MoreViewModel(authRepository: authRepository, sessionStore: sessionStore)
+		let sut = MoreViewModel(authRepository: authRepository)
 		trackForMemoryLeak(sut, file: file, line: line)
 		return sut
 	}

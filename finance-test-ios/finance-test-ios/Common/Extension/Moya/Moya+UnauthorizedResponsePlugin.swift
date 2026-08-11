@@ -16,7 +16,7 @@ final class UnauthorizedResponsePlugin: PluginType {
 
 	// `Task` here must be `_Concurrency.Task`, fully qualified — Moya's own `Moya.Task` (the
 	// request-task enum) shadows Swift Concurrency's `Task` in any file that `import Moya`.
-	init(onUnauthorized: @escaping () -> Void = { _Concurrency.Task { @MainActor in SessionStore.shared.forceLogout() } }) {
+	init(onUnauthorized: @escaping () -> Void = { _Concurrency.Task { @MainActor in AuthDefaultSessionStore.shared.forceLogout() } }) {
 		self.onUnauthorized = onUnauthorized
 	}
 

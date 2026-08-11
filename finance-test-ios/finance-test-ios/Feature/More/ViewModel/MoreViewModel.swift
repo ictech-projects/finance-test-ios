@@ -20,11 +20,9 @@ final class MoreViewModel: ObservableObject {
 	@Published private(set) var isLoggingOut = false
 
 	private let authRepository: any AuthRepository
-	private let sessionStore: SessionStore
 
-	init(authRepository: some AuthRepository = AuthDefaultRepository(), sessionStore: SessionStore = .shared) {
+	init(authRepository: some AuthRepository = AuthDefaultRepository()) {
 		self.authRepository = authRepository
-		self.sessionStore = sessionStore
 	}
 
 	func onLoad() async {
@@ -47,14 +45,13 @@ final class MoreViewModel: ObservableObject {
 		}
 	}
 
-	/// Best-effort remote revoke; the actual "user is logged out" state transition is
-	/// guaranteed by `sessionStore.forceLogout()` regardless of the repository's outcome — a
-	/// network failure here must never leave the user stuck logged in on this device.
+	/// `AuthDefaultRepository.logout()` guarantees the local session is cleared and the shared
+	/// `AuthSessionStore` is flipped regardless of the remote call's outcome — a network
+	/// failure here must never leave the user stuck logged in on this device.
 	func logOutTapped() async {
 		guard !isLoggingOut else { return }
 		isLoggingOut = true
 		_ = try? await authRepository.logout()
-		sessionStore.forceLogout()
 		isLoggingOut = false
 	}
 }

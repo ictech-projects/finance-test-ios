@@ -12,18 +12,19 @@ final class LaunchScreenViewModelTests: MemoryLeakTrackingSuite {
 
 	@Test
 	func onAppear_refreshesFromKeychainAndStopsLaunching() async {
-		let sessionStore = SessionStore(localDataSource: AuthMockLocalDataSource())
+		let sessionStore = AuthMockSessionStore()
 		let sut = makeSUT(sessionStore: sessionStore)
 		#expect(sut.isLaunching == true)
 
 		await sut.onAppear()
 
 		#expect(sut.isLaunching == false)
+		#expect(sessionStore.invocations == [.refreshFromKeychain])
 	}
 
 	@Test
 	func init_reflectsSessionStoreInitialIsLoggedIn() {
-		let sessionStore = SessionStore(localDataSource: AuthMockLocalDataSource(accessToken: "token"))
+		let sessionStore = AuthMockSessionStore(isLoggedIn: true)
 		let sut = makeSUT(sessionStore: sessionStore)
 
 		#expect(sut.isLoggedIn == true)
@@ -31,7 +32,7 @@ final class LaunchScreenViewModelTests: MemoryLeakTrackingSuite {
 
 	@Test
 	func isLoggedIn_keepsTrackingSessionStoreAfterOnAppear() async {
-		let sessionStore = SessionStore(localDataSource: AuthMockLocalDataSource(accessToken: "token"))
+		let sessionStore = AuthMockSessionStore(isLoggedIn: true)
 		let sut = makeSUT(sessionStore: sessionStore)
 		await sut.onAppear()
 		#expect(sut.isLoggedIn == true)
@@ -44,7 +45,7 @@ final class LaunchScreenViewModelTests: MemoryLeakTrackingSuite {
 	// MARK: - Helpers
 
 	private func makeSUT(
-		sessionStore: SessionStore,
+		sessionStore: AuthMockSessionStore,
 		file: StaticString = #filePath,
 		line: UInt = #line
 	) -> LaunchScreenViewModel {

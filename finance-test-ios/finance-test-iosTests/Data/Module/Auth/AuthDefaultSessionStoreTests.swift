@@ -1,14 +1,14 @@
 //
-//  SessionStoreTests.swift
+//  AuthDefaultSessionStoreTests.swift
 //  finance-test-iosTests
 //
 
 import Testing
 @testable import finance_test_ios
 
-@Suite("SessionStore")
+@Suite("AuthDefaultSessionStore")
 @MainActor
-final class SessionStoreTests: MemoryLeakTrackingSuite {
+final class AuthDefaultSessionStoreTests: MemoryLeakTrackingSuite {
 
 	@Test
 	func init_whenAccessTokenPresent_isLoggedInTrue() {
@@ -74,8 +74,8 @@ final class SessionStoreTests: MemoryLeakTrackingSuite {
 		local: AuthMockLocalDataSource,
 		file: StaticString = #filePath,
 		line: UInt = #line
-	) -> SessionStore {
-		let sut = SessionStore(localDataSource: local)
+	) -> AuthDefaultSessionStore {
+		let sut = AuthDefaultSessionStore(localDataSource: local)
 		trackForMemoryLeak(sut, file: file, line: line)
 		return sut
 	}

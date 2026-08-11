@@ -8,6 +8,7 @@ import Testing
 @testable import finance_test_ios
 
 @Suite("AuthDefaultRepository")
+@MainActor
 struct AuthDefaultRepositoryTests {
 
 	// MARK: - register
@@ -35,6 +36,16 @@ struct AuthDefaultRepositoryTests {
 		}
 		#expect(response.data == session)
 		#expect(local.invocations == [.saveSession(accessToken: session.token, refreshToken: session.refreshToken)])
+	}
+
+	@Test func register_success_marksSessionStoreLoggedIn() async throws {
+		let remote = AuthMockRemoteDataSource(registerResult: .success(anySessionSuccessResponse()))
+		let sessionStore = AuthMockSessionStore()
+		let sut = makeSUT(remote: remote, sessionStore: sessionStore)
+
+		_ = try await sut.register(request: anyRegisterRequest())
+
+		#expect(sessionStore.invocations == [.markLoggedIn])
 	}
 
 	@Test(arguments: [401, 422, 500])
@@ -96,6 +107,16 @@ struct AuthDefaultRepositoryTests {
 		#expect(response.statusCode == 200)
 		#expect(response.data == session)
 		#expect(local.invocations == [.saveSession(accessToken: session.token, refreshToken: session.refreshToken)])
+	}
+
+	@Test func login_success_marksSessionStoreLoggedIn() async throws {
+		let remote = AuthMockRemoteDataSource(loginResult: .success(anySessionSuccessResponse()))
+		let sessionStore = AuthMockSessionStore()
+		let sut = makeSUT(remote: remote, sessionStore: sessionStore)
+
+		_ = try await sut.login(request: anyLoginRequest())
+
+		#expect(sessionStore.invocations == [.markLoggedIn])
 	}
 
 	@Test(arguments: [401, 404, 500])
@@ -216,12 +237,24 @@ struct AuthDefaultRepositoryTests {
 		#expect(local.getAccessToken() == nil)
 	}
 
+	@Test func logout_success_marksSessionStoreLoggedOut() async throws {
+		let remote = AuthMockRemoteDataSource(logoutResult: .success(anyEmptySuccessResponse()))
+		let sessionStore = AuthMockSessionStore(isLoggedIn: true)
+		let sut = makeSUT(remote: remote, sessionStore: sessionStore)
+
+		_ = try await sut.logout()
+
+		#expect(sessionStore.invocations == [.forceLogout])
+		#expect(sessionStore.isLoggedIn == false)
+	}
+
 	@Test(arguments: [401, 404, 500])
 	func logout_whenThrowsErrorResponse_returnsErrorStateButStillClearsSession(statusCode: Int) async throws {
 		let expectedError = ErrorResponse(success: false, statusCode: statusCode, message: "Logout failed", errors: nil)
 		let remote = AuthMockRemoteDataSource(logoutResult: .failure(expectedError))
 		let local = AuthMockLocalDataSource(accessToken: "stale-token", refreshToken: "stale-refresh")
-		let sut = makeSUT(remote: remote, local: local)
+		let sessionStore = AuthMockSessionStore(isLoggedIn: true)
+		let sut = makeSUT(remote: remote, local: local, sessionStore: sessionStore)
 
 		let result = try await sut.logout()
 
@@ -232,13 +265,16 @@ struct AuthDefaultRepositoryTests {
 		#expect(error.statusCode == statusCode)
 		#expect(local.invocations == [.clearSession])
 		#expect(local.getAccessToken() == nil)
+		#expect(sessionStore.invocations == [.forceLogout])
+		#expect(sessionStore.isLoggedIn == false)
 	}
 
 	@Test func logout_whenThrowsGenericError_stillClearsLocalSession() async throws {
 		let dummyError = NSError(domain: "TestError", code: 999)
 		let remote = AuthMockRemoteDataSource(logoutResult: .failure(dummyError))
 		let local = AuthMockLocalDataSource(accessToken: "stale-token", refreshToken: "stale-refresh")
-		let sut = makeSUT(remote: remote, local: local)
+		let sessionStore = AuthMockSessionStore(isLoggedIn: true)
+		let sut = makeSUT(remote: remote, local: local, sessionStore: sessionStore)
 
 		let result = try await sut.logout()
 
@@ -250,6 +286,8 @@ struct AuthDefaultRepositoryTests {
 		#expect(error.code == 999)
 		#expect(local.invocations == [.clearSession])
 		#expect(local.getAccessToken() == nil)
+		#expect(sessionStore.invocations == [.forceLogout])
+		#expect(sessionStore.isLoggedIn == false)
 	}
 
 	// MARK: - logoutAll
@@ -277,12 +315,24 @@ struct AuthDefaultRepositoryTests {
 		#expect(local.invocations == [.clearSession])
 	}
 
+	@Test func logoutAll_success_marksSessionStoreLoggedOut() async throws {
+		let remote = AuthMockRemoteDataSource(logoutAllResult: .success(anyEmptySuccessResponse()))
+		let sessionStore = AuthMockSessionStore(isLoggedIn: true)
+		let sut = makeSUT(remote: remote, sessionStore: sessionStore)
+
+		_ = try await sut.logoutAll()
+
+		#expect(sessionStore.invocations == [.forceLogout])
+		#expect(sessionStore.isLoggedIn == false)
+	}
+
 	@Test(arguments: [401, 404, 500])
 	func logoutAll_whenThrowsErrorResponse_returnsErrorStateButStillClearsSession(statusCode: Int) async throws {
 		let expectedError = ErrorResponse(success: false, statusCode: statusCode, message: "Logout failed", errors: nil)
 		let remote = AuthMockRemoteDataSource(logoutAllResult: .failure(expectedError))
 		let local = AuthMockLocalDataSource(accessToken: "stale-token", refreshToken: "stale-refresh")
-		let sut = makeSUT(remote: remote, local: local)
+		let sessionStore = AuthMockSessionStore(isLoggedIn: true)
+		let sut = makeSUT(remote: remote, local: local, sessionStore: sessionStore)
 
 		let result = try await sut.logoutAll()
 
@@ -293,13 +343,16 @@ struct AuthDefaultRepositoryTests {
 		#expect(error.statusCode == statusCode)
 		#expect(local.invocations == [.clearSession])
 		#expect(local.getAccessToken() == nil)
+		#expect(sessionStore.invocations == [.forceLogout])
+		#expect(sessionStore.isLoggedIn == false)
 	}
 
 	@Test func logoutAll_whenThrowsGenericError_stillClearsLocalSession() async throws {
 		let dummyError = NSError(domain: "TestError", code: 999)
 		let remote = AuthMockRemoteDataSource(logoutAllResult: .failure(dummyError))
 		let local = AuthMockLocalDataSource(accessToken: "stale-token", refreshToken: "stale-refresh")
-		let sut = makeSUT(remote: remote, local: local)
+		let sessionStore = AuthMockSessionStore(isLoggedIn: true)
+		let sut = makeSUT(remote: remote, local: local, sessionStore: sessionStore)
 
 		let result = try await sut.logoutAll()
 
@@ -311,6 +364,8 @@ struct AuthDefaultRepositoryTests {
 		#expect(error.code == 999)
 		#expect(local.invocations == [.clearSession])
 		#expect(local.getAccessToken() == nil)
+		#expect(sessionStore.invocations == [.forceLogout])
+		#expect(sessionStore.isLoggedIn == false)
 	}
 
 	// MARK: - getProfile
@@ -374,8 +429,10 @@ struct AuthDefaultRepositoryTests {
 	// there's no reference to leak — `trackForMemoryLeak` doesn't apply here.
 	private func makeSUT(
 		remote: AuthMockRemoteDataSource = AuthMockRemoteDataSource(),
-		local: AuthMockLocalDataSource = AuthMockLocalDataSource()
+		local: AuthMockLocalDataSource = AuthMockLocalDataSource(),
+		sessionStore: AuthMockSessionStore? = nil
 	) -> AuthDefaultRepository {
-		AuthDefaultRepository(remoteDataSource: remote, localDataSource: local)
+		let sessionStore = sessionStore ?? AuthMockSessionStore()
+		return AuthDefaultRepository(remoteDataSource: remote, localDataSource: local, sessionStore: sessionStore)
 	}
 }

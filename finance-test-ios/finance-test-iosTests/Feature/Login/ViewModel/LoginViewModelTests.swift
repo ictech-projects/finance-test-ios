@@ -78,20 +78,6 @@ final class LoginViewModelTests: MemoryLeakTrackingSuite {
 	}
 
 	@Test
-	func login_success_marksSessionStoreLoggedIn() async {
-		let repository = AuthMockRepository(loginResult: .loaded(anySessionSuccessResponse()))
-		let sessionStore = SessionStore(localDataSource: AuthMockLocalDataSource())
-		let sut = makeSUT(authRepository: repository, sessionStore: sessionStore)
-		sut.email = "jane.doe@example.com"
-		sut.password = "password123"
-		#expect(sessionStore.isLoggedIn == false)
-
-		await sut.login()
-
-		#expect(sessionStore.isLoggedIn == true)
-	}
-
-	@Test
 	func login_success_emitsLoadingThenInitialViewState() async {
 		let repository = AuthMockRepository(loginResult: .loaded(anySessionSuccessResponse()))
 		let sut = makeSUT(authRepository: repository)
@@ -332,12 +318,10 @@ final class LoginViewModelTests: MemoryLeakTrackingSuite {
 
 	private func makeSUT(
 		authRepository: AuthMockRepository = AuthMockRepository(),
-		sessionStore: SessionStore? = nil,
 		file: StaticString = #filePath,
 		line: UInt = #line
 	) -> LoginViewModel {
-		let sessionStore = sessionStore ?? SessionStore(localDataSource: AuthMockLocalDataSource())
-		let sut = LoginViewModel(authRepository: authRepository, sessionStore: sessionStore)
+		let sut = LoginViewModel(authRepository: authRepository)
 		trackForMemoryLeak(sut, file: file, line: line)
 		return sut
 	}
