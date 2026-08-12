@@ -10,7 +10,6 @@ import IQKeyboardManagerSwift
 
 @main
 struct IosBaseProjectApp: App {
-	@State private var isLoggedIn = false
 
 	init() {
 		tabBarAdjustment()
@@ -18,11 +17,7 @@ struct IosBaseProjectApp: App {
 
 	var body: some Scene {
 		WindowGroup {
-			if isLoggedIn {
-				RootTabView()
-			} else {
-				AuthFlowView(onAuthenticated: { isLoggedIn = true })
-			}
+			LaunchScreenView()
 		}
 	}
 }

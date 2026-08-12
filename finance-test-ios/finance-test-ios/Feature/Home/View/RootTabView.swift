@@ -26,7 +26,7 @@ struct RootTabView: View {
 					Text("Reports")
 				}
 
-			ComingSoonPlaceholderView(title: "More", iconName: "ellipsis.circle.fill")
+			MoreView()
 				.tabItem {
 					Image(systemName: "ellipsis.circle.fill")
 					Text("More")
@@ -34,25 +34,6 @@ struct RootTabView: View {
 		}
 		.tint(Color.brandPrimary)
 		.tabBarBaseStyle()
-	}
-}
-
-private struct ComingSoonPlaceholderView: View {
-	let title: String
-	let iconName: String
-
-	var body: some View {
-		VStack(spacing: 12) {
-			Image(systemName: iconName)
-				.font(.system(size: 40))
-				.foregroundStyle(.neutral40)
-
-			Text("\(title) coming soon")
-				.font(.baseStyle(size: 14, weight: .medium))
-				.foregroundStyle(.neutral60)
-		}
-		.frame(maxWidth: .infinity, maxHeight: .infinity)
-		.background(Color.neutral20.ignoresSafeArea())
 	}
 }
 

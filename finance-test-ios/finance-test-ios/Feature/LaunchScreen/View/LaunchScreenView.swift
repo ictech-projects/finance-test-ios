@@ -7,65 +7,48 @@
 
 import SwiftUI
 
-
-/// A programmatic launch screen view.
-///
-/// Unlike the default Launch Screen configuration using Info.plist
-/// and storyboard (recommended by Apple for simple static launch UI),
-/// this view allows adding runtime logic before routing.
-///
-/// Apple’s Launch Screen API (plist + storyboard) is fast and simple,
-/// but does not support:
-/// - Async operations
-/// - Conditional routing
-/// - State-based transitions
-///
-/// This programmatic approach is commonly used to:
-/// - Fetch force update status and route to a Force Update screen
-/// - Validate authentication token and route to Home or Login
-/// - Display a short loading state before entering the main flow
-///
-/// Note:
-/// This is NOT a replacement for the required static LaunchScreen file.
-/// It is shown immediately after the system launch screen.
+/// The app's actual root view. Shows a brief splash (the OS-level static Launch Screen already
+/// covers the true cold-start instant — see `INFOPLIST_KEY_UILaunchScreen_BackgroundColorName`),
+/// runs the session check, then switches its own body to `RootTabView`/`LoginView` and keeps
+/// reacting to `SessionStore` afterwards, so a later logout (manual or 401-triggered) routes
+/// back to `LoginView` without relaunching the app.
 struct LaunchScreenView: View {
-	
+
 	@StateObject private var viewModel = LaunchScreenViewModel()
-	
+
 	var body: some View {
-		GeometryReader { geometry in
-			ZStack {
-				
-				// TODO: Background placeholder image (replace with your asset)
-				Image(.launchScreen)
-					.resizable()
+		Group {
+			if viewModel.isLaunching {
+				Color.splashSurface
 					.ignoresSafeArea()
-					
-				
-				VStack {
-					Spacer()
-					
-					Text("Programmatic Launch Screen")
-						.foregroundStyle(.neutral10)
-						.font(.headline)
-						.padding(.bottom, 8)
-					
-					Text("Preparing application...")
-						.foregroundStyle(.neutral30)
-						.font(.subheadline)
-					
-					Spacer()
-					
-					// ProgressView positioned at 1/4 bottom height
-					ProgressView()
-						.progressViewStyle(.circular)
-						.scaleEffect(1.2)
-						.tint(.neutral60)
-						.padding(.bottom, geometry.size.height / 4)
-				}
-				.padding()
+					.overlay {
+						VStack(spacing: 16) {
+							Image(.mainIcon)
+								.resizable()
+								.scaledToFit()
+								.frame(width: 49, height: 54)
+								.shadow(color: .cardShadow, radius: 4, x: 0, y: 2)
+
+							Text("SpendWise")
+								.font(.baseStyle(size: 28, weight: .bold))
+								.foregroundStyle(.brandPrimary)
+
+							ProgressView()
+								.padding(.top, 24)
+						}
+					}
+			} else if viewModel.isLoggedIn {
+				RootTabView()
+			} else {
+				// `AuthFlowView` wraps Login + Register navigation. Its own `onAuthenticated`
+				// callback is a no-op here — the actual root swap to `RootTabView` is already
+				// driven reactively by `viewModel.isLoggedIn` above (which flips as soon as
+				// `AuthDefaultRepository.login()`/`.register()` mark the shared session store
+				// logged in), not by this callback.
+				AuthFlowView(onAuthenticated: {})
 			}
 		}
+		.task { await viewModel.onAppear() }
 	}
 }
 
