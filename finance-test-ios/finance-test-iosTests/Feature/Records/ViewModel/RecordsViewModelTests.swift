@@ -137,11 +137,39 @@ final class RecordsViewModelTests: MemoryLeakTrackingSuite {
 
 	private func makeSUT(
 		transactionRepository: TransactionMockRepository = TransactionMockRepository(),
+		categoryRepository: TransactionCategoryMockRepository = TransactionCategoryMockRepository(
+			result: .loaded(anyCategoryListSuccessResponse(items: recordsFixtureCategories()))
+		),
+		accountRepository: AccountMockRepository = AccountMockRepository(
+			result: .loaded(anyAccountListSuccessResponse(items: recordsFixtureAccounts()))
+		),
 		file: StaticString = #filePath,
 		line: UInt = #line
 	) -> RecordsViewModel {
-		let sut = RecordsViewModel(transactionRepository: transactionRepository)
+		let sut = RecordsViewModel(
+			transactionRepository: transactionRepository,
+			categoryRepository: categoryRepository,
+			accountRepository: accountRepository
+		)
 		trackForMemoryLeak(sut, file: file, line: line)
 		return sut
 	}
+}
+
+/// Mirrors the ids `anyTransactionItem`'s default `accountId`/`categoryId` (and this suite's
+/// explicit overrides) expect to resolve to, via `CategoryAccountDisplayResolver`.
+private func recordsFixtureCategories() -> [TransactionCategory.Response.CategoryItem] {
+	[
+		anyCategoryItem(id: "01K3CT0000000000000000CT01", name: "Dining & Drinks", type: .expense),
+		anyCategoryItem(id: "01K3CT0000000000000000CT02", name: "Freelance Income", type: .income),
+		anyCategoryItem(id: "01K3CT0000000000000000CT03", name: "Transport", type: .expense)
+	]
+}
+
+private func recordsFixtureAccounts() -> [Account.Response.AccountItem] {
+	[
+		anyAccountItem(id: "01K3AC0000000000000000AC01", name: "Cash", type: "cash"),
+		anyAccountItem(id: "01K3AC0000000000000000AC02", name: "Main Bank", type: "bank_account"),
+		anyAccountItem(id: "01K3AC0000000000000000AC03", name: "Credit Card", type: "credit_card")
+	]
 }
