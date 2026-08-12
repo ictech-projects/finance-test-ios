@@ -35,7 +35,7 @@ final class MoreViewModel: ObservableObject {
 			case .loaded(let response):
 				profile = response.data?.user
 				viewState = .loaded
-			case .error:
+			case .error: 
 				viewState = .error
 			default:
 				break

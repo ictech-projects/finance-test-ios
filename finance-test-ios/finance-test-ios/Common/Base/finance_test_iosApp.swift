@@ -10,11 +10,11 @@ import IQKeyboardManagerSwift
 
 @main
 struct IosBaseProjectApp: App {
-	
+
 	init() {
 		tabBarAdjustment()
 	}
-	
+
 	var body: some Scene {
 		WindowGroup {
 			LaunchScreenView()

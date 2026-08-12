@@ -40,7 +40,12 @@ struct LaunchScreenView: View {
 			} else if viewModel.isLoggedIn {
 				RootTabView()
 			} else {
-				LoginView()
+				// `AuthFlowView` wraps Login + Register navigation. Its own `onAuthenticated`
+				// callback is a no-op here — the actual root swap to `RootTabView` is already
+				// driven reactively by `viewModel.isLoggedIn` above (which flips as soon as
+				// `AuthDefaultRepository.login()`/`.register()` mark the shared session store
+				// logged in), not by this callback.
+				AuthFlowView(onAuthenticated: {})
 			}
 		}
 		.task { await viewModel.onAppear() }
