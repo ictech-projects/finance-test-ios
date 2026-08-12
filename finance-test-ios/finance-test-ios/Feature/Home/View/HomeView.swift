@@ -12,38 +12,56 @@ struct HomeView: View {
 		NavigationStack {
 			VStack(spacing: 0) {
 				header
-
-				ScrollView {
-					VStack(spacing: 16) {
-						BalanceCard(amount: viewModel.summary.balanceThisMonth)
-							.staggeredAppear(index: 0)
-						NetWorthCard(amount: viewModel.summary.netWorth)
-							.staggeredAppear(index: 1)
-						IncomeExpenseRow(kind: .income, amount: viewModel.summary.income)
-							.staggeredAppear(index: 2)
-						IncomeExpenseRow(kind: .expense, amount: viewModel.summary.expense)
-							.staggeredAppear(index: 3)
-						TotalOwedCard(
-							totalOwed: viewModel.summary.totalOwed,
-							limit: viewModel.summary.owedLimit,
-							ratio: viewModel.summary.owedRatio
-						)
-						.staggeredAppear(index: 4)
-						SpendingByCategoryCard(
-							categories: viewModel.categories,
-							total: viewModel.summary.expense
-						)
-						.staggeredAppear(index: 5)
-						RecentTransactionsSection(transactions: viewModel.transactions)
-							.staggeredAppear(index: 6)
-					}
-					.padding(16)
-				}
+				content
 			}
 			.background(Color.brandTertiary.ignoresSafeArea())
 			.navigationBarHidden(true)
 		}
+		.task {
+			await viewModel.onLoad()
+		}
 		.currencySelectionDialog(isPresented: $viewModel.isCurrencyDialogPresented, delegate: viewModel)
+	}
+
+	@ViewBuilder
+	private var content: some View {
+		switch viewModel.viewState {
+		case .initial, .loading:
+			ProgressView()
+				.frame(maxWidth: .infinity, maxHeight: .infinity)
+		case .error:
+			ContentUnavailableView(
+				"Couldn't load your dashboard",
+				systemImage: "chart.line.downtrend.xyaxis",
+				description: Text("Please try again later.")
+			)
+			.frame(maxWidth: .infinity, maxHeight: .infinity)
+		case .loaded:
+			loadedContent
+		}
+	}
+
+	private var loadedContent: some View {
+		ScrollView {
+			VStack(spacing: 16) {
+				BalanceCard(amount: viewModel.summary.balanceThisMonth)
+					.staggeredAppear(index: 0)
+				NetWorthCard(amount: viewModel.summary.netWorth)
+					.staggeredAppear(index: 1)
+				IncomeExpenseRow(kind: .income, amount: viewModel.summary.income)
+					.staggeredAppear(index: 2)
+				IncomeExpenseRow(kind: .expense, amount: viewModel.summary.expense)
+					.staggeredAppear(index: 3)
+				SpendingByCategoryCard(
+					categories: viewModel.categories,
+					total: viewModel.summary.expense
+				)
+				.staggeredAppear(index: 4)
+				RecentTransactionsSection(transactions: viewModel.transactions)
+					.staggeredAppear(index: 5)
+			}
+			.padding(16)
+		}
 	}
 
 	private var header: some View {
