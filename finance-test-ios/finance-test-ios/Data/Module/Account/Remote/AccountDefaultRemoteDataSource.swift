@@ -21,4 +21,13 @@ struct AccountDefaultRemoteDataSource: AccountRemoteDataSource {
 			model: GeneralResponse<Account.Response.AccountList>.self
 		)
 	}
+
+	func createAccount(
+		request: Account.Request.CreateAccount
+	) async throws -> GeneralResponse<Account.Response.AccountItem> {
+		try await provider.request(
+			.createAccount(request),
+			model: GeneralResponse<Account.Response.AccountItem>.self
+		)
+	}
 }
