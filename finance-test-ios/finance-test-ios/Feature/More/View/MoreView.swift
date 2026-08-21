@@ -18,7 +18,12 @@ struct MoreView: View {
 			.background(Color.splashSurface.ignoresSafeArea())
 			.navigationBarHidden(true)
 			.navigationDestination(for: MoreDestination.self) { destination in
-				ComingSoonPlaceholderView(title: destination.placeholderTitle, iconName: destination.iconName)
+				switch destination {
+				case .currency:
+					UserCurrenciesListView()
+				case .appearance, .accounts, .categories:
+					ComingSoonPlaceholderView(title: destination.placeholderTitle, iconName: destination.iconName)
+				}
 			}
 		}
 		.task {

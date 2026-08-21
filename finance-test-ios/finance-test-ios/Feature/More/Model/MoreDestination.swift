@@ -5,7 +5,8 @@
 
 import Foundation
 
-/// The More screen's not-yet-built rows — each pushes to `ComingSoonPlaceholderView` for now.
+/// The More screen's rows. `.currency` pushes the real `UserCurrenciesListView`; the rest still
+/// push to `ComingSoonPlaceholderView`.
 enum MoreDestination: Hashable, CaseIterable {
 	case appearance
 	case accounts
