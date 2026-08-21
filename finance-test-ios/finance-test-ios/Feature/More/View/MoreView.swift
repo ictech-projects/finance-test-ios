@@ -21,10 +21,12 @@ struct MoreView: View {
 				switch destination {
 				case .currency:
 					UserCurrenciesListView()
+				case .accounts:
+					AccountsListView()
+				case .categories:
+					CategoryManagementView()
 				case .appearance:
 					AppearanceSettingView()
-				case .accounts, .categories:
-					ComingSoonPlaceholderView(title: destination.placeholderTitle, iconName: destination.iconName)
 				}
 			}
 		}
