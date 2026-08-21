@@ -21,7 +21,9 @@ struct MoreView: View {
 				switch destination {
 				case .currency:
 					UserCurrenciesListView()
-				case .appearance, .accounts, .categories:
+				case .accounts:
+					AccountsListView()
+				case .appearance, .categories:
 					ComingSoonPlaceholderView(title: destination.placeholderTitle, iconName: destination.iconName)
 				}
 			}
