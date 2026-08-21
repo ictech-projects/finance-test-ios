@@ -26,7 +26,7 @@ struct MoreView: View {
 				case .categories:
 					CategoryManagementView()
 				case .appearance:
-					ComingSoonPlaceholderView(title: destination.placeholderTitle, iconName: destination.iconName)
+					AppearanceSettingView()
 				}
 			}
 		}

@@ -98,7 +98,6 @@ struct CountrySelectionModalSheetView: View {
 				centerContent: (isShowLogo: false, title: Text("Select Country"))
 			)
 		}
-		.preferredColorScheme(.light)
 		.task {
 			await viewModel.onLoad()
 		}
