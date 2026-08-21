@@ -18,4 +18,10 @@ struct SyncDefaultRepository: SyncRepository {
 	) async throws -> RequestState<GeneralResponse<Sync.Response.PushResult>> {
 		await execute { try await remote.push(request: request) }
 	}
+
+	func pull(
+		request: Sync.Request.Pull
+	) async throws -> RequestState<GeneralResponse<Sync.Response.Pull>> {
+		await execute { try await remote.pull(request: request) }
+	}
 }

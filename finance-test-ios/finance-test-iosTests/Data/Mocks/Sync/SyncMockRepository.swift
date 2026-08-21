@@ -12,14 +12,20 @@ final class SyncMockRepository: SyncRepository {
 
 	enum Invocation: Equatable {
 		case push(Sync.Request.Push)
+		case pull(Sync.Request.Pull)
 	}
 
 	private(set) var invocations: [Invocation] = []
 
 	private let result: RequestState<GeneralResponse<Sync.Response.PushResult>>
+	private let pullResult: RequestState<GeneralResponse<Sync.Response.Pull>>
 
-	init(result: RequestState<GeneralResponse<Sync.Response.PushResult>> = .idle) {
+	init(
+		result: RequestState<GeneralResponse<Sync.Response.PushResult>> = .idle,
+		pullResult: RequestState<GeneralResponse<Sync.Response.Pull>> = .idle
+	) {
 		self.result = result
+		self.pullResult = pullResult
 	}
 
 	func push(
@@ -27,5 +33,12 @@ final class SyncMockRepository: SyncRepository {
 	) async throws -> RequestState<GeneralResponse<Sync.Response.PushResult>> {
 		invocations.append(.push(request))
 		return result
+	}
+
+	func pull(
+		request: Sync.Request.Pull
+	) async throws -> RequestState<GeneralResponse<Sync.Response.Pull>> {
+		invocations.append(.pull(request))
+		return pullResult
 	}
 }
