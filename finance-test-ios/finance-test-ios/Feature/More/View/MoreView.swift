@@ -23,7 +23,9 @@ struct MoreView: View {
 					UserCurrenciesListView()
 				case .accounts:
 					AccountsListView()
-				case .appearance, .categories:
+				case .categories:
+					CategoryManagementView()
+				case .appearance:
 					ComingSoonPlaceholderView(title: destination.placeholderTitle, iconName: destination.iconName)
 				}
 			}

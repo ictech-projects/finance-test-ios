@@ -21,4 +21,13 @@ struct SyncDefaultRemoteDataSource: SyncRemoteDataSource {
 			model: GeneralResponse<Sync.Response.PushResult>.self
 		)
 	}
+
+	func pull(
+		request: Sync.Request.Pull
+	) async throws -> GeneralResponse<Sync.Response.Pull> {
+		try await provider.request(
+			.pull(request),
+			model: GeneralResponse<Sync.Response.Pull>.self
+		)
+	}
 }
