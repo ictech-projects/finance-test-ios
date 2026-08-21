@@ -35,10 +35,18 @@ final class RecordsViewModel: ObservableObject {
 	private(set) var availableAccountNames: [String] = []
 
 	private let transactionRepository: any TransactionRepository
+	private let categoryRepository: any TransactionCategoryRepository
+	private let accountRepository: any AccountRepository
 	private var entries: [Entry] = []
 
-	init(transactionRepository: some TransactionRepository = TransactionMockRepository()) {
+	init(
+		transactionRepository: some TransactionRepository = TransactionDefaultRepository(),
+		categoryRepository: some TransactionCategoryRepository = TransactionCategoryDefaultRepository(),
+		accountRepository: some AccountRepository = AccountDefaultRepository()
+	) {
 		self.transactionRepository = transactionRepository
+		self.categoryRepository = categoryRepository
+		self.accountRepository = accountRepository
 	}
 
 	func presentAddTransaction() {
@@ -48,20 +56,32 @@ final class RecordsViewModel: ObservableObject {
 	func onLoad() async {
 		viewState = .loading
 
+		async let transactionsState = transactionRepository.getTransactions(request: .init(since: nil))
+		async let categoriesState = categoryRepository.getCategories(request: .init(type: nil, since: nil))
+		async let accountsState = accountRepository.getAccounts(request: .init(since: nil))
+
 		do {
-			let state = try await transactionRepository.getTransactions(request: .init(since: nil))
-			switch state {
-			case .loaded(let response):
-				entries = (response.data?.items ?? []).compactMap(Self.makeEntry)
-				availableCategoryNames = Set(entries.map(\.categoryName)).sorted()
-				availableAccountNames = Set(entries.map(\.accountName)).sorted()
-				rebuildSections()
-				viewState = .loaded
-			case .error:
+			let (transactionsResult, categoriesResult, accountsResult) = try await (transactionsState, categoriesState, accountsState)
+
+			guard
+				case .loaded(let transactionsResponse) = transactionsResult,
+				case .loaded(let categoriesResponse) = categoriesResult,
+				case .loaded(let accountsResponse) = accountsResult
+			else {
 				viewState = .error
-			default:
-				break
+				return
 			}
+
+			let resolver = CategoryAccountDisplayResolver(
+				categories: categoriesResponse.data?.items ?? [],
+				accounts: accountsResponse.data?.items ?? []
+			)
+
+			entries = (transactionsResponse.data?.items ?? []).compactMap { Self.makeEntry(from: $0, resolver: resolver) }
+			availableCategoryNames = Set(entries.map(\.categoryName)).sorted()
+			availableAccountNames = Set(entries.map(\.accountName)).sorted()
+			rebuildSections()
+			viewState = .loaded
 		} catch {
 			viewState = .error
 		}
@@ -106,11 +126,12 @@ final class RecordsViewModel: ObservableObject {
 		}
 	}
 
-	private static func makeEntry(from item: TransactionRecord.Response.TransactionItem) -> Entry? {
+	private static func makeEntry(
+		from item: TransactionRecord.Response.TransactionItem,
+		resolver: CategoryAccountDisplayResolver
+	) -> Entry? {
 		guard
 			let id = item.id,
-			let categoryId = item.categoryId,
-			let accountId = item.accountId,
 			let amountString = item.amount,
 			let amount = Double(amountString),
 			let type = item.type,
@@ -118,8 +139,8 @@ final class RecordsViewModel: ObservableObject {
 			let dayKey = dayKeyFormatter.date(from: transactionDateString)
 		else { return nil }
 
-		let category = RecordsCatalog.categories[categoryId] ?? RecordsCatalog.unknownCategory
-		let account = RecordsCatalog.accounts[accountId] ?? RecordsCatalog.unknownAccount
+		let category = resolver.category(for: item.categoryId)
+		let account = resolver.account(for: item.accountId)
 		let isCredit = type == .income
 		let signedAmount = isCredit ? amount : -amount
 		let timestamp = item.createdAt.flatMap(timestampFormatter.date(from:)) ?? dayKey

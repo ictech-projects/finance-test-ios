@@ -46,9 +46,9 @@ final class AddTransactionViewModel: ObservableObject {
 
 	init(
 		date: Date = Date(),
-		transactionRepository: some TransactionRepository = TransactionMockRepository(),
-		categoryRepository: some TransactionCategoryRepository = TransactionCategoryMockRepository(),
-		accountRepository: some AccountRepository = AccountMockRepository(),
+		transactionRepository: some TransactionRepository = TransactionDefaultRepository(),
+		categoryRepository: some TransactionCategoryRepository = TransactionCategoryDefaultRepository(),
+		accountRepository: some AccountRepository = AccountDefaultRepository(),
 		delegate: some AddTransactionDelegate
 	) {
 		self.date = date

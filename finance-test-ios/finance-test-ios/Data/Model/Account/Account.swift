@@ -61,8 +61,8 @@ extension Account.Response {
 }
 
 extension Account.Response.AccountItem {
-	/// Seeded from the same ids `RecordsCatalog` already uses, so Add Transaction's picker and
-	/// Records' display stay visually consistent while both are mock-backed.
+	/// Shared ids let Add Transaction's picker and Records' display stay visually consistent
+	/// while both are mock-backed.
 	static let mocks: [Account.Response.AccountItem] = [
 		Account.Response.AccountItem(
 			id: "01K3AC0000000000000000AC01", userId: "01K3US0000000000000000US01",
