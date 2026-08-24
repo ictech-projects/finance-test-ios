@@ -145,4 +145,14 @@ final class LoginViewModel: ObservableObject {
 		let pattern = #"^[^\s@]+@[^\s@]+\.[^\s@]+$"#
 		return email.range(of: pattern, options: .regularExpression) != nil
 	}
+
+	#if DEBUG
+	/// Long-pressing the logo on the Login screen calls this to autofill a known-good tester
+	/// account against wallet.birchlabs.tech - manual-QA convenience only, never compiled into
+	/// a Release build.
+	func fillTestCredentials() {
+		email = "profile.tester.1787546663@example.com"
+		password = "TestPass123!"
+	}
+	#endif
 }
