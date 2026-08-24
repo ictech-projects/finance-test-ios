@@ -28,6 +28,7 @@ struct ReportsHeader: View {
 					.font(.baseStyle(size: 20, weight: .medium))
 					.foregroundStyle(.reportsAccentText)
 			}
+			.buttonStyle(ReportsPressableButtonStyle())
 		}
 		.padding(.horizontal, 16)
 		.frame(height: 64)

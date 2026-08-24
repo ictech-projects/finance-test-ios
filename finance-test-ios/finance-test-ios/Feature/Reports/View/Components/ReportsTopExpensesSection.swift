@@ -17,6 +17,7 @@ struct ReportsTopExpensesSection: View {
 			VStack(spacing: 8) {
 				ForEach(expenses) { expense in
 					ReportsExpenseRow(expense: expense)
+						.transition(.opacity.combined(with: .scale(scale: 0.95)))
 				}
 			}
 		}

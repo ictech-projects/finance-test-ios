@@ -32,7 +32,7 @@ struct ReportsSpendingBreakdownCard: View {
 				}
 				.chartLegend(.hidden)
 				.frame(width: 192, height: 192)
-				.onAppear {
+				.task(id: categories.map(\.id)) {
 					displayedCategories = categories.map {
 						var zeroed = $0
 						zeroed.percent = 0
@@ -51,6 +51,8 @@ struct ReportsSpendingBreakdownCard: View {
 					Text(totalSpent.currencyWholeFormatted())
 						.font(.baseStyle(size: 22, weight: .medium))
 						.foregroundStyle(.addTransactionValueText)
+						.monospacedDigit()
+						.contentTransition(.numericText())
 				}
 			}
 			.frame(maxWidth: .infinity)

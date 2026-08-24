@@ -28,6 +28,8 @@ struct ReportsSummaryCard: View {
 				Text(value)
 					.font(.baseStyle(size: 24, weight: .medium))
 					.foregroundStyle(valueColor)
+					.monospacedDigit()
+					.contentTransition(.numericText())
 
 				if let trailingSystemImage {
 					Image(systemName: trailingSystemImage)

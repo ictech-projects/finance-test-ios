@@ -24,6 +24,7 @@ struct ReportsView: View {
 				})
 
 				content
+					.animation(.easeInOut(duration: 0.25), value: viewModel.viewState)
 			}
 			.background(Color.neutral20.ignoresSafeArea())
 			.navigationBarHidden(true)
@@ -42,15 +43,24 @@ struct ReportsView: View {
 		case .initial, .loading:
 			ProgressView()
 				.frame(maxWidth: .infinity, maxHeight: .infinity)
+				.transition(.opacity)
 		case .error:
-			ContentUnavailableView(
-				"Couldn't load reports",
-				systemImage: "exclamationmark.triangle",
-				description: Text("Please try again later.")
-			)
+			ContentUnavailableView {
+				Label("Couldn't load reports", systemImage: "exclamationmark.triangle")
+			} description: {
+				Text("Please try again later.")
+			} actions: {
+				PrimaryButton(size: .mediumIntrinsic, action: {
+					Task { await viewModel.onLoad() }
+				}) {
+					Text("Try Again")
+				}
+			}
 			.frame(maxWidth: .infinity, maxHeight: .infinity)
+			.transition(.opacity)
 		case .loaded:
 			loadedContent
+				.transition(.opacity)
 		}
 	}
 
@@ -101,6 +111,9 @@ struct ReportsView: View {
 			}
 			.padding(16)
 			.animation(.easeInOut(duration: 0.2), value: viewModel.referenceDate)
+		}
+		.refreshable {
+			await viewModel.onLoad()
 		}
 	}
 }

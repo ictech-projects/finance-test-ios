@@ -25,13 +25,15 @@ struct ReportsPeriodSelector: View {
 					Text(periodLabel)
 						.font(.baseStyle(size: 16, weight: .semibold))
 						.foregroundStyle(.addTransactionValueText)
+						.contentTransition(.opacity)
 
 					Text(periodSubtitle)
 						.font(.baseStyle(size: 11, weight: .medium))
 						.foregroundStyle(.recordsNeutralIconTint)
+						.contentTransition(.opacity)
 				}
 			}
-			.buttonStyle(.plain)
+			.buttonStyle(ReportsPressableButtonStyle())
 			.accessibilityElement(children: .combine)
 			.accessibilityHint("Opens a picker to jump to a different period.")
 
