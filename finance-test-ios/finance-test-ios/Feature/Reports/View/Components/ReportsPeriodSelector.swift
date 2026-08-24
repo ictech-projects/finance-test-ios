@@ -17,6 +17,7 @@ struct ReportsPeriodSelector: View {
 	var body: some View {
 		HStack {
 			chevronButton(systemName: "chevron.left", isEnabled: canGoToPreviousPeriod, action: onPreviousTapped)
+				.accessibilityIdentifier("reportsPreviousPeriodButton")
 
 			Spacer(minLength: 0)
 
@@ -36,10 +37,12 @@ struct ReportsPeriodSelector: View {
 			.buttonStyle(ReportsPressableButtonStyle())
 			.accessibilityElement(children: .combine)
 			.accessibilityHint("Opens a picker to jump to a different period.")
+			.accessibilityIdentifier("reportsPeriodLabelButton")
 
 			Spacer(minLength: 0)
 
 			chevronButton(systemName: "chevron.right", isEnabled: canGoToNextPeriod, action: onNextTapped)
+				.accessibilityIdentifier("reportsNextPeriodButton")
 		}
 	}
 

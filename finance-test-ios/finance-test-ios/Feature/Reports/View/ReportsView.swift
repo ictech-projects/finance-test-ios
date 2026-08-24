@@ -6,7 +6,14 @@
 import SwiftUI
 
 struct ReportsView: View {
+	/// Pushed from within this screen's own `NavigationStack` — mirrors `CategoryManagementView`'s
+	/// local `Route` pattern, since this app has no shared routing enum or `NavigationManager`.
+	private enum Route: Hashable {
+		case recordsFilteredByCategory(String)
+	}
+
 	@StateObject private var viewModel: ReportsViewModel
+	@State private var path = NavigationPath()
 
 	init() {
 		_viewModel = StateObject(wrappedValue: ReportsViewModel())
@@ -17,7 +24,7 @@ struct ReportsView: View {
 	}
 
 	var body: some View {
-		NavigationStack {
+		NavigationStack(path: $path) {
 			VStack(spacing: 0) {
 				ReportsHeader(onSettingsTapped: {
 					// TODO: Navigate to Settings once that screen exists.
@@ -28,6 +35,12 @@ struct ReportsView: View {
 			}
 			.background(Color.neutral20.ignoresSafeArea())
 			.navigationBarHidden(true)
+			.navigationDestination(for: Route.self) { route in
+				switch route {
+				case .recordsFilteredByCategory(let categoryName):
+					RecordsView(initialCategoryFilter: categoryName, isPushedDestination: true)
+				}
+			}
 		}
 		.task {
 			await viewModel.onLoad()
@@ -102,7 +115,10 @@ struct ReportsView: View {
 
 					ReportsSpendingBreakdownCard(
 						categories: viewModel.summary.categories,
-						totalSpent: viewModel.summary.totalSpent
+						totalSpent: viewModel.summary.totalSpent,
+						onCategoryTapped: { categoryName in
+							path.append(Route.recordsFilteredByCategory(categoryName))
+						}
 					)
 
 					ReportsTopExpensesSection(expenses: viewModel.summary.topExpenses)

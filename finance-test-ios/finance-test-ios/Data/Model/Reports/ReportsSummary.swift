@@ -8,7 +8,11 @@ import Foundation
 /// One category's contribution to a `ReportsSummary` (a pie-chart slice / legend row).
 /// `percentage` (0...100) is relative to the total of transactions sharing `type` — an expense
 /// category's percentage is relative to `totalExpense`, an income category's to `totalIncome`.
-struct ReportsCategoryBreakdown: Equatable, Hashable, Identifiable {
+///
+/// Named `Home` rather than `Reports` because the Reports tab has its own, differently-shaped
+/// `ReportsCategoryBreakdown` (`Feature/Reports/Model/ReportsCategoryBreakdown.swift`); this one
+/// is only consumed by `HomeViewModel` via `ReportsAggregator`.
+struct HomeCategoryBreakdown: Equatable, Hashable, Identifiable {
 	let categoryId: String
 	let categoryName: String
 	let icon: String?
@@ -26,8 +30,8 @@ struct ReportsSummary: Equatable, Hashable {
 	let totalIncome: Double
 	let totalExpense: Double
 	let netAmount: Double
-	let expenseBreakdown: [ReportsCategoryBreakdown]
-	let incomeBreakdown: [ReportsCategoryBreakdown]
+	let expenseBreakdown: [HomeCategoryBreakdown]
+	let incomeBreakdown: [HomeCategoryBreakdown]
 
 	static let empty = ReportsSummary(
 		totalIncome: 0, totalExpense: 0, netAmount: 0, expenseBreakdown: [], incomeBreakdown: []

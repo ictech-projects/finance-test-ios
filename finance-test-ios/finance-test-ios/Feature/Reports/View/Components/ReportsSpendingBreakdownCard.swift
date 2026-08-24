@@ -9,6 +9,7 @@ import Charts
 struct ReportsSpendingBreakdownCard: View {
 	let categories: [ReportsCategoryBreakdown]
 	let totalSpent: Double
+	let onCategoryTapped: (String) -> Void
 
 	@State private var displayedCategories: [ReportsCategoryBreakdown] = []
 
@@ -59,15 +60,19 @@ struct ReportsSpendingBreakdownCard: View {
 
 			LazyVGrid(columns: legendColumns, spacing: 8) {
 				ForEach(categories) { category in
-					HStack(spacing: 8) {
-						Circle()
-							.fill(category.color)
-							.frame(width: 12, height: 12)
+					Button(action: { onCategoryTapped(category.name) }) {
+						HStack(spacing: 8) {
+							Circle()
+								.fill(category.color)
+								.frame(width: 12, height: 12)
 
-						Text(category.name)
-							.font(.baseStyle(size: 11, weight: .medium))
-							.foregroundStyle(.addTransactionValueText)
+							Text(category.name)
+								.font(.baseStyle(size: 11, weight: .medium))
+								.foregroundStyle(.addTransactionValueText)
+						}
 					}
+					.buttonStyle(ReportsPressableButtonStyle())
+					.accessibilityIdentifier("reportsCategoryLegendButton")
 				}
 			}
 		}
@@ -85,7 +90,9 @@ struct ReportsSpendingBreakdownCard: View {
 }
 
 #Preview {
-	ReportsSpendingBreakdownCard(categories: ReportsPeriodSummary.monthlyMocks.last!.categories, totalSpent: 3_240)
-		.padding()
-		.background(Color.neutral20)
+	ReportsSpendingBreakdownCard(
+		categories: ReportsPeriodSummary.monthlyMocks.last!.categories, totalSpent: 3_240, onCategoryTapped: { _ in }
+	)
+	.padding()
+	.background(Color.neutral20)
 }

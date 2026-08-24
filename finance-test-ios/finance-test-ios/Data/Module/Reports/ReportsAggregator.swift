@@ -55,7 +55,7 @@ enum ReportsAggregator {
 		type: TransactionType,
 		total: Double,
 		categoriesById: [String: TransactionCategory.Response.CategoryItem]
-	) -> [ReportsCategoryBreakdown] {
+	) -> [HomeCategoryBreakdown] {
 		let grouped = Dictionary(grouping: items, by: \.categoryId)
 
 		return grouped.map { categoryId, items in
@@ -63,7 +63,7 @@ enum ReportsAggregator {
 			let category = categoriesById[categoryId]
 			let percentage = total == 0 ? 0 : (categoryTotal / total * 100).rounded(toPlaces: 1)
 
-			return ReportsCategoryBreakdown(
+			return HomeCategoryBreakdown(
 				categoryId: categoryId,
 				categoryName: category?.name ?? uncategorizedName,
 				icon: category?.icon,
