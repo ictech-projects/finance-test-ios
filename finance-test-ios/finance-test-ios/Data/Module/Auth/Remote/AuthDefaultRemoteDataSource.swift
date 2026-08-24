@@ -3,6 +3,7 @@
 //  finance-test-ios
 //
 
+import Foundation
 import Moya
 
 struct AuthDefaultRemoteDataSource: AuthRemoteDataSource {
@@ -57,6 +58,33 @@ struct AuthDefaultRemoteDataSource: AuthRemoteDataSource {
 	func getProfile() async throws -> GeneralResponse<Auth.Response.Profile> {
 		try await provider.request(
 			.getProfile,
+			model: GeneralResponse<Auth.Response.Profile>.self
+		)
+	}
+
+	func updateProfile(
+		request: Auth.Request.UpdateProfile
+	) async throws -> GeneralResponse<Auth.Response.Profile> {
+		try await provider.request(
+			.updateProfile(request),
+			model: GeneralResponse<Auth.Response.Profile>.self
+		)
+	}
+
+	func uploadAvatar(
+		imageData: Data,
+		fileName: String,
+		mimeType: String
+	) async throws -> GeneralResponse<Auth.Response.Profile> {
+		try await provider.request(
+			.uploadAvatar(imageData: imageData, fileName: fileName, mimeType: mimeType),
+			model: GeneralResponse<Auth.Response.Profile>.self
+		)
+	}
+
+	func deleteAvatar() async throws -> GeneralResponse<Auth.Response.Profile> {
+		try await provider.request(
+			.deleteAvatar,
 			model: GeneralResponse<Auth.Response.Profile>.self
 		)
 	}

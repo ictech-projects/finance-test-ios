@@ -3,6 +3,7 @@
 //  finance-test-iosTests
 //
 
+import Foundation
 @testable import finance_test_ios
 
 final class AuthMockRemoteDataSource: AuthRemoteDataSource {
@@ -14,6 +15,9 @@ final class AuthMockRemoteDataSource: AuthRemoteDataSource {
 		case logout
 		case logoutAll
 		case getProfile
+		case updateProfile(Auth.Request.UpdateProfile)
+		case uploadAvatar(imageData: Data, fileName: String, mimeType: String)
+		case deleteAvatar
 	}
 
 	private(set) var invocations: [Invocation] = []
@@ -24,6 +28,9 @@ final class AuthMockRemoteDataSource: AuthRemoteDataSource {
 	private let logoutResult: Result<GeneralResponse<EmptyData>, Error>
 	private let logoutAllResult: Result<GeneralResponse<EmptyData>, Error>
 	private let getProfileResult: Result<GeneralResponse<Auth.Response.Profile>, Error>
+	private let updateProfileResult: Result<GeneralResponse<Auth.Response.Profile>, Error>
+	private let uploadAvatarResult: Result<GeneralResponse<Auth.Response.Profile>, Error>
+	private let deleteAvatarResult: Result<GeneralResponse<Auth.Response.Profile>, Error>
 
 	init(
 		registerResult: Result<GeneralResponse<Auth.Response.Session>, Error> = .success(anySessionSuccessResponse()),
@@ -31,7 +38,10 @@ final class AuthMockRemoteDataSource: AuthRemoteDataSource {
 		refreshResult: Result<GeneralResponse<Auth.Response.Session>, Error> = .success(anySessionSuccessResponse()),
 		logoutResult: Result<GeneralResponse<EmptyData>, Error> = .success(anyEmptySuccessResponse()),
 		logoutAllResult: Result<GeneralResponse<EmptyData>, Error> = .success(anyEmptySuccessResponse()),
-		getProfileResult: Result<GeneralResponse<Auth.Response.Profile>, Error> = .success(anyProfileSuccessResponse())
+		getProfileResult: Result<GeneralResponse<Auth.Response.Profile>, Error> = .success(anyProfileSuccessResponse()),
+		updateProfileResult: Result<GeneralResponse<Auth.Response.Profile>, Error> = .success(anyProfileSuccessResponse()),
+		uploadAvatarResult: Result<GeneralResponse<Auth.Response.Profile>, Error> = .success(anyProfileSuccessResponse()),
+		deleteAvatarResult: Result<GeneralResponse<Auth.Response.Profile>, Error> = .success(anyProfileSuccessResponse())
 	) {
 		self.registerResult = registerResult
 		self.loginResult = loginResult
@@ -39,6 +49,9 @@ final class AuthMockRemoteDataSource: AuthRemoteDataSource {
 		self.logoutResult = logoutResult
 		self.logoutAllResult = logoutAllResult
 		self.getProfileResult = getProfileResult
+		self.updateProfileResult = updateProfileResult
+		self.uploadAvatarResult = uploadAvatarResult
+		self.deleteAvatarResult = deleteAvatarResult
 	}
 
 	func register(
@@ -75,6 +88,27 @@ final class AuthMockRemoteDataSource: AuthRemoteDataSource {
 	func getProfile() async throws -> GeneralResponse<Auth.Response.Profile> {
 		invocations.append(.getProfile)
 		return try getProfileResult.get()
+	}
+
+	func updateProfile(
+		request: Auth.Request.UpdateProfile
+	) async throws -> GeneralResponse<Auth.Response.Profile> {
+		invocations.append(.updateProfile(request))
+		return try updateProfileResult.get()
+	}
+
+	func uploadAvatar(
+		imageData: Data,
+		fileName: String,
+		mimeType: String
+	) async throws -> GeneralResponse<Auth.Response.Profile> {
+		invocations.append(.uploadAvatar(imageData: imageData, fileName: fileName, mimeType: mimeType))
+		return try uploadAvatarResult.get()
+	}
+
+	func deleteAvatar() async throws -> GeneralResponse<Auth.Response.Profile> {
+		invocations.append(.deleteAvatar)
+		return try deleteAvatarResult.get()
 	}
 }
 

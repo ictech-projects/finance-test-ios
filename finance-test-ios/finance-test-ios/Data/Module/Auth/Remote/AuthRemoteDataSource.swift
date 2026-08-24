@@ -23,4 +23,16 @@ protocol AuthRemoteDataSource {
 	func logoutAll() async throws -> GeneralResponse<EmptyData>
 
 	func getProfile() async throws -> GeneralResponse<Auth.Response.Profile>
+
+	func updateProfile(
+		request: Auth.Request.UpdateProfile
+	) async throws -> GeneralResponse<Auth.Response.Profile>
+
+	func uploadAvatar(
+		imageData: Data,
+		fileName: String,
+		mimeType: String
+	) async throws -> GeneralResponse<Auth.Response.Profile>
+
+	func deleteAvatar() async throws -> GeneralResponse<Auth.Response.Profile>
 }

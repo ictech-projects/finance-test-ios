@@ -3,6 +3,8 @@
 //  finance-test-ios
 //
 
+import Foundation
+
 protocol AuthRepository {
 	func register(
 		request: Auth.Request.Register
@@ -21,4 +23,16 @@ protocol AuthRepository {
 	func logoutAll() async throws -> RequestState<GeneralResponse<EmptyData>>
 
 	func getProfile() async throws -> RequestState<GeneralResponse<Auth.Response.Profile>>
+
+	func updateProfile(
+		request: Auth.Request.UpdateProfile
+	) async throws -> RequestState<GeneralResponse<Auth.Response.Profile>>
+
+	func uploadAvatar(
+		imageData: Data,
+		fileName: String,
+		mimeType: String
+	) async throws -> RequestState<GeneralResponse<Auth.Response.Profile>>
+
+	func deleteAvatar() async throws -> RequestState<GeneralResponse<Auth.Response.Profile>>
 }
