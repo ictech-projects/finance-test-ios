@@ -37,11 +37,7 @@ extension AuthTargetType: BaseTargetType, AccessTokenAuthorizable {
 				"Accept": "application/json",
 				"Content-Type": "application/json"
 			]
-		case .logout, .logoutAll, .getProfile, .deleteAvatar:
-			[
-				"Accept": "application/json"
-			]
-		case .uploadAvatar:
+		case .logout, .logoutAll, .getProfile, .uploadAvatar, .deleteAvatar:
 			[
 				"Accept": "application/json"
 			]

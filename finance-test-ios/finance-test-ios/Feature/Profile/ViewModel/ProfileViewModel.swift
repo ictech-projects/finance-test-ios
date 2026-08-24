@@ -46,7 +46,7 @@ final class ProfileViewModel: ObservableObject {
 
 		do {
 			let state = try await authRepository.updateProfile(request: Auth.Request.UpdateProfile(name: trimmedName))
-			apply(state)
+			apply(state, syncName: true)
 		} catch {
 			handleError(error)
 		}
@@ -57,7 +57,7 @@ final class ProfileViewModel: ObservableObject {
 
 		do {
 			let state = try await authRepository.uploadAvatar(imageData: imageData, fileName: fileName, mimeType: mimeType)
-			apply(state)
+			apply(state, syncName: false)
 		} catch {
 			handleError(error)
 		}
@@ -68,17 +68,28 @@ final class ProfileViewModel: ObservableObject {
 
 		do {
 			let state = try await authRepository.deleteAvatar()
-			apply(state)
+			apply(state, syncName: false)
 		} catch {
 			handleError(error)
 		}
 	}
 
-	private func apply(_ state: RequestState<GeneralResponse<Auth.Response.Profile>>) {
+	/// `syncName` is false for avatar operations so a successful upload/removal never clobbers
+	/// a name edit the user has typed but not yet saved.
+	private func apply(_ state: RequestState<GeneralResponse<Auth.Response.Profile>>, syncName: Bool) {
 		switch state {
 		case .loaded(let response):
-			if let updatedUser = response.data?.user {
-				user = updatedUser
+			guard let updatedUser = response.data?.user else {
+				handleError(ErrorResponse(
+					success: false,
+					statusCode: -1,
+					message: String(localized: "Something went wrong. Please try again."),
+					errors: nil
+				))
+				return
+			}
+			user = updatedUser
+			if syncName {
 				name = updatedUser.name
 			}
 			viewState = .idle

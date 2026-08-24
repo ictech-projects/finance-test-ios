@@ -89,6 +89,7 @@ struct MoreView: View {
 					name: viewModel.profile?.name ?? "",
 					email: viewModel.profile?.email ?? "",
 					onEditProfileTapped: {
+						guard viewModel.profile != nil else { return }
 						withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
 							isProfilePresented = true
 						}

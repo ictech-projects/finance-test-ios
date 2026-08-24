@@ -17,13 +17,16 @@ struct ProfileAvatarView: View {
 	@State private var isActionSheetPresented = false
 	@State private var isPhotosPickerPresented = false
 	@State private var photoPickerItem: PhotosPickerItem?
+	@State private var isPicking = false
+
+	private var isBusy: Bool { isUploading || isPicking }
 
 	var body: some View {
 		ZStack(alignment: .bottomTrailing) {
 			avatarImage
 			editButton
 		}
-		.animation(.spring(response: 0.3, dampingFraction: 0.7), value: isUploading)
+		.animation(.spring(response: 0.3, dampingFraction: 0.7), value: isBusy)
 		.confirmationDialog(Text("Change Photo"), isPresented: $isActionSheetPresented, titleVisibility: .visible) {
 			Button("Choose Photo") { isPhotosPickerPresented = true }
 			if hasAvatar {
@@ -33,6 +36,10 @@ struct ProfileAvatarView: View {
 		.photosPicker(isPresented: $isPhotosPickerPresented, selection: $photoPickerItem, matching: .images)
 		.onChange(of: photoPickerItem) { _, newItem in
 			guard let newItem else { return }
+			// Disabling the edit button on `isUploading` alone leaves it tappable during the
+			// load/resize work below, so a second pick before this one finishes could race two
+			// concurrent uploads - `isPicking` covers that window too.
+			isPicking = true
 			Task {
 				if
 					let data = try? await newItem.loadTransferable(type: Data.self),
@@ -41,6 +48,7 @@ struct ProfileAvatarView: View {
 					onImagePicked(uploadData)
 				}
 				photoPickerItem = nil
+				isPicking = false
 			}
 		}
 	}
@@ -68,7 +76,7 @@ struct ProfileAvatarView: View {
 			.overlay(Circle().stroke(Color.white, lineWidth: 4))
 			.shadow(color: .black.opacity(0.12), radius: 8, y: 4)
 
-			if isUploading {
+			if isBusy {
 				Circle()
 					.fill(Color.black.opacity(0.35))
 					.frame(width: 112, height: 112)
@@ -97,7 +105,7 @@ struct ProfileAvatarView: View {
 				)
 				.overlay(Circle().stroke(Color.white, lineWidth: 2))
 		}
-		.disabled(isUploading)
+		.disabled(isBusy)
 		.accessibilityLabel("Edit photo")
 	}
 

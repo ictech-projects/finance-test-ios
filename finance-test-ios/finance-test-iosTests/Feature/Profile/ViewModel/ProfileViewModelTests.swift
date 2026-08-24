@@ -74,6 +74,24 @@ final class ProfileViewModelTests: MemoryLeakTrackingSuite {
 		#expect(sut.isErrorPresented == true)
 	}
 
+	@Test
+	func saveName_whenResponseDataIsNil_setsErrorAndLeavesUserUnchanged() async {
+		let originalUser = anyUser(name: "Jane Doe")
+		let emptyResponse = GeneralResponse<Auth.Response.Profile>(
+			success: true, statusCode: 200, message: "Profile updated.", data: nil
+		)
+		let repository = AuthMockRepository(updateProfileResult: .loaded(emptyResponse))
+		let sut = makeSUT(user: originalUser, authRepository: repository)
+		sut.name = "Jane Smith"
+
+		await sut.saveName()
+
+		#expect(sut.errorMessage == "Something went wrong. Please try again.")
+		#expect(sut.isErrorPresented == true)
+		#expect(sut.user == originalUser)
+		#expect(sut.viewState == .idle)
+	}
+
 	// MARK: - uploadAvatar
 
 	@Test
@@ -90,6 +108,19 @@ final class ProfileViewModelTests: MemoryLeakTrackingSuite {
 		])
 		#expect(sut.user == updatedUser)
 		#expect(sut.viewState == .idle)
+	}
+
+	@Test
+	func uploadAvatar_success_doesNotOverwriteUnsavedNameEdit() async {
+		let updatedUser = anyUser(name: "Jane Doe")
+		let repository = AuthMockRepository(uploadAvatarResult: .loaded(anyProfileSuccessResponse(user: updatedUser)))
+		let sut = makeSUT(user: anyUser(name: "Jane Doe"), authRepository: repository)
+		sut.name = "Unsaved Edit"
+
+		await sut.uploadAvatar(imageData: Data([0x01]), fileName: "avatar.jpg", mimeType: "image/jpeg")
+
+		#expect(sut.user == updatedUser)
+		#expect(sut.name == "Unsaved Edit")
 	}
 
 	@Test
@@ -118,6 +149,19 @@ final class ProfileViewModelTests: MemoryLeakTrackingSuite {
 		#expect(repository.invocations == [.deleteAvatar])
 		#expect(sut.user == updatedUser)
 		#expect(sut.viewState == .idle)
+	}
+
+	@Test
+	func removeAvatar_success_doesNotOverwriteUnsavedNameEdit() async {
+		let updatedUser = anyUser(name: "Jane Doe")
+		let repository = AuthMockRepository(deleteAvatarResult: .loaded(anyProfileSuccessResponse(user: updatedUser)))
+		let sut = makeSUT(user: anyUser(name: "Jane Doe"), authRepository: repository)
+		sut.name = "Unsaved Edit"
+
+		await sut.removeAvatar()
+
+		#expect(sut.user == updatedUser)
+		#expect(sut.name == "Unsaved Edit")
 	}
 
 	@Test
