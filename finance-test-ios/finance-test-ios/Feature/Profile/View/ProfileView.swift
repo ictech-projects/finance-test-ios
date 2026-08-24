@@ -53,7 +53,7 @@ struct ProfileView: View {
 				onRemoveTapped: { Task { await viewModel.removeAvatar() } }
 			)
 
-			VStack(spacing: 2) {
+			VStack(spacing: 8) {
 				Text(viewModel.user.name)
 					.font(.baseStyle(size: 20, weight: .bold))
 					.foregroundStyle(.neutral100)
@@ -61,9 +61,30 @@ struct ProfileView: View {
 				Text(viewModel.user.email)
 					.font(.baseStyle(size: 14, weight: .regular))
 					.foregroundStyle(.moreProfileEmailText)
+
+				premiumPlanBadge
 			}
 		}
 		.padding(.top, 8)
+	}
+
+	/// Static per the Figma design - the wallet API has no plan/subscription concept (only a
+	/// generic `role`), so this badge isn't backed by any real data.
+	private var premiumPlanBadge: some View {
+		HStack(spacing: 6) {
+			Image(.verifiedBadgeIcon)
+				.renderingMode(.template)
+				.resizable()
+				.frame(width: 15, height: 14)
+
+			Text("PREMIUM PLAN")
+				.font(.baseStyle(size: 12, weight: .bold))
+				.tracking(0.2)
+		}
+		.foregroundStyle(.moreEditProfileText)
+		.padding(.horizontal, 14)
+		.padding(.vertical, 6)
+		.background(Capsule().fill(.moreEditProfileBackground))
 	}
 
 	private var profileInformationCard: some View {
@@ -94,8 +115,15 @@ struct ProfileView: View {
 						.tint(.white)
 						.transition(.scale.combined(with: .opacity))
 				} else {
-					Label("Save Changes", systemImage: "square.and.arrow.down")
-						.transition(.scale.combined(with: .opacity))
+					Label {
+						Text("Save Changes")
+					} icon: {
+						Image(.saveIcon)
+							.renderingMode(.template)
+							.resizable()
+							.frame(width: 18, height: 18)
+					}
+					.transition(.scale.combined(with: .opacity))
 				}
 			}
 		}
