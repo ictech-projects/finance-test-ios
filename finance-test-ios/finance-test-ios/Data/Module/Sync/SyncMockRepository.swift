@@ -37,4 +37,28 @@ struct SyncMockRepository: SyncRepository {
 			)
 		)
 	}
+
+	func pull(
+		request: Sync.Request.Pull
+	) async -> RequestState<GeneralResponse<Sync.Response.Pull>> {
+		try? await Task.sleep(nanoseconds: 400_000_000)
+
+		return .loaded(
+			GeneralResponse(
+				success: true,
+				statusCode: 200,
+				message: "Sync data fetched.",
+				data: Sync.Response.Pull(
+					userCategories: [
+						Sync.Response.UserCategoryItem(
+							id: "01K3UT0000000000000000UT01", userId: "01K3US0000000000000000US01",
+							name: "Side Hustle", type: .income, icon: "briefcase", color: "#24389C",
+							createdAt: nil, updatedAt: nil, deletedAt: nil
+						)
+					],
+					serverTime: nil
+				)
+			)
+		)
+	}
 }

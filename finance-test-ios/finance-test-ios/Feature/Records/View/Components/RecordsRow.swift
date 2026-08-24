@@ -10,12 +10,9 @@ struct RecordsRow: View {
 
 	var body: some View {
 		HStack(alignment: .top, spacing: 16) {
-			Image(item.categoryIcon)
-				.renderingMode(.template)
-				.resizable()
-				.scaledToFit()
+			Image(systemName: item.categoryIcon)
+				.font(.system(size: 20, weight: .medium))
 				.foregroundStyle(item.categoryIconTint)
-				.frame(width: 22, height: 22)
 				.frame(width: 48, height: 48)
 				.background(Circle().fill(item.categoryIconBackground))
 
@@ -29,11 +26,8 @@ struct RecordsRow: View {
 					.foregroundStyle(.neutral90)
 
 				HStack(spacing: 4) {
-					Image(item.accountIcon)
-						.renderingMode(.template)
-						.resizable()
-						.scaledToFit()
-						.frame(width: 12, height: 10)
+					Image(systemName: item.accountIcon)
+						.font(.system(size: 11, weight: .medium))
 					Text(item.accountName)
 						.font(.baseStyle(size: 11, weight: .medium))
 				}

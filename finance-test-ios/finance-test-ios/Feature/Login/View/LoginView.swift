@@ -8,6 +8,10 @@ import SwiftUI
 struct LoginView: View {
 	@StateObject private var viewModel = LoginViewModel()
 	@FocusState private var focusedField: Field?
+	var successMessage: String? = nil
+	var onDismissSuccessMessage: () -> Void = {}
+	var onSignUpTapped: () -> Void = {}
+	var onLoginSuccess: () -> Void = {}
 
 	private enum Field {
 		case email
@@ -62,17 +66,16 @@ struct LoginView: View {
 			}
 			.staggeredAppear(index: 1)
 
-			LoginSignUpFooter(onSignUpTapped: {
-				// TODO: Navigate to Sign Up once that screen exists.
-			})
-			.disabled(viewModel.isSubmitting)
-			.staggeredAppear(index: 2)
+			LoginSignUpFooter(onSignUpTapped: onSignUpTapped)
+				.disabled(viewModel.isSubmitting)
+				.staggeredAppear(index: 2)
 
 			Spacer()
 		}
 		.padding(.horizontal, 32)
 		.frame(maxWidth: .infinity, maxHeight: .infinity)
 		.background(Color.neutral10.ignoresSafeArea())
+		.toolbar(.hidden, for: .navigationBar)
 		.sensoryFeedback(.error, trigger: viewModel.viewState) { _, new in
 			new == .error
 		}
@@ -84,6 +87,10 @@ struct LoginView: View {
 				focusedField = nil
 				Task { await viewModel.login() }
 			}
+		}
+		.onChange(of: viewModel.isLoggedIn) { _, isLoggedIn in
+			guard isLoggedIn else { return }
+			onLoginSuccess()
 		}
 		.baseAlert(
 			isPresented: Binding(
@@ -99,6 +106,21 @@ struct LoginView: View {
 			message: viewModel.generalErrorMessage ?? "",
 			confirmLabel: Text("OK"),
 			confirmAction: { viewModel.dismissGeneralError() }
+		)
+		.baseAlert(
+			isPresented: Binding(
+				get: { successMessage != nil },
+				set: { isPresented in
+					if !isPresented {
+						onDismissSuccessMessage()
+					}
+				}
+			),
+			type: .success,
+			title: String(localized: "Account Created"),
+			message: successMessage ?? "",
+			confirmLabel: Text("Log In"),
+			confirmAction: { onDismissSuccessMessage() }
 		)
 	}
 }

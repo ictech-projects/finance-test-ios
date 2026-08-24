@@ -53,8 +53,8 @@ extension TransactionCategory.Response {
 }
 
 extension TransactionCategory.Response.CategoryItem {
-	/// Seeded from the same ids `RecordsCatalog` already uses, so Add Transaction's picker and
-	/// Records' display stay visually consistent while both are mock-backed.
+	/// Shared ids let Add Transaction's picker and Records' display stay visually consistent
+	/// while both are mock-backed.
 	static let mocks: [TransactionCategory.Response.CategoryItem] = [
 		TransactionCategory.Response.CategoryItem(
 			id: "01K3CT0000000000000000CT01", name: "Dining & Drinks", type: .expense,

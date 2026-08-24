@@ -15,6 +15,44 @@ extension Account.Request {
 	struct GetAccounts: Codable, Equatable {
 		let since: String?
 	}
+
+	struct CreateAccount: Codable, Equatable {
+		let userCurrencyId: String
+		let name: String
+		let type: String
+		let notes: String?
+		let color: String?
+		let initialBalance: String?
+		let isDefault: Bool?
+
+		enum CodingKeys: String, CodingKey {
+			case userCurrencyId = "user_currency_id"
+			case name, type, notes, color
+			case initialBalance = "initial_balance"
+			case isDefault = "is_default"
+		}
+	}
+
+	/// Same wire shape as `CreateAccount` — there's no `PATCH /accounts/{id}`, so an update is
+	/// submitted as an `account`/`update` change via `/sync/push` instead (see
+	/// `AccountDefaultRepository.updateAccount`). Kept as its own type so call sites read as
+	/// "update", matching this codebase's request-naming convention.
+	struct UpdateAccount: Codable, Equatable {
+		let userCurrencyId: String
+		let name: String
+		let type: String
+		let notes: String?
+		let color: String?
+		let initialBalance: String?
+		let isDefault: Bool?
+
+		enum CodingKeys: String, CodingKey {
+			case userCurrencyId = "user_currency_id"
+			case name, type, notes, color
+			case initialBalance = "initial_balance"
+			case isDefault = "is_default"
+		}
+	}
 }
 
 extension Account.Response {
@@ -61,8 +99,8 @@ extension Account.Response {
 }
 
 extension Account.Response.AccountItem {
-	/// Seeded from the same ids `RecordsCatalog` already uses, so Add Transaction's picker and
-	/// Records' display stay visually consistent while both are mock-backed.
+	/// Shared ids let Add Transaction's picker and Records' display stay visually consistent
+	/// while both are mock-backed.
 	static let mocks: [Account.Response.AccountItem] = [
 		Account.Response.AccountItem(
 			id: "01K3AC0000000000000000AC01", userId: "01K3US0000000000000000US01",

@@ -10,14 +10,18 @@ import IQKeyboardManagerSwift
 
 @main
 struct IosBaseProjectApp: App {
-	
+
+	@StateObject private var appearanceManager = AppearanceManager()
+
 	init() {
 		tabBarAdjustment()
 	}
-	
+
 	var body: some Scene {
 		WindowGroup {
-			RootTabView()
+			LaunchScreenView()
+				.environmentObject(appearanceManager)
+				.preferredColorScheme(appearanceManager.mode.colorScheme)
 		}
 	}
 }

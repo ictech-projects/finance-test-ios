@@ -55,7 +55,14 @@ extension AuthTargetType: BaseTargetType, AccessTokenAuthorizable {
 	}
 
 	var task: Task {
-		.requestParameters(parameters: parameters, encoding: parameterEncoding)
+		switch self {
+		case .register, .login, .refresh, .logout, .logoutAll:
+			.requestParameters(parameters: parameters, encoding: parameterEncoding)
+		case .getProfile:
+			// GET requests can't carry body data — JSONEncoding would otherwise attach an
+			// empty `{}` body, which Alamofire's URLRequest validation rejects outright.
+			.requestPlain
+		}
 	}
 
 	var parameters: [String: Any] {

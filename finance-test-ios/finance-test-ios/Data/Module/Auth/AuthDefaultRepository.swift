@@ -9,13 +9,16 @@ struct AuthDefaultRepository: AuthRepository {
 
 	private let remote: any AuthRemoteDataSource
 	private let local: any AuthLocalDataSource
+	private let sessionStore: any AuthSessionStore
 
 	init(
 		remoteDataSource: some AuthRemoteDataSource = AuthDefaultRemoteDataSource(),
-		localDataSource: some AuthLocalDataSource = AuthDefaultLocalDataSource()
+		localDataSource: some AuthLocalDataSource = AuthDefaultLocalDataSource(),
+		sessionStore: any AuthSessionStore = AuthDefaultSessionStore.shared
 	) {
 		self.remote = remoteDataSource
 		self.local = localDataSource
+		self.sessionStore = sessionStore
 	}
 
 	func register(
@@ -25,6 +28,7 @@ struct AuthDefaultRepository: AuthRepository {
 			let result = try await remote.register(request: request)
 			if let session = result.data {
 				local.saveSession(accessToken: session.token, refreshToken: session.refreshToken)
+				await sessionStore.markLoggedIn()
 			}
 			return .loaded(result)
 		} catch let error as ErrorResponse {
@@ -41,6 +45,7 @@ struct AuthDefaultRepository: AuthRepository {
 			let result = try await remote.login(request: request)
 			if let session = result.data {
 				local.saveSession(accessToken: session.token, refreshToken: session.refreshToken)
+				await sessionStore.markLoggedIn()
 			}
 			return .loaded(result)
 		} catch let error as ErrorResponse {
@@ -67,25 +72,31 @@ struct AuthDefaultRepository: AuthRepository {
 	}
 
 	func logout() async throws -> RequestState<GeneralResponse<EmptyData>> {
+		defer { local.clearSession() }
 		do {
 			let result = try await remote.logout()
-			local.clearSession()
+			await sessionStore.forceLogout()
 			return .loaded(result)
 		} catch let error as ErrorResponse {
+			await sessionStore.forceLogout()
 			return .error(error)
 		} catch {
+			await sessionStore.forceLogout()
 			return .error(error)
 		}
 	}
 
 	func logoutAll() async throws -> RequestState<GeneralResponse<EmptyData>> {
+		defer { local.clearSession() }
 		do {
 			let result = try await remote.logoutAll()
-			local.clearSession()
+			await sessionStore.forceLogout()
 			return .loaded(result)
 		} catch let error as ErrorResponse {
+			await sessionStore.forceLogout()
 			return .error(error)
 		} catch {
+			await sessionStore.forceLogout()
 			return .error(error)
 		}
 	}
