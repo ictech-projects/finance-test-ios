@@ -93,6 +93,40 @@ final class HomeViewModelTests: MemoryLeakTrackingSuite {
 		#expect(sut.viewState == .error)
 	}
 
+	// MARK: - Profile
+
+	@Test
+	func onLoad_success_setsProfileFromAuthRepository() async {
+		let user = anyUser(name: "Jane Doe")
+		let authRepository = AuthMockRepository(getProfileResult: .loaded(anyProfileSuccessResponse(user: user)))
+		let sut = makeSUT(authRepository: authRepository)
+
+		await sut.onLoad()
+
+		#expect(sut.profile == user)
+	}
+
+	@Test
+	func onLoad_whenProfileFetchFails_stillLoadsDashboardWithNilProfile() async {
+		let authRepository = AuthMockRepository(getProfileResult: .error(NSError(domain: "", code: -1)))
+		let sut = makeSUT(authRepository: authRepository)
+
+		await sut.onLoad()
+
+		#expect(sut.viewState == .loaded)
+		#expect(sut.profile == nil)
+	}
+
+	@Test
+	func profileDidUpdate_setsProfileToGivenUser() {
+		let sut = makeSUT()
+		let updatedUser = anyUser(name: "Jane Smith")
+
+		sut.profileDidUpdate(updatedUser)
+
+		#expect(sut.profile == updatedUser)
+	}
+
 	// MARK: - Helpers
 
 	/// Always resolves to a date in the current calendar month, regardless of when the suite runs.
@@ -114,13 +148,15 @@ final class HomeViewModelTests: MemoryLeakTrackingSuite {
 		accountRepository: AccountMockRepository = AccountMockRepository(
 			result: .loaded(anyAccountListSuccessResponse(items: []))
 		),
+		authRepository: AuthMockRepository = AuthMockRepository(),
 		file: StaticString = #filePath,
 		line: UInt = #line
 	) -> HomeViewModel {
 		let sut = HomeViewModel(
 			transactionRepository: transactionRepository,
 			categoryRepository: categoryRepository,
-			accountRepository: accountRepository
+			accountRepository: accountRepository,
+			authRepository: authRepository
 		)
 		trackForMemoryLeak(sut, file: file, line: line)
 		return sut

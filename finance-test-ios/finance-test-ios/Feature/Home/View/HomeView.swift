@@ -7,6 +7,7 @@ import SwiftUI
 
 struct HomeView: View {
 	@StateObject private var viewModel = HomeViewModel()
+	@State private var isProfilePresented = false
 
 	var body: some View {
 		NavigationStack {
@@ -16,6 +17,11 @@ struct HomeView: View {
 			}
 			.background(Color.brandTertiary.ignoresSafeArea())
 			.navigationBarHidden(true)
+			.navigationDestination(isPresented: $isProfilePresented) {
+				if let profile = viewModel.profile {
+					ProfileView(user: profile, onProfileUpdated: { viewModel.profileDidUpdate($0) })
+				}
+			}
 		}
 		.task {
 			await viewModel.onLoad()
@@ -66,16 +72,17 @@ struct HomeView: View {
 
 	private var header: some View {
 		HStack(spacing: 12) {
-			Image(systemName: "person.crop.circle.fill")
-				.resizable()
-				.scaledToFit()
-				.frame(width: 36, height: 36)
-				.foregroundStyle(.neutral40)
-				.clipShape(Circle())
+			Button(action: { isProfilePresented = true }) {
+				HStack(spacing: 12) {
+					UserAvatarView(avatarUrl: viewModel.profile?.avatarUrl, size: 36)
 
-			Text("Financial Architect")
-				.font(.baseStyle(size: 18, weight: .bold))
-				.foregroundStyle(.brandPrimary)
+					Text(viewModel.profile?.name ?? "Financial Architect")
+						.font(.baseStyle(size: 18, weight: .bold))
+						.foregroundStyle(.brandPrimary)
+				}
+			}
+			.buttonStyle(.plain)
+			.disabled(viewModel.profile == nil)
 
 			Spacer()
 

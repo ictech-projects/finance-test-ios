@@ -20,12 +20,14 @@ final class HomeViewModel: ObservableObject {
 	@Published private(set) var summary = HomeSummary.empty
 	@Published private(set) var transactions: [TransactionItem] = []
 	@Published private(set) var categories: [SpendingCategory] = []
+	@Published private(set) var profile: Auth.Response.User?
 	@Published var selectedCurrency: Currency.Response.CurrencyItem
 	@Published var isCurrencyDialogPresented = false
 
 	private let transactionRepository: any TransactionRepository
 	private let categoryRepository: any TransactionCategoryRepository
 	private let accountRepository: any AccountRepository
+	private let authRepository: any AuthRepository
 
 	private static let recentTransactionsLimit = 5
 
@@ -33,11 +35,13 @@ final class HomeViewModel: ObservableObject {
 		transactionRepository: some TransactionRepository = TransactionDefaultRepository(),
 		categoryRepository: some TransactionCategoryRepository = TransactionCategoryDefaultRepository(),
 		accountRepository: some AccountRepository = AccountDefaultRepository(),
+		authRepository: some AuthRepository = AuthDefaultRepository(),
 		selectedCurrency: Currency.Response.CurrencyItem = .usd
 	) {
 		self.transactionRepository = transactionRepository
 		self.categoryRepository = categoryRepository
 		self.accountRepository = accountRepository
+		self.authRepository = authRepository
 		self.selectedCurrency = selectedCurrency
 	}
 
@@ -47,15 +51,30 @@ final class HomeViewModel: ObservableObject {
 		}
 	}
 
+	/// Lets `ProfileView` push a freshly saved name/avatar back into the header without a
+	/// re-fetch, via a plain closure rather than a shared delegate object.
+	func profileDidUpdate(_ user: Auth.Response.User) {
+		profile = user
+	}
+
 	func onLoad() async {
 		viewState = .loading
 
 		async let transactionsState = transactionRepository.getTransactions(request: .init(since: nil))
 		async let categoriesState = categoryRepository.getCategories(request: .init(type: nil, since: nil))
 		async let accountsState = accountRepository.getAccounts(request: .init(since: nil))
+		async let profileState = authRepository.getProfile()
 
 		do {
-			let (transactionsResult, categoriesResult, accountsResult) = try await (transactionsState, categoriesState, accountsState)
+			let (transactionsResult, categoriesResult, accountsResult, profileResult) = try await (
+				transactionsState, categoriesState, accountsState, profileState
+			)
+
+			// The header's avatar/name are a nice-to-have, not core to the dashboard - a failed
+			// profile fetch falls back to the placeholder rather than failing the whole screen.
+			if case .loaded(let profileResponse) = profileResult {
+				profile = profileResponse.data?.user
+			}
 
 			guard
 				case .loaded(let transactionsResponse) = transactionsResult,
