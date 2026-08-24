@@ -88,7 +88,11 @@ struct MoreView: View {
 				MoreProfileCard(
 					name: viewModel.profile?.name ?? "",
 					email: viewModel.profile?.email ?? "",
-					onEditProfileTapped: { isProfilePresented = true }
+					onEditProfileTapped: {
+						withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+							isProfilePresented = true
+						}
+					}
 				)
 
 				VStack(alignment: .leading, spacing: 8) {

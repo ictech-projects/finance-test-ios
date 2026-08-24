@@ -23,6 +23,7 @@ struct ProfileAvatarView: View {
 			avatarImage
 			editButton
 		}
+		.animation(.spring(response: 0.3, dampingFraction: 0.7), value: isUploading)
 		.confirmationDialog(Text("Change Photo"), isPresented: $isActionSheetPresented, titleVisibility: .visible) {
 			Button("Choose Photo") { isPhotosPickerPresented = true }
 			if hasAvatar {
@@ -55,15 +56,21 @@ struct ProfileAvatarView: View {
 				Circle()
 					.fill(Color.black.opacity(0.35))
 					.frame(width: 112, height: 112)
+					.transition(.opacity)
 
 				ProgressView()
 					.tint(.white)
+					.transition(.scale.combined(with: .opacity))
 			}
 		}
 	}
 
 	private var editButton: some View {
-		Button(action: { isActionSheetPresented = true }) {
+		Button(action: {
+			withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+				isActionSheetPresented = true
+			}
+		}) {
 			Circle()
 				.fill(Color.brandPrimary)
 				.frame(width: 32, height: 32)

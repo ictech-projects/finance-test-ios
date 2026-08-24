@@ -30,6 +30,8 @@ struct ProfileView: View {
 		}
 		.background(Color.splashSurface.ignoresSafeArea())
 		.navigationBarHidden(true)
+		.animation(.spring(response: 0.35, dampingFraction: 0.85), value: viewModel.user)
+		.animation(.spring(response: 0.3, dampingFraction: 0.8), value: viewModel.viewState)
 		.onChange(of: viewModel.user) { _, user in onProfileUpdated(user) }
 		.baseAlert(
 			isPresented: $viewModel.isErrorPresented,
@@ -88,9 +90,12 @@ struct ProfileView: View {
 				action: { Task { await viewModel.saveName() } }
 			) {
 				if viewModel.viewState == .saving {
-					ProgressView().tint(.white)
+					ProgressView()
+						.tint(.white)
+						.transition(.scale.combined(with: .opacity))
 				} else {
 					Label("Save Changes", systemImage: "square.and.arrow.down")
+						.transition(.scale.combined(with: .opacity))
 				}
 			}
 		}
