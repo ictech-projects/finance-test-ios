@@ -8,6 +8,7 @@ import SwiftUI
 struct MoreView: View {
 	@StateObject private var viewModel = MoreViewModel()
 	@State private var isLogOutConfirmationPresented = false
+	@State private var isProfilePresented = false
 
 	var body: some View {
 		NavigationStack {
@@ -27,6 +28,11 @@ struct MoreView: View {
 					CategoryManagementView()
 				case .appearance:
 					AppearanceSettingView()
+				}
+			}
+			.navigationDestination(isPresented: $isProfilePresented) {
+				if let profile = viewModel.profile {
+					ProfileView(user: profile, onProfileUpdated: { viewModel.profileDidUpdate($0) })
 				}
 			}
 		}
@@ -82,7 +88,7 @@ struct MoreView: View {
 				MoreProfileCard(
 					name: viewModel.profile?.name ?? "",
 					email: viewModel.profile?.email ?? "",
-					onEditProfileTapped: { /* TODO: Navigate to Edit Profile once that screen exists. */ }
+					onEditProfileTapped: { isProfilePresented = true }
 				)
 
 				VStack(alignment: .leading, spacing: 8) {
