@@ -44,7 +44,7 @@ struct TopBarView: View {
 			.padding(.bottom)
 			.background(
 				Rectangle()
-					.foregroundStyle(.neutral30)
+					.foregroundStyle(.splashSurface)
 					.ignoresSafeArea()
 			)
 		}
