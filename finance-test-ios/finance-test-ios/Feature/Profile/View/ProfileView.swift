@@ -1,0 +1,106 @@
+//
+//  ProfileView.swift
+//  finance-test-ios
+//
+
+import SwiftUI
+
+struct ProfileView: View {
+	@StateObject private var viewModel: ProfileViewModel
+	@Environment(\.dismiss) private var dismiss
+
+	private let onProfileUpdated: (Auth.Response.User) -> Void
+
+	init(user: Auth.Response.User, onProfileUpdated: @escaping (Auth.Response.User) -> Void) {
+		_viewModel = StateObject(wrappedValue: ProfileViewModel(user: user))
+		self.onProfileUpdated = onProfileUpdated
+	}
+
+	var body: some View {
+		VStack(spacing: 0) {
+			TopBarView(title: "Profile", onBackPressed: { dismiss() })
+
+			ScrollView {
+				VStack(spacing: 24) {
+					profileHeader
+					profileInformationCard
+				}
+				.padding(16)
+			}
+		}
+		.background(Color.splashSurface.ignoresSafeArea())
+		.navigationBarHidden(true)
+		.onChange(of: viewModel.user) { _, user in onProfileUpdated(user) }
+		.baseAlert(
+			isPresented: $viewModel.isErrorPresented,
+			type: .error,
+			title: "Something Went Wrong",
+			message: viewModel.errorMessage,
+			confirmLabel: Text("OK"),
+			confirmAction: {}
+		)
+	}
+
+	private var profileHeader: some View {
+		VStack(spacing: 12) {
+			ProfileAvatarView(
+				avatarUrl: viewModel.user.avatarUrl,
+				hasAvatar: viewModel.user.avatarPath != nil,
+				isUploading: viewModel.viewState == .uploadingAvatar,
+				onImagePicked: { data in Task { await viewModel.uploadAvatar(imageData: data) } },
+				onRemoveTapped: { Task { await viewModel.removeAvatar() } }
+			)
+
+			VStack(spacing: 2) {
+				Text(viewModel.user.name)
+					.font(.baseStyle(size: 20, weight: .bold))
+					.foregroundStyle(.neutral100)
+
+				Text(viewModel.user.email)
+					.font(.baseStyle(size: 14, weight: .regular))
+					.foregroundStyle(.moreProfileEmailText)
+			}
+		}
+		.padding(.top, 8)
+	}
+
+	private var profileInformationCard: some View {
+		VStack(alignment: .leading, spacing: 20) {
+			Text("PROFILE INFORMATION")
+				.font(.baseStyle(size: 12, weight: .bold))
+				.tracking(0.6)
+				.foregroundStyle(.neutral60)
+
+			VStack(alignment: .leading, spacing: 16) {
+				TextField("Full Name", text: $viewModel.name)
+					.withTitle(Text("Full Name"), capitalization: .words)
+
+				TextField("Email Address", text: .constant(viewModel.user.email))
+					.withTitle(Text("Email Address"))
+					.disabled(true)
+					.opacity(0.6)
+			}
+
+			PrimaryButton(
+				size: .large,
+				backgroundColor: .brandPrimary,
+				isDisabled: viewModel.isSaveDisabled,
+				action: { Task { await viewModel.saveName() } }
+			) {
+				if viewModel.viewState == .saving {
+					ProgressView().tint(.white)
+				} else {
+					Label("Save Changes", systemImage: "square.and.arrow.down")
+				}
+			}
+		}
+		.padding(20)
+		.background(RoundedRectangle(cornerRadius: 16).fill(Color.moreSectionCardBackground))
+	}
+}
+
+#Preview {
+	NavigationStack {
+		ProfileView(user: .mock, onProfileUpdated: { _ in })
+	}
+}
