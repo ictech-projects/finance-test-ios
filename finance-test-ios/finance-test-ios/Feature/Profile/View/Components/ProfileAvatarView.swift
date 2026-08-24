@@ -47,10 +47,26 @@ struct ProfileAvatarView: View {
 
 	private var avatarImage: some View {
 		ZStack {
-			ImageLoader(path: avatarUrl ?? "", width: 112, height: 112)
-				.clipShape(Circle())
-				.overlay(Circle().stroke(Color.white, lineWidth: 4))
-				.shadow(color: .black.opacity(0.12), radius: 8, y: 4)
+			Group {
+				// `ImageLoader`/`AsyncImage` never resolves past its loading spinner for a `nil`
+				// URL (which is what `URL(string: "")` produces), so an empty/missing avatar
+				// needs an explicit placeholder rather than being handed an empty path.
+				if let avatarUrl, !avatarUrl.isEmpty {
+					ImageLoader(path: avatarUrl, width: 112, height: 112)
+				} else {
+					Circle()
+						.fill(Color.moreSectionCardBackground)
+						.frame(width: 112, height: 112)
+						.overlay(
+							Image(systemName: "person.fill")
+								.font(.system(size: 40))
+								.foregroundStyle(.neutral60)
+						)
+				}
+			}
+			.clipShape(Circle())
+			.overlay(Circle().stroke(Color.white, lineWidth: 4))
+			.shadow(color: .black.opacity(0.12), radius: 8, y: 4)
 
 			if isUploading {
 				Circle()
