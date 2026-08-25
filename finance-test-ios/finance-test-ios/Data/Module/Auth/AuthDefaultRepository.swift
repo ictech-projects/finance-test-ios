@@ -102,13 +102,24 @@ struct AuthDefaultRepository: AuthRepository {
 	}
 
 	func getProfile() async throws -> RequestState<GeneralResponse<Auth.Response.Profile>> {
-		do {
-			let result = try await remote.getProfile()
-			return .loaded(result)
-		} catch let error as ErrorResponse {
-			return .error(error)
-		} catch {
-			return .error(error)
-		}
+		await execute { try await remote.getProfile() }
+	}
+
+	func updateProfile(
+		request: Auth.Request.UpdateProfile
+	) async throws -> RequestState<GeneralResponse<Auth.Response.Profile>> {
+		await execute { try await remote.updateProfile(request: request) }
+	}
+
+	func uploadAvatar(
+		imageData: Data,
+		fileName: String,
+		mimeType: String
+	) async throws -> RequestState<GeneralResponse<Auth.Response.Profile>> {
+		await execute { try await remote.uploadAvatar(imageData: imageData, fileName: fileName, mimeType: mimeType) }
+	}
+
+	func deleteAvatar() async throws -> RequestState<GeneralResponse<Auth.Response.Profile>> {
+		await execute { try await remote.deleteAvatar() }
 	}
 }

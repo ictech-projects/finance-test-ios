@@ -36,6 +36,19 @@ final class MoreViewModelTests: MemoryLeakTrackingSuite {
 		#expect(sut.profile == nil)
 	}
 
+	// MARK: - profileDidUpdate
+
+	@Test
+	func profileDidUpdate_setsProfileToGivenUser() async {
+		let sut = makeSUT(authRepository: AuthMockRepository(getProfileResult: .loaded(anyProfileSuccessResponse(user: anyUser(name: "Jane Doe")))))
+		await sut.onLoad()
+		let updatedUser = anyUser(name: "Jane Smith")
+
+		sut.profileDidUpdate(updatedUser)
+
+		#expect(sut.profile == updatedUser)
+	}
+
 	// MARK: - logOutTapped
 
 	@Test

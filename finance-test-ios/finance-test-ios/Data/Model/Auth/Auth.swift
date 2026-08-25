@@ -36,6 +36,10 @@ extension Auth.Request {
 			case refreshToken = "refresh_token"
 		}
 	}
+
+	struct UpdateProfile: Codable, Equatable {
+		let name: String
+	}
 }
 
 extension Auth.Response {

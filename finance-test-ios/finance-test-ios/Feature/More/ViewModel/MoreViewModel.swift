@@ -45,6 +45,12 @@ final class MoreViewModel: ObservableObject {
 		}
 	}
 
+	/// Lets `ProfileView` push a freshly saved name/avatar back into the profile card without a
+	/// re-fetch, via a plain closure rather than a shared delegate object.
+	func profileDidUpdate(_ user: Auth.Response.User) {
+		profile = user
+	}
+
 	/// `AuthDefaultRepository.logout()` guarantees the local session is cleared and the shared
 	/// `AuthSessionStore` is flipped regardless of the remote call's outcome — a network
 	/// failure here must never leave the user stuck logged in on this device.

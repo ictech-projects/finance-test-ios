@@ -14,6 +14,9 @@ enum AuthTargetType {
 	case logout
 	case logoutAll
 	case getProfile
+	case updateProfile(Auth.Request.UpdateProfile)
+	case uploadAvatar(imageData: Data, fileName: String, mimeType: String)
+	case deleteAvatar
 }
 
 extension AuthTargetType: BaseTargetType, AccessTokenAuthorizable {
@@ -22,19 +25,19 @@ extension AuthTargetType: BaseTargetType, AccessTokenAuthorizable {
 		switch self {
 		case .register, .login, .refresh:
 			nil
-		case .logout, .logoutAll, .getProfile:
+		case .logout, .logoutAll, .getProfile, .updateProfile, .uploadAvatar, .deleteAvatar:
 			.bearer
 		}
 	}
 
 	var headers: [String: String]? {
 		switch self {
-		case .register, .login, .refresh:
+		case .register, .login, .refresh, .updateProfile:
 			[
 				"Accept": "application/json",
 				"Content-Type": "application/json"
 			]
-		case .logout, .logoutAll, .getProfile:
+		case .logout, .logoutAll, .getProfile, .uploadAvatar, .deleteAvatar:
 			[
 				"Accept": "application/json"
 			]
@@ -43,10 +46,14 @@ extension AuthTargetType: BaseTargetType, AccessTokenAuthorizable {
 
 	var method: Moya.Method {
 		switch self {
-		case .register, .login, .refresh, .logout, .logoutAll:
+		case .register, .login, .refresh, .logout, .logoutAll, .uploadAvatar:
 			.post
 		case .getProfile:
 			.get
+		case .updateProfile:
+			.put
+		case .deleteAvatar:
+			.delete
 		}
 	}
 
@@ -56,12 +63,16 @@ extension AuthTargetType: BaseTargetType, AccessTokenAuthorizable {
 
 	var task: Task {
 		switch self {
-		case .register, .login, .refresh, .logout, .logoutAll:
+		case .register, .login, .refresh, .logout, .logoutAll, .updateProfile:
 			.requestParameters(parameters: parameters, encoding: parameterEncoding)
-		case .getProfile:
-			// GET requests can't carry body data — JSONEncoding would otherwise attach an
+		case .getProfile, .deleteAvatar:
+			// GET/DELETE requests can't carry body data — JSONEncoding would otherwise attach an
 			// empty `{}` body, which Alamofire's URLRequest validation rejects outright.
 			.requestPlain
+		case .uploadAvatar(let imageData, let fileName, let mimeType):
+			.uploadMultipart([
+				MultipartFormData(provider: .data(imageData), name: "avatar", fileName: fileName, mimeType: mimeType)
+			])
 		}
 	}
 
@@ -73,7 +84,9 @@ extension AuthTargetType: BaseTargetType, AccessTokenAuthorizable {
 			request.toJSON()
 		case .refresh(let request):
 			request.toJSON()
-		case .logout, .logoutAll, .getProfile:
+		case .updateProfile(let request):
+			request.toJSON()
+		case .logout, .logoutAll, .getProfile, .uploadAvatar, .deleteAvatar:
 			[:]
 		}
 	}
@@ -90,8 +103,10 @@ extension AuthTargetType: BaseTargetType, AccessTokenAuthorizable {
 			"/auth/logout"
 		case .logoutAll:
 			"/auth/logout-all"
-		case .getProfile:
+		case .getProfile, .updateProfile:
 			"/auth/profile"
+		case .uploadAvatar, .deleteAvatar:
+			"/auth/profile/avatar"
 		}
 	}
 
@@ -134,6 +149,30 @@ extension AuthTargetType: BaseTargetType, AccessTokenAuthorizable {
 				success: true,
 				statusCode: 200,
 				message: "Profile fetched.",
+				data: Auth.Response.Profile(user: .mock)
+			)
+			return response.toJSONData()
+		case .updateProfile:
+			let response = GeneralResponse(
+				success: true,
+				statusCode: 200,
+				message: "Profile updated.",
+				data: Auth.Response.Profile(user: .mock)
+			)
+			return response.toJSONData()
+		case .uploadAvatar:
+			let response = GeneralResponse(
+				success: true,
+				statusCode: 200,
+				message: "Avatar updated.",
+				data: Auth.Response.Profile(user: .mock)
+			)
+			return response.toJSONData()
+		case .deleteAvatar:
+			let response = GeneralResponse(
+				success: true,
+				statusCode: 200,
+				message: "Avatar removed.",
 				data: Auth.Response.Profile(user: .mock)
 			)
 			return response.toJSONData()

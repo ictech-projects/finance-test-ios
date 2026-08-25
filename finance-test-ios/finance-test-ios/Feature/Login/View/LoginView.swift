@@ -3,6 +3,9 @@
 //  finance-test-ios
 //
 
+#if DEBUG
+import UIKit
+#endif
 import SwiftUI
 
 struct LoginView: View {
@@ -22,8 +25,13 @@ struct LoginView: View {
 		VStack(spacing: 24) {
 			Spacer()
 
-			LoginBrandHeader()
-				.staggeredAppear(index: 0)
+			LoginBrandHeader(onLogoLongPressed: {
+				#if DEBUG
+				UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+				viewModel.fillTestCredentials()
+				#endif
+			})
+			.staggeredAppear(index: 0)
 
 			VStack(spacing: 16) {
 				LoginEmailField(email: $viewModel.email, errorMessage: viewModel.emailErrorMessage)
