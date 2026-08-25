@@ -20,7 +20,7 @@ struct RootTabView: View {
 					Text("Records")
 				}
 
-			ComingSoonPlaceholderView(title: "Reports", iconName: "chart.pie.fill")
+			ReportsView()
 				.tabItem {
 					Image(systemName: "chart.pie.fill")
 					Text("Reports")

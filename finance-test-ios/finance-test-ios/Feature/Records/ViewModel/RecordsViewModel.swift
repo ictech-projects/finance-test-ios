@@ -42,11 +42,13 @@ final class RecordsViewModel: ObservableObject {
 	init(
 		transactionRepository: some TransactionRepository = TransactionDefaultRepository(),
 		categoryRepository: some TransactionCategoryRepository = TransactionCategoryDefaultRepository(),
-		accountRepository: some AccountRepository = AccountDefaultRepository()
+		accountRepository: some AccountRepository = AccountDefaultRepository(),
+		categoryFilter: String? = nil
 	) {
 		self.transactionRepository = transactionRepository
 		self.categoryRepository = categoryRepository
 		self.accountRepository = accountRepository
+		self.categoryFilter = categoryFilter
 	}
 
 	func presentAddTransaction() {
