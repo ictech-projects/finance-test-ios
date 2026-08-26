@@ -13,7 +13,9 @@ struct FinanceAppShortcuts: AppShortcutsProvider {
 			intent: AddExpenseIntent(),
 			phrases: [
 				"Log an expense in \(.applicationName)",
-				"Add an expense in \(.applicationName)"
+				"Add an expense in \(.applicationName)",
+				"Track an expense in \(.applicationName)",
+				"Record an expense in \(.applicationName)"
 			],
 			shortTitle: "Log Expense",
 			systemImageName: "creditcard.fill"

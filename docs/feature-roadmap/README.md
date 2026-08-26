@@ -44,9 +44,11 @@ in the Shortcuts app once the app has launched once):
 ```
 "Log an expense in finance-test-ios"
 "Add an expense in finance-test-ios"
+"Track an expense in finance-test-ios"
+"Record an expense in finance-test-ios"
 ```
 
-Shortcuts app entry: **Log Expense** (credit-card icon). Saying either phrase, or running the
+Shortcuts app entry: **Log Expense** (credit-card icon). Saying any phrase, or running the
 shortcut manually, prompts for an amount if one wasn't given (App Intents does this natively
 for a required, non-optional parameter) and optionally accepts a merchant/note, category, and
 account by name.
