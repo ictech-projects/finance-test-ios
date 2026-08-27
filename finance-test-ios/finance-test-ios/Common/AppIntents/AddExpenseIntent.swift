@@ -4,6 +4,7 @@
 //
 
 import AppIntents
+import SwiftUI
 
 struct AddExpenseIntent: AppIntent {
 	static var title: LocalizedStringResource = "Log an Expense"
@@ -33,13 +34,19 @@ struct AddExpenseIntent: AppIntent {
 		}
 	}
 
-	func perform() async throws -> some IntentResult & ProvidesDialog {
+	func perform() async throws -> some IntentResult & ProvidesDialog & ShowsSnippetView {
 		let result = try await AddExpenseIntentHandler().addExpense(
 			amount: amount,
 			merchant: merchant,
 			accountId: account?.id,
 			categoryId: category.id
 		)
-		return .result(dialog: "Logged your \(result.categoryName) expense of $\(String(format: "%.2f", result.amount)).")
+		// The dialog is the spoken confirmation; the snippet shows the record it created. Keeping
+		// them complementary rather than duplicated is Apple's guidance for result views.
+		return .result(
+			dialog: "Logged your \(result.categoryName) expense of $\(String(format: "%.2f", result.amount))."
+		) {
+			AddExpenseSnippetView(result: result)
+		}
 	}
 }

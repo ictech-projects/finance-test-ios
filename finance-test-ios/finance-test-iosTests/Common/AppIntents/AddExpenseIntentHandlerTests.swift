@@ -80,7 +80,14 @@ struct AddExpenseIntentHandlerTests {
 				transactionDate: "2026-01-15"
 			))
 		])
-		#expect(result == AddExpenseResult(amount: 12, categoryName: "Dining"))
+		#expect(result == AddExpenseResult(
+			amount: 12,
+			categoryName: "Dining",
+			categoryIcon: "briefcase",
+			categoryColorHex: "#24389C",
+			accountName: "Cash",
+			note: nil
+		))
 	}
 
 	@Test
@@ -119,7 +126,14 @@ struct AddExpenseIntentHandlerTests {
 				transactionDate: "2026-01-15"
 			))
 		])
-		#expect(result == AddExpenseResult(amount: 30, categoryName: "Groceries"))
+		#expect(result == AddExpenseResult(
+			amount: 30,
+			categoryName: "Groceries",
+			categoryIcon: "briefcase",
+			categoryColorHex: "#24389C",
+			accountName: "Main Bank",
+			note: "Whole Foods"
+		))
 	}
 
 	/// Regression: an explicitly requested category that doesn't match must fail loudly rather

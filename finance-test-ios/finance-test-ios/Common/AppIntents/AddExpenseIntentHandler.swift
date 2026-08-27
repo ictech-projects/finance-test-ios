@@ -5,10 +5,18 @@
 
 import Foundation
 
-/// The result of a successful `AddExpenseIntentHandler.addExpense` call.
+/// The result of a successful `AddExpenseIntentHandler.addExpense` call — carries everything
+/// `AddExpenseSnippetView` needs to render the created record, so the Siri card can show the
+/// transaction rather than restating the spoken confirmation.
 struct AddExpenseResult: Equatable {
 	let amount: Double
 	let categoryName: String
+	/// Already resolved to a real SF Symbol via `CategoryIconResolver`.
+	let categoryIcon: String
+	let categoryColorHex: String?
+	let accountName: String
+	/// The merchant/note, when the caller gave one. `nil` collapses that line in the snippet.
+	let note: String?
 }
 
 /// Core logic behind `AddExpenseIntent`, split out so it's testable the same way this codebase
@@ -106,7 +114,16 @@ struct AddExpenseIntentHandler {
 			throw Self.error(from: state)
 		}
 
-		return AddExpenseResult(amount: amount, categoryName: category.name ?? String(localized: "expense"))
+		let note = (trimmedMerchant?.isEmpty ?? true) ? nil : trimmedMerchant
+
+		return AddExpenseResult(
+			amount: amount,
+			categoryName: category.name ?? String(localized: "expense"),
+			categoryIcon: CategoryIconResolver.symbol(for: category.icon),
+			categoryColorHex: category.color,
+			accountName: account.name ?? String(localized: "Unknown Account"),
+			note: note
+		)
 	}
 
 	/// Unwraps a `.loaded` list response's items, or throws the right `FinanceIntentError` for
