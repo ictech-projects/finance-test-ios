@@ -7,8 +7,9 @@ import SwiftUI
 
 /// The card Siri/Shortcuts shows after `AddExpenseIntent` creates a transaction.
 ///
-/// Deliberately mirrors `RecordsRow`'s anatomy (48pt tinted icon, 12pt radius, 17pt padding,
-/// 16/14/11 type ramp) so the result reads as this app's content rather than a generic card.
+/// Deliberately mirrors `RecordsRow`'s content anatomy (48pt tinted icon, 16/14/11 type ramp) so
+/// the result reads as this app's content — but without `RecordsRow`'s own card surface, which
+/// Siri's container already provides.
 ///
 /// Per Apple's guidance the snippet complements the spoken response instead of repeating it:
 /// Siri already says "Logged your Food & Drink expense of $25.00", so this shows the *record* —
@@ -65,9 +66,10 @@ struct AddExpenseSnippetView: View {
 					.foregroundStyle(.neutral70)
 			}
 		}
-		.padding(17)
-		.background(RoundedRectangle(cornerRadius: 12).fill(Color.recordsCardBackground))
-		.overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.recordsCardBorder, lineWidth: 1))
+		// No background, border or outer padding: Siri renders this inside its own card, which
+		// already supplies the surface, corner radius and insets. Drawing our own nests a second
+		// card inside the system one. Only the vertical breathing room is ours to set.
+		.padding(.vertical, 4)
 	}
 }
 
@@ -89,6 +91,8 @@ private extension Double {
 			note: "Lunch at the bistro"
 		)
 	)
+	.padding(17)
+	.background(RoundedRectangle(cornerRadius: 18).fill(Color.recordsCardBackground))
 	.padding()
 }
 
@@ -103,5 +107,7 @@ private extension Double {
 			note: nil
 		)
 	)
+	.padding(17)
+	.background(RoundedRectangle(cornerRadius: 18).fill(Color.recordsCardBackground))
 	.padding()
 }
