@@ -1,9 +1,10 @@
 # Feature roadmap tickets
 
-Thirteen tracer-bullet tickets covering the AI / Siri / Foundation Models / Widgets / App
-Intents / Lock Screen widget / Control Center / Spotlight / Localization feature roadmap.
-Each ticket in `issues/` is a self-contained vertical slice: one fresh session should be able
-to pick it up, build it, and demo it without needing the others open at the same time.
+Tracer-bullet tickets covering the AI / Siri / Foundation Models / Widgets / App Intents /
+Lock Screen widget / Control Center / Spotlight / Localization feature roadmap, plus fixes
+found while building them. Each ticket in `issues/` is a self-contained vertical slice: one
+fresh session should be able to pick it up, build it, and demo it without needing the others
+open at the same time.
 
 Numbering is dependency order (blockers first) - `NN` is a stable short ID, so referring to
 "ticket 07" or "ticket 12" is enough.
@@ -23,9 +24,10 @@ Numbering is dependency order (blockers first) - `NN` is a stable short ID, so r
 | 11 | [Spotlight search for transactions/accounts](issues/11-spotlight-search-transactions-accounts.md) | None |
 | 12 | [Additional language localization](issues/12-additional-language-localization.md) | None |
 | 13 | [Conversational Siri chaining (stretch)](issues/13-conversational-siri-chaining.md) | 04 |
+| 14 | [New-user setup dead ends (currency → account)](issues/14-new-user-setup-dead-ends.md) | None |
 
 **Picking up a ticket:** any ticket whose "Blocked by" tickets are already done is on the
-frontier and ready to go - currently that's 01, 02, 04, 07, 09, 11, and 12. Check a ticket's
+frontier and ready to go - currently that's 01, 02, 04, 07, 09, 11, 12, and 14. Check a ticket's
 box items off as you satisfy them; this repo doesn't yet auto-update ticket status, so mark it
 done in the file itself when you finish.
 
