@@ -15,6 +15,7 @@ import SwiftUI
 struct LaunchScreenView: View {
 
 	@StateObject private var viewModel = LaunchScreenViewModel()
+	@StateObject private var displayCurrency = DisplayCurrencyDefaultStore.shared
 
 	var body: some View {
 		Group {
@@ -48,7 +49,14 @@ struct LaunchScreenView: View {
 				AuthFlowView(onAuthenticated: {})
 			}
 		}
+		.environmentObject(displayCurrency)
 		.task { await viewModel.onAppear() }
+		// The anchor currency is per-user, so it's resolved once the session is known and again
+		// after any later login — a logged-out launch has nothing to read.
+		.task(id: viewModel.isLoggedIn) {
+			guard viewModel.isLoggedIn else { return }
+			await displayCurrency.refresh()
+		}
 	}
 }
 
