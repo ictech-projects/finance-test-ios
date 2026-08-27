@@ -71,7 +71,18 @@ struct AddExpenseIntentHandler {
 			throw FinanceIntentError.noAccountAvailable
 		}
 
-		let resolvedCategory = categoryId.flatMap { id in categories.first { $0.id == id } } ?? categories.first
+		// Unlike accounts, categories have no backend `isDefault`, so there is no meaningful
+		// default to fall back on — silently substituting one mis-files the expense under a
+		// category the user never chose. An explicitly requested category must actually match.
+		let resolvedCategory: Sync.Response.UserCategoryItem?
+		if let categoryId {
+			guard let match = categories.first(where: { $0.id == categoryId }) else {
+				throw FinanceIntentError.categoryNotFound
+			}
+			resolvedCategory = match
+		} else {
+			resolvedCategory = categories.first
+		}
 
 		guard let category = resolvedCategory, let categoryIdValue = category.id else {
 			throw FinanceIntentError.noCategoryAvailable

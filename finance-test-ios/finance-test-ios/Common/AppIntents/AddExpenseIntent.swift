@@ -15,8 +15,12 @@ struct AddExpenseIntent: AppIntent {
 	@Parameter(title: "Merchant or Note")
 	var merchant: String?
 
+	/// Required on purpose: there is no backend notion of a "default" category (unlike accounts,
+	/// which carry `isDefault`), so picking one on the user's behalf silently mis-files the
+	/// expense. Being required makes App Intents prompt with the user's categories to choose
+	/// from, using `TransactionCategoryEntityQuery.suggestedEntities()`.
 	@Parameter(title: "Category")
-	var category: TransactionCategoryEntity?
+	var category: TransactionCategoryEntity
 
 	@Parameter(title: "Account")
 	var account: AccountEntity?
@@ -34,7 +38,7 @@ struct AddExpenseIntent: AppIntent {
 			amount: amount,
 			merchant: merchant,
 			accountId: account?.id,
-			categoryId: category?.id
+			categoryId: category.id
 		)
 		return .result(dialog: "Logged your \(result.categoryName) expense of $\(String(format: "%.2f", result.amount)).")
 	}

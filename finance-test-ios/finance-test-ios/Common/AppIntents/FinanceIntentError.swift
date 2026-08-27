@@ -13,6 +13,7 @@ enum FinanceIntentError: Error, CustomLocalizedStringResourceConvertible, Equata
 	case invalidAmount
 	case noAccountAvailable
 	case noCategoryAvailable
+	case categoryNotFound
 	case requestFailed(message: String)
 
 	var localizedStringResource: LocalizedStringResource {
@@ -27,6 +28,8 @@ enum FinanceIntentError: Error, CustomLocalizedStringResourceConvertible, Equata
 			"Add an account in the app before logging an expense."
 		case .noCategoryAvailable:
 			"Add an expense category in the app before logging an expense."
+		case .categoryNotFound:
+			"That category no longer exists. Please pick another one."
 		case .requestFailed(let message):
 			"\(message)"
 		}

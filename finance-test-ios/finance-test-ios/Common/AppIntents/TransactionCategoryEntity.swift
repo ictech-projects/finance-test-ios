@@ -6,7 +6,11 @@
 import AppIntents
 
 /// Lets Siri/Shortcuts list and disambiguate the user's expense categories for
-/// `AddExpenseIntent`'s optional `category` parameter.
+/// `AddExpenseIntent`'s `category` parameter.
+///
+/// Backed by the user's own categories (`UserCategoryRepository`), not the global
+/// `GET /categories` catalog: a transaction's `category_id` must reference a user category, so
+/// offering global ids here means whatever the user picks fails to match downstream.
 struct TransactionCategoryEntity: AppEntity {
 	let id: String
 	let name: String
@@ -20,13 +24,13 @@ struct TransactionCategoryEntity: AppEntity {
 }
 
 struct TransactionCategoryEntityQuery: EntityQuery {
-	private let categoryRepository: any TransactionCategoryRepository
+	private let categoryRepository: any UserCategoryRepository
 
 	init() {
-		self.init(categoryRepository: TransactionCategoryDefaultRepository())
+		self.init(categoryRepository: UserCategoryDefaultRepository())
 	}
 
-	init(categoryRepository: some TransactionCategoryRepository) {
+	init(categoryRepository: some UserCategoryRepository) {
 		self.categoryRepository = categoryRepository
 	}
 
@@ -39,11 +43,13 @@ struct TransactionCategoryEntityQuery: EntityQuery {
 	}
 
 	private func allCategories() async throws -> [TransactionCategoryEntity] {
-		let state = try await categoryRepository.getCategories(request: .init(type: .expense, since: nil))
+		let state = try await categoryRepository.getUserCategories()
 		guard case .loaded(let response) = state else { return [] }
-		return (response.data?.items ?? []).compactMap { item in
-			guard let id = item.id, let name = item.name else { return nil }
-			return TransactionCategoryEntity(id: id, name: name)
-		}
+		return (response.data ?? [])
+			.filter { $0.type == .expense && $0.deletedAt == nil }
+			.compactMap { item in
+				guard let id = item.id, let name = item.name else { return nil }
+				return TransactionCategoryEntity(id: id, name: name)
+			}
 	}
 }

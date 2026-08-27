@@ -122,6 +122,28 @@ struct AddExpenseIntentHandlerTests {
 		#expect(result == AddExpenseResult(amount: 30, categoryName: "Groceries"))
 	}
 
+	/// Regression: an explicitly requested category that doesn't match must fail loudly rather
+	/// than silently logging the expense under some other category. This is what made every Siri
+	/// expense land in "Food & Drink" — the picker offered global-catalog ids, none of which
+	/// matched a user category, so resolution fell through to `categories.first`.
+	@Test
+	func addExpense_whenRequestedCategoryDoesNotMatch_throwsRatherThanSubstituting() async throws {
+		let available = anyUserCategoryItem(id: "cat-real", name: "Dining", type: .expense)
+		let transactionRepository = TransactionMockRepository()
+		let sut = makeSUT(
+			transactionRepository: transactionRepository,
+			categoryRepository: UserCategoryMockRepository(
+				result: .loaded(anyUserCategoryListSuccessResponse(items: [available]))
+			)
+		)
+
+		await expectThrows(FinanceIntentError.categoryNotFound) {
+			try await sut.addExpense(amount: 12, merchant: nil, accountId: nil, categoryId: "cat-from-global-catalog")
+		}
+
+		#expect(transactionRepository.invocations.isEmpty)
+	}
+
 	// MARK: - Resolution failures
 
 	@Test
