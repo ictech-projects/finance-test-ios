@@ -47,6 +47,7 @@ struct AddExpenseIntent: AppIntent {
 			dialog: "Logged your \(result.categoryName) expense of \(result.amount.currencyFormatted())."
 		) {
 			AddExpenseSnippetView(result: result)
+				.padding()
 		}
 	}
 }
