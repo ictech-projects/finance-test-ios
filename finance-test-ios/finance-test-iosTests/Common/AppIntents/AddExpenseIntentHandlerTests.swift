@@ -8,6 +8,7 @@ import Testing
 @testable import finance_test_ios
 
 @Suite("AddExpenseIntentHandler")
+@MainActor
 struct AddExpenseIntentHandlerTests {
 
 	private static let fixedDate = ISO8601DateFormatter().date(from: "2026-01-15T00:00:00Z")!
@@ -214,19 +215,61 @@ struct AddExpenseIntentHandlerTests {
 		}
 	}
 
+	// MARK: - Display currency
+
+	/// A Siri-only launch never shows `LaunchScreenView`, so the handler is the only thing that
+	/// resolves the display currency — without it the dialog and snippet format every user's
+	/// amount with the fallback "$". `DisplayCurrencyStoreTests` covers the resolution itself.
+	@Test
+	func addExpense_resolvesTheDisplayCurrency() async throws {
+		let displayCurrencyStore = DisplayCurrencyMockStore(
+			resolved: DisplayCurrency(code: "EUR", symbol: "€", decimalPlaces: 2)
+		)
+		let sut = makeSUT(
+			transactionRepository: TransactionMockRepository(
+				createTransactionResult: .loaded(GeneralResponse(success: true, statusCode: 200, message: "Applied.", data: anyTransactionItem()))
+			),
+			displayCurrencyStore: displayCurrencyStore
+		)
+
+		_ = try await sut.addExpense(amount: 12, merchant: nil, accountId: nil, categoryId: nil)
+
+		#expect(displayCurrencyStore.invocations == [.refresh])
+		#expect(displayCurrencyStore.current.symbol == "€")
+	}
+
+	@Test
+	func addExpense_whenNotLoggedIn_skipsTheCurrencyRefresh() async throws {
+		let displayCurrencyStore = DisplayCurrencyMockStore()
+		let sut = makeSUT(
+			authLocalDataSource: AuthMockLocalDataSource(accessToken: nil),
+			displayCurrencyStore: displayCurrencyStore
+		)
+
+		await expectThrows(FinanceIntentError.notLoggedIn) {
+			try await sut.addExpense(amount: 12, merchant: nil, accountId: nil, categoryId: nil)
+		}
+
+		#expect(displayCurrencyStore.invocations.isEmpty)
+	}
+
 	// MARK: - Helpers
 
 	private func makeSUT(
 		transactionRepository: TransactionMockRepository = TransactionMockRepository(),
 		accountRepository: AccountMockRepository = AccountMockRepository(result: .loaded(anyAccountListSuccessResponse())),
 		categoryRepository: UserCategoryMockRepository = UserCategoryMockRepository(result: .loaded(anyUserCategoryListSuccessResponse(items: [anyUserCategoryItem(type: .expense)]))),
-		authLocalDataSource: AuthMockLocalDataSource = AuthMockLocalDataSource(accessToken: "any-token")
+		authLocalDataSource: AuthMockLocalDataSource = AuthMockLocalDataSource(accessToken: "any-token"),
+		// Constructed in the body rather than as a default argument: default arguments are
+		// evaluated in a nonisolated context, and this mock is `@MainActor`.
+		displayCurrencyStore: DisplayCurrencyMockStore? = nil
 	) -> AddExpenseIntentHandler {
 		AddExpenseIntentHandler(
 			transactionRepository: transactionRepository,
 			accountRepository: accountRepository,
 			categoryRepository: categoryRepository,
 			authLocalDataSource: authLocalDataSource,
+			displayCurrencyStore: displayCurrencyStore ?? DisplayCurrencyMockStore(),
 			now: { Self.fixedDate }
 		)
 	}

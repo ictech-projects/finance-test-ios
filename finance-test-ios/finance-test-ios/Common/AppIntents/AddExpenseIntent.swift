@@ -44,7 +44,7 @@ struct AddExpenseIntent: AppIntent {
 		// The dialog is the spoken confirmation; the snippet shows the record it created. Keeping
 		// them complementary rather than duplicated is Apple's guidance for result views.
 		return .result(
-			dialog: "Logged your \(result.categoryName) expense of $\(String(format: "%.2f", result.amount))."
+			dialog: "Logged your \(result.categoryName) expense of \(result.amount.currencyFormatted())."
 		) {
 			AddExpenseSnippetView(result: result)
 		}

@@ -26,6 +26,7 @@ struct AddExpenseIntentHandler {
 	private let accountRepository: any AccountRepository
 	private let categoryRepository: any UserCategoryRepository
 	private let authLocalDataSource: any AuthLocalDataSource
+	private let displayCurrencyStore: any DisplayCurrencyStore
 
 	private let now: () -> Date
 
@@ -34,12 +35,14 @@ struct AddExpenseIntentHandler {
 		accountRepository: some AccountRepository = AccountDefaultRepository(),
 		categoryRepository: some UserCategoryRepository = UserCategoryDefaultRepository(),
 		authLocalDataSource: some AuthLocalDataSource = AuthDefaultLocalDataSource(),
+		displayCurrencyStore: any DisplayCurrencyStore = DisplayCurrencyDefaultStore.shared,
 		now: @escaping () -> Date = Date.init
 	) {
 		self.transactionRepository = transactionRepository
 		self.accountRepository = accountRepository
 		self.categoryRepository = categoryRepository
 		self.authLocalDataSource = authLocalDataSource
+		self.displayCurrencyStore = displayCurrencyStore
 		self.now = now
 	}
 
@@ -61,8 +64,13 @@ struct AddExpenseIntentHandler {
 
 		async let accountsState = accountRepository.getAccounts(request: .init(since: nil))
 		async let categoriesState = categoryRepository.getUserCategories()
+		// A Siri-only launch never shows `LaunchScreenView`, so nothing else resolves the display
+		// currency — without this the dialog and snippet would fall back to "$" for every user.
+		// Fire-and-forget: a failure leaves the previous currency, which formatting handles.
+		async let currencyRefresh: Void = displayCurrencyStore.refresh()
 
 		let (accountsResult, categoriesResult) = try await (accountsState, categoriesState)
+		await currencyRefresh
 
 		let accounts = try Self.items(from: accountsResult) { $0.items }
 		// A transaction's `category_id` must reference the user's own category, not the global
