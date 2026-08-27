@@ -8,6 +8,7 @@ import SwiftUI
 struct AccountFormView<Delegate: AccountMutationDelegate>: View {
 	@StateObject private var viewModel: AccountFormViewModel
 	@Environment(\.dismiss) private var dismiss
+	@EnvironmentObject private var displayCurrency: DisplayCurrencyDefaultStore
 
 	init(account: Account.Response.AccountItem?, delegate: Delegate) {
 		_viewModel = StateObject(wrappedValue: AccountFormViewModel(account: account, delegate: delegate))
@@ -61,7 +62,7 @@ struct AccountFormView<Delegate: AccountMutationDelegate>: View {
 				.foregroundStyle(.neutral60)
 
 			HStack(spacing: 4) {
-				Text("$")
+				Text(displayCurrency.current.symbol)
 					.font(.baseStyle(size: 28, weight: .bold))
 					.foregroundStyle(.brandPrimary)
 
@@ -150,10 +151,12 @@ private final class PreviewAccountMutationDelegate: AccountMutationDelegate {
 	NavigationStack {
 		AccountFormView(account: nil, delegate: PreviewAccountMutationDelegate())
 	}
+	.environmentObject(DisplayCurrencyDefaultStore.shared)
 }
 
 #Preview("Edit") {
 	NavigationStack {
 		AccountFormView(account: Account.Response.AccountItem.mocks[1], delegate: PreviewAccountMutationDelegate())
 	}
+	.environmentObject(DisplayCurrencyDefaultStore.shared)
 }

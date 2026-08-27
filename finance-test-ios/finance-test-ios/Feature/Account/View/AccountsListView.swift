@@ -102,7 +102,7 @@ private struct AccountRow: View {
 	}
 
 	private var balanceText: String {
-		balanceValue.formatted(.currency(code: "USD"))
+		balanceValue.currencyFormatted()
 	}
 
 	var body: some View {

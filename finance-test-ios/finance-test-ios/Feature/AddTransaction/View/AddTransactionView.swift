@@ -8,6 +8,7 @@ import SwiftUI
 struct AddTransactionView: View {
 	@StateObject private var viewModel: AddTransactionViewModel
 	@Environment(\.dismiss) private var dismiss
+	@EnvironmentObject private var displayCurrency: DisplayCurrencyDefaultStore
 
 	init(delegate: some AddTransactionDelegate) {
 		_viewModel = StateObject(wrappedValue: AddTransactionViewModel(delegate: delegate))
@@ -156,7 +157,7 @@ struct AddTransactionView: View {
 				.foregroundStyle(.addTransactionMutedLabel)
 
 			HStack(spacing: 0) {
-				Text("$")
+				Text(displayCurrency.current.symbol)
 					.foregroundStyle(.recordsCardBorder)
 				TextField("0.00", text: $viewModel.amountText)
 					.keyboardType(.decimalPad)
@@ -268,4 +269,5 @@ private final class PreviewAddTransactionDelegate: AddTransactionDelegate {
 
 #Preview {
 	AddTransactionView(delegate: PreviewAddTransactionDelegate())
+		.environmentObject(DisplayCurrencyDefaultStore.shared)
 }
