@@ -16,10 +16,10 @@ final class AddTransactionViewModelTests: MemoryLeakTrackingSuite {
 	@Test
 	func onLoad_success_populatesAccountsCategoriesAndDefaults() async {
 		let account = anyAccountItem(id: "acc1", name: "Cash")
-		let category = anyCategoryItem(id: "cat1", type: .expense)
+		let category = anyUserCategoryItem(id: "cat1", type: .expense)
 		let sut = makeSUT(
-			categoryRepository: TransactionCategoryMockRepository(
-				result: .loaded(anyCategoryListSuccessResponse(items: [category]))
+			categoryRepository: UserCategoryMockRepository(
+				result: .loaded(anyUserCategoryListSuccessResponse(items: [category]))
 			),
 			accountRepository: AccountMockRepository(
 				result: .loaded(anyAccountListSuccessResponse(items: [account]))
@@ -35,10 +35,33 @@ final class AddTransactionViewModelTests: MemoryLeakTrackingSuite {
 		#expect(sut.selectedCategory == category)
 	}
 
+	/// `/sync/pull` returns soft-deleted tombstones (unlike the global `/categories` catalog this
+	/// used to read), so a deleted category must never reach the picker.
+	@Test
+	func onLoad_excludesSoftDeletedCategories() async {
+		let live = anyUserCategoryItem(id: "cat-live", type: .expense)
+		let deleted = Sync.Response.UserCategoryItem(
+			id: "cat-deleted", userId: nil, name: "Deleted", type: .expense,
+			icon: "trash", color: nil, createdAt: nil, updatedAt: nil,
+			deletedAt: "2026-08-01T00:00:00Z"
+		)
+		let sut = makeSUT(
+			categoryRepository: UserCategoryMockRepository(
+				result: .loaded(anyUserCategoryListSuccessResponse(items: [live, deleted]))
+			)
+		)
+
+		await sut.onLoad()
+
+		#expect(sut.categories == [live])
+		#expect(sut.categoriesForCurrentType == [live])
+		#expect(sut.selectedCategory == live)
+	}
+
 	@Test
 	func onLoad_whenCategoriesRepositoryErrors_setsErrorState() async {
 		let sut = makeSUT(
-			categoryRepository: TransactionCategoryMockRepository(result: .error(NSError(domain: "", code: -1)))
+			categoryRepository: UserCategoryMockRepository(result: .error(NSError(domain: "", code: -1)))
 		)
 
 		await sut.onLoad()
@@ -61,11 +84,11 @@ final class AddTransactionViewModelTests: MemoryLeakTrackingSuite {
 
 	@Test
 	func selectType_switchingToIncome_selectsFirstMatchingCategory() async {
-		let expenseCategory = anyCategoryItem(id: "cat-expense", type: .expense)
-		let incomeCategory = anyCategoryItem(id: "cat-income", type: .income)
+		let expenseCategory = anyUserCategoryItem(id: "cat-expense", type: .expense)
+		let incomeCategory = anyUserCategoryItem(id: "cat-income", type: .income)
 		let sut = makeSUT(
-			categoryRepository: TransactionCategoryMockRepository(
-				result: .loaded(anyCategoryListSuccessResponse(items: [expenseCategory, incomeCategory]))
+			categoryRepository: UserCategoryMockRepository(
+				result: .loaded(anyUserCategoryListSuccessResponse(items: [expenseCategory, incomeCategory]))
 			)
 		)
 		await sut.onLoad()
@@ -95,7 +118,7 @@ final class AddTransactionViewModelTests: MemoryLeakTrackingSuite {
 	func selectCategory_updatesSelectionAndClearsError() async {
 		let sut = makeSUT()
 		await sut.onLoad()
-		let newCategory = anyCategoryItem(id: "cat2", type: .expense)
+		let newCategory = anyUserCategoryItem(id: "cat2", type: .expense)
 
 		sut.selectCategory(newCategory)
 
@@ -168,8 +191,8 @@ final class AddTransactionViewModelTests: MemoryLeakTrackingSuite {
 		let transactionRepository = TransactionMockRepository()
 		let sut = makeSUT(
 			transactionRepository: transactionRepository,
-			categoryRepository: TransactionCategoryMockRepository(
-				result: .loaded(anyCategoryListSuccessResponse(items: []))
+			categoryRepository: UserCategoryMockRepository(
+				result: .loaded(anyUserCategoryListSuccessResponse(items: []))
 			)
 		)
 		await sut.onLoad()
@@ -186,7 +209,7 @@ final class AddTransactionViewModelTests: MemoryLeakTrackingSuite {
 	@Test
 	func save_success_callsRepositoryWithMappedRequestAndNotifiesDelegate() async {
 		let account = anyAccountItem(id: "acc1")
-		let category = anyCategoryItem(id: "cat1", type: .expense)
+		let category = anyUserCategoryItem(id: "cat1", type: .expense)
 		let createdItem = anyTransactionItem(id: "created1")
 		let transactionRepository = TransactionMockRepository(
 			createTransactionResult: .loaded(
@@ -198,8 +221,8 @@ final class AddTransactionViewModelTests: MemoryLeakTrackingSuite {
 		let sut = makeSUT(
 			date: fixedDate,
 			transactionRepository: transactionRepository,
-			categoryRepository: TransactionCategoryMockRepository(
-				result: .loaded(anyCategoryListSuccessResponse(items: [category]))
+			categoryRepository: UserCategoryMockRepository(
+				result: .loaded(anyUserCategoryListSuccessResponse(items: [category]))
 			),
 			accountRepository: AccountMockRepository(
 				result: .loaded(anyAccountListSuccessResponse(items: [account]))
@@ -231,7 +254,7 @@ final class AddTransactionViewModelTests: MemoryLeakTrackingSuite {
 	@Test
 	func save_withEmptyNote_sendsNilDescription() async {
 		let account = anyAccountItem(id: "acc1")
-		let category = anyCategoryItem(id: "cat1", type: .expense)
+		let category = anyUserCategoryItem(id: "cat1", type: .expense)
 		let transactionRepository = TransactionMockRepository(
 			createTransactionResult: .loaded(
 				GeneralResponse(success: true, statusCode: 200, message: "Transaction created.", data: anyTransactionItem())
@@ -239,8 +262,8 @@ final class AddTransactionViewModelTests: MemoryLeakTrackingSuite {
 		)
 		let sut = makeSUT(
 			transactionRepository: transactionRepository,
-			categoryRepository: TransactionCategoryMockRepository(
-				result: .loaded(anyCategoryListSuccessResponse(items: [category]))
+			categoryRepository: UserCategoryMockRepository(
+				result: .loaded(anyUserCategoryListSuccessResponse(items: [category]))
 			),
 			accountRepository: AccountMockRepository(
 				result: .loaded(anyAccountListSuccessResponse(items: [account]))
@@ -262,15 +285,15 @@ final class AddTransactionViewModelTests: MemoryLeakTrackingSuite {
 	@Test(arguments: [401, 422, 500])
 	func save_whenRepositoryReturnsErrorResponse_showsAlertWithBackendMessage(statusCode: Int) async {
 		let account = anyAccountItem(id: "acc1")
-		let category = anyCategoryItem(id: "cat1", type: .expense)
+		let category = anyUserCategoryItem(id: "cat1", type: .expense)
 		let expectedError = ErrorResponse(
 			success: false, statusCode: statusCode, message: "The selected account or category is invalid.", errors: nil
 		)
 		let transactionRepository = TransactionMockRepository(createTransactionResult: .error(expectedError))
 		let sut = makeSUT(
 			transactionRepository: transactionRepository,
-			categoryRepository: TransactionCategoryMockRepository(
-				result: .loaded(anyCategoryListSuccessResponse(items: [category]))
+			categoryRepository: UserCategoryMockRepository(
+				result: .loaded(anyUserCategoryListSuccessResponse(items: [category]))
 			),
 			accountRepository: AccountMockRepository(
 				result: .loaded(anyAccountListSuccessResponse(items: [account]))
@@ -289,12 +312,12 @@ final class AddTransactionViewModelTests: MemoryLeakTrackingSuite {
 	@Test
 	func save_whenRepositoryThrowsGenericError_showsGenericAlertMessage() async {
 		let account = anyAccountItem(id: "acc1")
-		let category = anyCategoryItem(id: "cat1", type: .expense)
+		let category = anyUserCategoryItem(id: "cat1", type: .expense)
 		let transactionRepository = TransactionMockRepository(createTransactionResult: .error(NSError(domain: "TestError", code: 999)))
 		let sut = makeSUT(
 			transactionRepository: transactionRepository,
-			categoryRepository: TransactionCategoryMockRepository(
-				result: .loaded(anyCategoryListSuccessResponse(items: [category]))
+			categoryRepository: UserCategoryMockRepository(
+				result: .loaded(anyUserCategoryListSuccessResponse(items: [category]))
 			),
 			accountRepository: AccountMockRepository(
 				result: .loaded(anyAccountListSuccessResponse(items: [account]))
@@ -323,8 +346,8 @@ final class AddTransactionViewModelTests: MemoryLeakTrackingSuite {
 	private func makeSUT(
 		date: Date = Date(),
 		transactionRepository: TransactionMockRepository = TransactionMockRepository(),
-		categoryRepository: TransactionCategoryMockRepository = TransactionCategoryMockRepository(
-			result: .loaded(anyCategoryListSuccessResponse())
+		categoryRepository: UserCategoryMockRepository = UserCategoryMockRepository(
+			result: .loaded(anyUserCategoryListSuccessResponse(items: [anyUserCategoryItem(type: .expense)]))
 		),
 		accountRepository: AccountMockRepository = AccountMockRepository(
 			result: .loaded(anyAccountListSuccessResponse())

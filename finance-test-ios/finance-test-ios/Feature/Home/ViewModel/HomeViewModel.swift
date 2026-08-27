@@ -25,7 +25,7 @@ final class HomeViewModel: ObservableObject {
 	@Published var isCurrencyDialogPresented = false
 
 	private let transactionRepository: any TransactionRepository
-	private let categoryRepository: any TransactionCategoryRepository
+	private let categoryRepository: any UserCategoryRepository
 	private let accountRepository: any AccountRepository
 	private let authRepository: any AuthRepository
 
@@ -33,7 +33,7 @@ final class HomeViewModel: ObservableObject {
 
 	init(
 		transactionRepository: some TransactionRepository = TransactionDefaultRepository(),
-		categoryRepository: some TransactionCategoryRepository = TransactionCategoryDefaultRepository(),
+		categoryRepository: some UserCategoryRepository = UserCategoryDefaultRepository(),
 		accountRepository: some AccountRepository = AccountDefaultRepository(),
 		authRepository: some AuthRepository = AuthDefaultRepository(),
 		selectedCurrency: Currency.Response.CurrencyItem = .usd
@@ -61,7 +61,7 @@ final class HomeViewModel: ObservableObject {
 		viewState = .loading
 
 		async let transactionsState = transactionRepository.getTransactions(request: .init(since: nil))
-		async let categoriesState = categoryRepository.getCategories(request: .init(type: nil, since: nil))
+		async let categoriesState = categoryRepository.getUserCategories()
 		async let accountsState = accountRepository.getAccounts(request: .init(since: nil))
 		async let profileState = authRepository.getProfile()
 
@@ -86,7 +86,7 @@ final class HomeViewModel: ObservableObject {
 			}
 
 			let allTransactions = transactionsResponse.data?.items ?? []
-			let allCategories = categoriesResponse.data?.items ?? []
+			let allCategories = (categoriesResponse.data ?? []).filter { $0.deletedAt == nil }
 			let allAccounts = accountsResponse.data?.items ?? []
 			let resolver = CategoryAccountDisplayResolver(categories: allCategories, accounts: allAccounts)
 

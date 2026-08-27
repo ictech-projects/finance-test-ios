@@ -24,7 +24,7 @@ struct ReportsAggregatorTests {
 			anyTransactionItem(id: "4", type: .expense, amount: "20")
 		]
 
-		let summary = ReportsAggregator.summarize(transactions: transactions, categories: [anyCategoryItem()])
+		let summary = ReportsAggregator.summarize(transactions: transactions, categories: [anyUserCategoryItem()])
 
 		#expect(summary.totalIncome == 150)
 		#expect(summary.totalExpense == 50)
@@ -37,8 +37,8 @@ struct ReportsAggregatorTests {
 			anyTransactionItem(id: "2", categoryId: "transport", type: .expense, amount: "25")
 		]
 		let categories = [
-			anyCategoryItem(id: "food", name: "Food", type: .expense),
-			anyCategoryItem(id: "transport", name: "Transport", type: .expense)
+			anyUserCategoryItem(id: "food", name: "Food", type: .expense),
+			anyUserCategoryItem(id: "transport", name: "Transport", type: .expense)
 		]
 
 		let summary = ReportsAggregator.summarize(transactions: transactions, categories: categories)
@@ -57,8 +57,8 @@ struct ReportsAggregatorTests {
 			anyTransactionItem(id: "2", categoryId: "rent", type: .expense, amount: "900")
 		]
 		let categories = [
-			anyCategoryItem(id: "salary", name: "Salary", type: .income),
-			anyCategoryItem(id: "rent", name: "Rent", type: .expense)
+			anyUserCategoryItem(id: "salary", name: "Salary", type: .income),
+			anyUserCategoryItem(id: "rent", name: "Rent", type: .expense)
 		]
 
 		let summary = ReportsAggregator.summarize(transactions: transactions, categories: categories)
@@ -84,7 +84,7 @@ struct ReportsAggregatorTests {
 	@Test func summarize_unmatchedCategoryId_bucketsUnderUncategorized() {
 		let transaction = anyTransactionItem(id: "1", categoryId: "does-not-exist", type: .expense, amount: "10")
 
-		let summary = ReportsAggregator.summarize(transactions: [transaction], categories: [anyCategoryItem(id: "other")])
+		let summary = ReportsAggregator.summarize(transactions: [transaction], categories: [anyUserCategoryItem(id: "other")])
 
 		#expect(summary.expenseBreakdown.first?.categoryName == "Uncategorized")
 	}
@@ -95,8 +95,8 @@ struct ReportsAggregatorTests {
 			anyTransactionItem(id: "2", categoryId: "large", type: .expense, amount: "90")
 		]
 		let categories = [
-			anyCategoryItem(id: "small", name: "Small", type: .expense),
-			anyCategoryItem(id: "large", name: "Large", type: .expense)
+			anyUserCategoryItem(id: "small", name: "Small", type: .expense),
+			anyUserCategoryItem(id: "large", name: "Large", type: .expense)
 		]
 
 		let summary = ReportsAggregator.summarize(transactions: transactions, categories: categories)
@@ -116,7 +116,7 @@ struct ReportsAggregatorTests {
 
 		let summary = ReportsAggregator.summarize(
 			transactions: [nilType, unparsableAmount, valid],
-			categories: [anyCategoryItem(id: "food")]
+			categories: [anyUserCategoryItem(id: "food")]
 		)
 
 		#expect(summary.totalExpense == 10)
@@ -125,7 +125,7 @@ struct ReportsAggregatorTests {
 	@Test func summarize_singleCategory_percentageIsExactly100NotFloatingPointNoise() {
 		let transactions = [anyTransactionItem(id: "1", categoryId: "food", type: .expense, amount: "33.33")]
 
-		let summary = ReportsAggregator.summarize(transactions: transactions, categories: [anyCategoryItem(id: "food")])
+		let summary = ReportsAggregator.summarize(transactions: transactions, categories: [anyUserCategoryItem(id: "food")])
 
 		#expect(summary.expenseBreakdown.first?.percentage == 100)
 	}
@@ -133,7 +133,7 @@ struct ReportsAggregatorTests {
 	@Test func summarize_zeroExpenseTotal_breakdownPercentageIsZeroNotNaN() {
 		let transactions = [anyTransactionItem(id: "1", categoryId: "salary", type: .income, amount: "100")]
 
-		let summary = ReportsAggregator.summarize(transactions: transactions, categories: [anyCategoryItem(id: "salary", type: .income)])
+		let summary = ReportsAggregator.summarize(transactions: transactions, categories: [anyUserCategoryItem(id: "salary", type: .income)])
 
 		#expect(summary.totalExpense == 0)
 		#expect(summary.expenseBreakdown.isEmpty)

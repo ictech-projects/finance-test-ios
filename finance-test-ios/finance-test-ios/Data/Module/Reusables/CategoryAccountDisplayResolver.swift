@@ -10,6 +10,11 @@ import SwiftUI
 /// hardcoded-mock-id lookup now that real Category/Account data layers exist — used by both
 /// `RecordsViewModel` and `HomeViewModel`. Holds no external/global state, only the lookup tables
 /// built once from whatever arrays the caller passes in.
+///
+/// Categories must be the user's own (`Sync.Response.UserCategoryItem`, via
+/// `UserCategoryRepository`), **not** the global `GET /categories` catalog: a transaction's
+/// `category_id` references a user category, so keying this lookup by global ids silently
+/// resolves everything to "Uncategorized".
 struct CategoryAccountDisplayResolver {
 
 	struct CategoryDisplay {
@@ -29,10 +34,10 @@ struct CategoryAccountDisplayResolver {
 	private static let unknownAccountName = "Unknown Account"
 	private static let unknownAccountIcon = "questionmark.circle"
 
-	private let categoriesById: [String: TransactionCategory.Response.CategoryItem]
+	private let categoriesById: [String: Sync.Response.UserCategoryItem]
 	private let accountsById: [String: Account.Response.AccountItem]
 
-	init(categories: [TransactionCategory.Response.CategoryItem], accounts: [Account.Response.AccountItem]) {
+	init(categories: [Sync.Response.UserCategoryItem], accounts: [Account.Response.AccountItem]) {
 		categoriesById = Dictionary(
 			categories.compactMap { category in category.id.map { ($0, category) } },
 			uniquingKeysWith: { first, _ in first }
