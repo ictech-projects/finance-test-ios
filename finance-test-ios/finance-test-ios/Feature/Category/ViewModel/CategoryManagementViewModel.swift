@@ -55,7 +55,7 @@ final class CategoryManagementViewModel: ObservableObject {
 			let row = CategoryRow(
 				id: category.id ?? UUID().uuidString,
 				name: category.name ?? "Untitled",
-				icon: category.icon ?? "tag",
+				icon: CategoryIconResolver.symbol(for: category.icon),
 				colorHex: category.color
 			)
 			result.append(row)
@@ -65,7 +65,7 @@ final class CategoryManagementViewModel: ObservableObject {
 			let row = CategoryRow(
 				id: category.id ?? UUID().uuidString,
 				name: category.name ?? "Untitled",
-				icon: category.icon ?? "tag",
+				icon: CategoryIconResolver.symbol(for: category.icon),
 				colorHex: category.color
 			)
 			result.append(row)

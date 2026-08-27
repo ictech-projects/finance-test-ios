@@ -70,7 +70,7 @@ enum ReportsAggregator {
 			return HomeCategoryBreakdown(
 				categoryId: categoryId,
 				categoryName: category?.name ?? uncategorizedName,
-				icon: category?.icon,
+				icon: CategoryIconResolver.symbol(for: category?.icon),
 				colorHex: category?.color,
 				type: type,
 				total: categoryTotal,

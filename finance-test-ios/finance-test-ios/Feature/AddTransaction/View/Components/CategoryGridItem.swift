@@ -15,7 +15,7 @@ struct CategoryGridItem: View {
 	var body: some View {
 		Button(action: action) {
 			VStack(spacing: 4) {
-				Image(systemName: category.icon ?? "circle.grid.2x2")
+				Image(systemName: CategoryIconResolver.symbol(for: category.icon))
 					.font(.baseStyle(size: 18, weight: .semibold))
 					.foregroundStyle(isSelected ? .white : .recordsNeutralIconTint)
 					.frame(width: 56, height: 56)
