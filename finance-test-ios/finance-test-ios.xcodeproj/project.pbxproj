@@ -17,6 +17,7 @@
 		92D90EE23010732600DCD00C /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90EE13010732600DCD00C /* SDWebImageSwiftUI */; };
 		92D90EEC301074D400DCD00C /* RichText in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90EEB301074D400DCD00C /* RichText */; };
 		92D90F00301077CC00DCD00C /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90EFF301077CC00DCD00C /* SwiftUIIntrospect */; };
+		AC05C0DE00000000000000C /* finance-test-iosWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AC05C0DE000000000000002 /* finance-test-iosWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		FA0E7F0330106EEE00DCD003 /* netfox in Frameworks */ = {isa = PBXBuildFile; productRef = FA0E7F0230106EEE00DCD002 /* netfox */; };
 /* End PBXBuildFile section */
 
@@ -35,12 +36,34 @@
 			remoteGlobalIDString = 920743673010673800FD2C6E;
 			remoteInfo = "finance-test-ios";
 		};
+		AC05C0DE00000000000000E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 920743603010673800FD2C6E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AC05C0DE000000000000001;
+			remoteInfo = "finance-test-iosWidgets";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		AC05C0DE00000000000000B /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				AC05C0DE00000000000000C /* finance-test-iosWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		920743683010673800FD2C6E /* finance-test-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "finance-test-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		920743773010673B00FD2C6E /* finance-test-iosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "finance-test-iosTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		920743813010673B00FD2C6E /* finance-test-iosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "finance-test-iosUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC05C0DE000000000000002 /* finance-test-iosWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "finance-test-iosWidgets.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -50,6 +73,13 @@
 				Info.plist,
 			);
 			target = 920743673010673800FD2C6E /* finance-test-ios */;
+		};
+		AC05C0DE00000000000000F /* Exceptions for "finance-test-iosWidgets" folder in "finance-test-iosWidgets" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = AC05C0DE000000000000001 /* finance-test-iosWidgets */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -70,6 +100,19 @@
 		920743843010673B00FD2C6E /* finance-test-iosUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "finance-test-iosUITests";
+			sourceTree = "<group>";
+		};
+		AC05C0DE000000000000006 /* finance-test-iosWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AC05C0DE00000000000000F /* Exceptions for "finance-test-iosWidgets" folder in "finance-test-iosWidgets" target */,
+			);
+			path = "finance-test-iosWidgets";
+			sourceTree = "<group>";
+		};
+		AC05C0DE000000000000007 /* finance-test-iosShared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "finance-test-iosShared";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -107,6 +150,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AC05C0DE000000000000004 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -114,6 +164,8 @@
 			isa = PBXGroup;
 			children = (
 				9207436A3010673800FD2C6E /* finance-test-ios */,
+				AC05C0DE000000000000007 /* finance-test-iosShared */,
+				AC05C0DE000000000000006 /* finance-test-iosWidgets */,
 				9207437A3010673B00FD2C6E /* finance-test-iosTests */,
 				920743843010673B00FD2C6E /* finance-test-iosUITests */,
 				920743693010673800FD2C6E /* Products */,
@@ -126,6 +178,7 @@
 				920743683010673800FD2C6E /* finance-test-ios.app */,
 				920743773010673B00FD2C6E /* finance-test-iosTests.xctest */,
 				920743813010673B00FD2C6E /* finance-test-iosUITests.xctest */,
+				AC05C0DE000000000000002 /* finance-test-iosWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -140,13 +193,16 @@
 				920743643010673800FD2C6E /* Sources */,
 				920743653010673800FD2C6E /* Frameworks */,
 				920743663010673800FD2C6E /* Resources */,
+				AC05C0DE00000000000000B /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				AC05C0DE00000000000000D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				9207436A3010673800FD2C6E /* finance-test-ios */,
+				AC05C0DE000000000000007 /* finance-test-iosShared */,
 			);
 			name = "finance-test-ios";
 			packageProductDependencies = (
@@ -212,6 +268,29 @@
 			productReference = 920743813010673B00FD2C6E /* finance-test-iosUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		AC05C0DE000000000000001 /* finance-test-iosWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AC05C0DE000000000000008 /* Build configuration list for PBXNativeTarget "finance-test-iosWidgets" */;
+			buildPhases = (
+				AC05C0DE000000000000003 /* Sources */,
+				AC05C0DE000000000000004 /* Frameworks */,
+				AC05C0DE000000000000005 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AC05C0DE000000000000006 /* finance-test-iosWidgets */,
+				AC05C0DE000000000000007 /* finance-test-iosShared */,
+			);
+			name = "finance-test-iosWidgets";
+			packageProductDependencies = (
+			);
+			productName = "finance-test-iosWidgets";
+			productReference = AC05C0DE000000000000002 /* finance-test-iosWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -232,6 +311,9 @@
 					920743803010673B00FD2C6E = {
 						CreatedOnToolsVersion = 26.5;
 						TestTargetID = 920743673010673800FD2C6E;
+					};
+					AC05C0DE000000000000001 = {
+						CreatedOnToolsVersion = 26.5;
 					};
 				};
 			};
@@ -262,6 +344,7 @@
 				920743673010673800FD2C6E /* finance-test-ios */,
 				920743763010673B00FD2C6E /* finance-test-iosTests */,
 				920743803010673B00FD2C6E /* finance-test-iosUITests */,
+				AC05C0DE000000000000001 /* finance-test-iosWidgets */,
 			);
 		};
 /* End PBXProject section */
@@ -282,6 +365,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		9207437F3010673B00FD2C6E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AC05C0DE000000000000005 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -312,6 +402,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AC05C0DE000000000000003 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -324,6 +421,11 @@
 			isa = PBXTargetDependency;
 			target = 920743673010673800FD2C6E /* finance-test-ios */;
 			targetProxy = 920743823010673B00FD2C6E /* PBXContainerItemProxy */;
+		};
+		AC05C0DE00000000000000D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AC05C0DE000000000000001 /* finance-test-iosWidgets */;
+			targetProxy = AC05C0DE00000000000000E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -466,6 +568,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -500,6 +603,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -601,6 +705,66 @@
 			};
 			name = Release;
 		};
+		AC05C0DE000000000000009 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = APL5QSXJ32;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "finance-test-iosWidgets/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "SpendWise Widgets";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.indie.finance-test-ios.Widgets";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AC05C0DE00000000000000A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = APL5QSXJ32;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "finance-test-iosWidgets/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "SpendWise Widgets";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.indie.finance-test-ios.Widgets";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -636,6 +800,15 @@
 			buildConfigurations = (
 				920743923010673B00FD2C6E /* Debug */,
 				920743933010673B00FD2C6E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AC05C0DE000000000000008 /* Build configuration list for PBXNativeTarget "finance-test-iosWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AC05C0DE000000000000009 /* Debug */,
+				AC05C0DE00000000000000A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

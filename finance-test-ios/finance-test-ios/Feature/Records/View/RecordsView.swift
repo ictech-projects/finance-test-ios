@@ -7,6 +7,7 @@ import SwiftUI
 
 struct RecordsView: View {
 	@StateObject private var viewModel: RecordsViewModel
+	@ObservedObject private var intentRouter = AppIntentRouter.shared
 	@Environment(\.dismiss) private var dismiss
 
 	/// `false` (default) when this is the "Records" tab root — owns its own `NavigationStack`.
@@ -35,6 +36,16 @@ struct RecordsView: View {
 		}
 		.sheet(isPresented: $viewModel.isAddTransactionPresented) {
 			AddTransactionView(delegate: viewModel)
+		}
+		// The Control Center "Add Expense" control lands here: `RootTabView` switches to this
+		// tab, then this opens the same sheet the FAB does. `task(id:)` covers both orders -
+		// the request can predate this view (cold launch) or arrive while it's already on
+		// screen. Only the pushed-from-Reports instance sits this out, since it isn't the
+		// Records tab and shouldn't steal the request from the tab that is.
+		.task(id: intentRouter.pendingRequest) {
+			guard !isPushedDestination, intentRouter.pendingRequest == .addExpense else { return }
+			viewModel.presentAddTransaction()
+			intentRouter.clear()
 		}
 	}
 
