@@ -7,6 +7,9 @@
 
 import SwiftUI
 import IQKeyboardManagerSwift
+#if DEBUG
+import netfox
+#endif
 
 @main
 struct IosBaseProjectApp: App {
@@ -15,6 +18,7 @@ struct IosBaseProjectApp: App {
 
 	init() {
 		tabBarAdjustment()
+		startNetworkDebugger()
 	}
 
 	var body: some Scene {
@@ -27,7 +31,17 @@ struct IosBaseProjectApp: App {
 }
 
 extension IosBaseProjectApp {
-	
+
+	/// Starts netfox's in-app network inspector (shake the device, or press ⌃⌘N in the
+	/// simulator, to open it). DEBUG-only on purpose: netfox records full request/response
+	/// bodies including `Authorization` headers, which must never be capturable in a build
+	/// that ships.
+	private func startNetworkDebugger() {
+		#if DEBUG
+		NFX.sharedInstance().start()
+		#endif
+	}
+
 	private func tabBarAdjustment() {
 		let appearance = UITabBarAppearance()
 		

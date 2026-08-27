@@ -17,6 +17,7 @@
 		92D90EE23010732600DCD00C /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90EE13010732600DCD00C /* SDWebImageSwiftUI */; };
 		92D90EEC301074D400DCD00C /* RichText in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90EEB301074D400DCD00C /* RichText */; };
 		92D90F00301077CC00DCD00C /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = 92D90EFF301077CC00DCD00C /* SwiftUIIntrospect */; };
+		FA0E7F0330106EEE00DCD003 /* netfox in Frameworks */ = {isa = PBXBuildFile; productRef = FA0E7F0230106EEE00DCD002 /* netfox */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +89,7 @@
 				92D90EDF301072CF00DCD00C /* RxMoya in Frameworks */,
 				92D90ED63010722200DCD00C /* Lottie in Frameworks */,
 				92D90EDD301072CF00DCD00C /* ReactiveMoya in Frameworks */,
+				FA0E7F0330106EEE00DCD003 /* netfox in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,6 +160,7 @@
 				92D90EE13010732600DCD00C /* SDWebImageSwiftUI */,
 				92D90EEB301074D400DCD00C /* RichText */,
 				92D90EFF301077CC00DCD00C /* SwiftUIIntrospect */,
+				FA0E7F0230106EEE00DCD002 /* netfox */,
 			);
 			productName = "finance-test-ios";
 			productReference = 920743683010673800FD2C6E /* finance-test-ios.app */;
@@ -249,6 +252,7 @@
 				92D90EE03010732600DCD00C /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 				92D90EEA301074D400DCD00C /* XCRemoteSwiftPackageReference "RichText" */,
 				92D90EFE301077CC00DCD00C /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+				FA0E7F0130106EEE00DCD001 /* XCRemoteSwiftPackageReference "netfox" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 920743693010673800FD2C6E /* Products */;
@@ -695,6 +699,14 @@
 				minimumVersion = 26.0.1;
 			};
 		};
+		FA0E7F0130106EEE00DCD001 /* XCRemoteSwiftPackageReference "netfox" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kasketis/netfox.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.21.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -747,6 +759,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 92D90EFE301077CC00DCD00C /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = SwiftUIIntrospect;
+		};
+		FA0E7F0230106EEE00DCD002 /* netfox */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FA0E7F0130106EEE00DCD001 /* XCRemoteSwiftPackageReference "netfox" */;
+			productName = netfox;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

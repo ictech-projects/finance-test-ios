@@ -59,7 +59,7 @@ struct CategoryAccountDisplayResolver {
 		let tint = category.color.flatMap { Color(hex: $0) } ?? .recordsNeutralIconTint
 		return CategoryDisplay(
 			name: category.name ?? Self.uncategorizedName,
-			icon: category.icon ?? Self.uncategorizedIcon,
+			icon: CategoryIconResolver.symbol(for: category.icon),
 			iconTint: tint,
 			iconBackground: tint.opacity(0.15)
 		)

@@ -4,9 +4,9 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** In review - [PR #25](https://github.com/ictech-projects/finance-test-ios/pull/25) (open, targeting `development`)
 
-- [ ] An App Intent exists that creates a transaction given an amount, and optionally a category/merchant/account
-- [ ] The intent is invocable via Siri and appears in the Shortcuts app
-- [ ] Running the intent creates a transaction visible in Records afterward
-- [ ] Missing/ambiguous parameters (e.g. no amount) prompt the user rather than silently failing
+- [x] An App Intent exists that creates a transaction given an amount, and optionally a category/merchant/account
+- [x] The intent is invocable via Siri and appears in the Shortcuts app - confirmed on simulator: "Log Expense" auto-registers under a "finance-test-ios" group with no manual setup, via the phrases "Log an expense in finance-test-ios" / "Add an expense in finance-test-ios"
+- [ ] Running the intent creates a transaction visible in Records afterward - unit-tested against mocks (`AddExpenseIntentHandlerTests`); a full live run (real login + tapping the shortcut + checking Records) hasn't been manually verified yet
+- [x] Missing/ambiguous parameters (e.g. no amount) prompt the user rather than silently failing - native App Intents behavior for a required, non-optional `@Parameter`
