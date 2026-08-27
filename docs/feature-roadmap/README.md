@@ -23,11 +23,16 @@ Numbering is dependency order (blockers first) - `NN` is a stable short ID, so r
 | 11 | [Spotlight search for transactions/accounts](issues/11-spotlight-search-transactions-accounts.md) | None |
 | 12 | [Additional language localization](issues/12-additional-language-localization.md) | None |
 | 13 | [Conversational Siri chaining (stretch)](issues/13-conversational-siri-chaining.md) | 04 |
+| 14 | [New-user setup dead ends (currency → account)](issues/14-new-user-setup-dead-ends.md) | None |
+| 15 | [Transactions use global category ids instead of the user's own](issues/15-transactions-use-global-category-ids.md) | None — **blocks 04** |
 
 **Picking up a ticket:** any ticket whose "Blocked by" tickets are already done is on the
-frontier and ready to go - currently that's 01, 02, 04, 07, 09, 11, and 12. Check a ticket's
+frontier and ready to go - currently that's 01, 02, 07, 09, 11, 12, 14, and 15. Check a ticket's
 box items off as you satisfy them; this repo doesn't yet auto-update ticket status, so mark it
 done in the file itself when you finish.
+
+Tickets 14 and 15 were both found while manually verifying ticket 04 against the live backend —
+15 is a blocking bug (transaction creation fails outright), so it lands before ticket 04's PR.
 
 Published via [`to-tickets`](https://github.com/mattpocock/skills) in local-markdown mode
 (no issue tracker is wired up for this repo yet - see `/setup-matt-pocock-skills` if you want
