@@ -16,7 +16,7 @@ struct AddExpenseResult: Equatable {
 struct AddExpenseIntentHandler {
 	private let transactionRepository: any TransactionRepository
 	private let accountRepository: any AccountRepository
-	private let categoryRepository: any TransactionCategoryRepository
+	private let categoryRepository: any UserCategoryRepository
 	private let authLocalDataSource: any AuthLocalDataSource
 
 	private let now: () -> Date
@@ -24,7 +24,7 @@ struct AddExpenseIntentHandler {
 	init(
 		transactionRepository: some TransactionRepository = TransactionDefaultRepository(),
 		accountRepository: some AccountRepository = AccountDefaultRepository(),
-		categoryRepository: some TransactionCategoryRepository = TransactionCategoryDefaultRepository(),
+		categoryRepository: some UserCategoryRepository = UserCategoryDefaultRepository(),
 		authLocalDataSource: some AuthLocalDataSource = AuthDefaultLocalDataSource(),
 		now: @escaping () -> Date = Date.init
 	) {
@@ -52,12 +52,16 @@ struct AddExpenseIntentHandler {
 		}
 
 		async let accountsState = accountRepository.getAccounts(request: .init(since: nil))
-		async let categoriesState = categoryRepository.getCategories(request: .init(type: .expense, since: nil))
+		async let categoriesState = categoryRepository.getUserCategories()
 
 		let (accountsResult, categoriesResult) = try await (accountsState, categoriesState)
 
 		let accounts = try Self.items(from: accountsResult) { $0.items }
-		let categories = try Self.items(from: categoriesResult) { $0.items }
+		// A transaction's `category_id` must reference the user's own category, not the global
+		// `/categories` catalog. `getUserCategories()` takes no type filter and `/sync/pull`
+		// includes soft-deleted tombstones, so both are narrowed here.
+		let categories = try Self.items(from: categoriesResult) { $0 }
+			.filter { $0.type == .expense && $0.deletedAt == nil }
 
 		let resolvedAccount = accountId.flatMap { id in accounts.first { $0.id == id } }
 			?? accounts.first(where: { $0.isDefault == true })

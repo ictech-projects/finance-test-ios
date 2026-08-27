@@ -17,7 +17,7 @@ struct AddExpenseIntentHandlerTests {
 	@Test
 	func addExpense_whenNotLoggedIn_throwsAndSkipsRepositoryCalls() async throws {
 		let accountRepository = AccountMockRepository(result: .loaded(anyAccountListSuccessResponse()))
-		let categoryRepository = TransactionCategoryMockRepository(result: .loaded(anyCategoryListSuccessResponse()))
+		let categoryRepository = UserCategoryMockRepository(result: .loaded(anyUserCategoryListSuccessResponse(items: [anyUserCategoryItem(type: .expense)])))
 		let sut = makeSUT(
 			accountRepository: accountRepository,
 			categoryRepository: categoryRepository,
@@ -57,14 +57,14 @@ struct AddExpenseIntentHandlerTests {
 			type: "bank_account", color: nil, initialBalance: nil, balance: nil,
 			isDefault: false, createdAt: nil, updatedAt: nil, deletedAt: nil
 		)
-		let category = anyCategoryItem(id: "cat-1", name: "Dining")
+		let category = anyUserCategoryItem(id: "cat-1", name: "Dining", type: .expense)
 		let transactionRepository = TransactionMockRepository(
 			createTransactionResult: .loaded(GeneralResponse(success: true, statusCode: 200, message: "Applied.", data: anyTransactionItem()))
 		)
 		let sut = makeSUT(
 			transactionRepository: transactionRepository,
 			accountRepository: AccountMockRepository(result: .loaded(anyAccountListSuccessResponse(items: [otherAccount, defaultAccount]))),
-			categoryRepository: TransactionCategoryMockRepository(result: .loaded(anyCategoryListSuccessResponse(items: [category])))
+			categoryRepository: UserCategoryMockRepository(result: .loaded(anyUserCategoryListSuccessResponse(items: [category])))
 		)
 
 		let result = try await sut.addExpense(amount: 12, merchant: "  ", accountId: nil, categoryId: nil)
@@ -95,15 +95,15 @@ struct AddExpenseIntentHandlerTests {
 			type: "bank_account", color: nil, initialBalance: nil, balance: nil,
 			isDefault: false, createdAt: nil, updatedAt: nil, deletedAt: nil
 		)
-		let firstCategory = anyCategoryItem(id: "cat-first", name: "Dining")
-		let chosenCategory = anyCategoryItem(id: "cat-chosen", name: "Groceries")
+		let firstCategory = anyUserCategoryItem(id: "cat-first", name: "Dining", type: .expense)
+		let chosenCategory = anyUserCategoryItem(id: "cat-chosen", name: "Groceries", type: .expense)
 		let transactionRepository = TransactionMockRepository(
 			createTransactionResult: .loaded(GeneralResponse(success: true, statusCode: 200, message: "Applied.", data: anyTransactionItem()))
 		)
 		let sut = makeSUT(
 			transactionRepository: transactionRepository,
 			accountRepository: AccountMockRepository(result: .loaded(anyAccountListSuccessResponse(items: [defaultAccount, chosenAccount]))),
-			categoryRepository: TransactionCategoryMockRepository(result: .loaded(anyCategoryListSuccessResponse(items: [firstCategory, chosenCategory])))
+			categoryRepository: UserCategoryMockRepository(result: .loaded(anyUserCategoryListSuccessResponse(items: [firstCategory, chosenCategory])))
 		)
 
 		let result = try await sut.addExpense(amount: 30, merchant: "Whole Foods", accountId: "acc-chosen", categoryId: "cat-chosen")
@@ -128,7 +128,7 @@ struct AddExpenseIntentHandlerTests {
 	func addExpense_whenNoAccountsAvailable_throwsNoAccountAvailable() async throws {
 		let sut = makeSUT(
 			accountRepository: AccountMockRepository(result: .loaded(anyAccountListSuccessResponse(items: []))),
-			categoryRepository: TransactionCategoryMockRepository(result: .loaded(anyCategoryListSuccessResponse()))
+			categoryRepository: UserCategoryMockRepository(result: .loaded(anyUserCategoryListSuccessResponse(items: [anyUserCategoryItem(type: .expense)])))
 		)
 
 		await expectThrows(FinanceIntentError.noAccountAvailable) {
@@ -140,7 +140,7 @@ struct AddExpenseIntentHandlerTests {
 	func addExpense_whenNoCategoriesAvailable_throwsNoCategoryAvailable() async throws {
 		let sut = makeSUT(
 			accountRepository: AccountMockRepository(result: .loaded(anyAccountListSuccessResponse())),
-			categoryRepository: TransactionCategoryMockRepository(result: .loaded(anyCategoryListSuccessResponse(items: [])))
+			categoryRepository: UserCategoryMockRepository(result: .loaded(anyUserCategoryListSuccessResponse(items: [])))
 		)
 
 		await expectThrows(FinanceIntentError.noCategoryAvailable) {
@@ -155,7 +155,7 @@ struct AddExpenseIntentHandlerTests {
 		let errorResponse = ErrorResponse(success: false, statusCode: 401, message: "Unauthenticated.", errors: nil)
 		let sut = makeSUT(
 			accountRepository: AccountMockRepository(result: .error(errorResponse)),
-			categoryRepository: TransactionCategoryMockRepository(result: .loaded(anyCategoryListSuccessResponse()))
+			categoryRepository: UserCategoryMockRepository(result: .loaded(anyUserCategoryListSuccessResponse(items: [anyUserCategoryItem(type: .expense)])))
 		)
 
 		await expectThrows(FinanceIntentError.sessionExpired) {
@@ -170,7 +170,7 @@ struct AddExpenseIntentHandlerTests {
 		let sut = makeSUT(
 			transactionRepository: transactionRepository,
 			accountRepository: AccountMockRepository(result: .loaded(anyAccountListSuccessResponse())),
-			categoryRepository: TransactionCategoryMockRepository(result: .loaded(anyCategoryListSuccessResponse()))
+			categoryRepository: UserCategoryMockRepository(result: .loaded(anyUserCategoryListSuccessResponse(items: [anyUserCategoryItem(type: .expense)])))
 		)
 
 		await expectThrows(FinanceIntentError.requestFailed(message: "The amount is invalid.")) {
@@ -183,7 +183,7 @@ struct AddExpenseIntentHandlerTests {
 	private func makeSUT(
 		transactionRepository: TransactionMockRepository = TransactionMockRepository(),
 		accountRepository: AccountMockRepository = AccountMockRepository(result: .loaded(anyAccountListSuccessResponse())),
-		categoryRepository: TransactionCategoryMockRepository = TransactionCategoryMockRepository(result: .loaded(anyCategoryListSuccessResponse())),
+		categoryRepository: UserCategoryMockRepository = UserCategoryMockRepository(result: .loaded(anyUserCategoryListSuccessResponse(items: [anyUserCategoryItem(type: .expense)]))),
 		authLocalDataSource: AuthMockLocalDataSource = AuthMockLocalDataSource(accessToken: "any-token")
 	) -> AddExpenseIntentHandler {
 		AddExpenseIntentHandler(
