@@ -6,16 +6,20 @@
 import Foundation
 
 /// Computes report summaries locally — there is no `/reports` backend endpoint. Raw data comes
-/// from `TransactionRepository` and `TransactionCategoryRepository`; this repository owns the
+/// from `TransactionRepository` and `UserCategoryRepository`; this repository owns the
 /// period filtering, sums, and breakdown math on top of it.
+///
+/// Categories come from the user's own set, not the global `GET /categories` catalog: a
+/// transaction's `category_id` references a user category, so a global-id lookup would leave
+/// every breakdown row unattributed.
 struct ReportsDefaultRepository: ReportsRepository {
 
 	private let transactionRepository: any TransactionRepository
-	private let categoryRepository: any TransactionCategoryRepository
+	private let categoryRepository: any UserCategoryRepository
 
 	init(
 		transactionRepository: some TransactionRepository = TransactionDefaultRepository(),
-		categoryRepository: some TransactionCategoryRepository = TransactionCategoryDefaultRepository()
+		categoryRepository: some UserCategoryRepository = UserCategoryDefaultRepository()
 	) {
 		self.transactionRepository = transactionRepository
 		self.categoryRepository = categoryRepository
@@ -50,12 +54,14 @@ struct ReportsDefaultRepository: ReportsRepository {
 		}
 	}
 
+	/// `/sync/pull` includes soft-deleted tombstones, so those are dropped here — a deleted
+	/// category must not appear in a breakdown.
 	private static func categoryItems(
-		from repository: any TransactionCategoryRepository
-	) async throws -> [TransactionCategory.Response.CategoryItem] {
-		switch try await repository.getCategories(request: TransactionCategory.Request.GetCategories(type: nil, since: nil)) {
+		from repository: any UserCategoryRepository
+	) async throws -> [Sync.Response.UserCategoryItem] {
+		switch try await repository.getUserCategories() {
 		case .loaded(let response):
-			return response.data?.items ?? []
+			return (response.data ?? []).filter { $0.deletedAt == nil }
 		case .error(let error):
 			throw error
 		default:
@@ -65,7 +71,7 @@ struct ReportsDefaultRepository: ReportsRepository {
 
 	private static func summarize(
 		transactions: [TransactionRecord.Response.TransactionItem],
-		categories: [TransactionCategory.Response.CategoryItem],
+		categories: [Sync.Response.UserCategoryItem],
 		request: Reports.Request.GetPeriodSummary
 	) -> Reports.Response.PeriodSummary {
 		let bounds = ReportsPeriodFormatting.bounds(for: request.periodType, referenceDate: request.referenceDate)
@@ -83,9 +89,12 @@ struct ReportsDefaultRepository: ReportsRepository {
 		let netSaved = totalIncome - totalSpent
 		let savingsRatePercent = totalIncome > 0 ? Int((netSaved / totalIncome * 100).rounded()) : 0
 
-		let categoriesById = Dictionary(uniqueKeysWithValues: categories.compactMap { category in
-			category.id.map { ($0, category) }
-		})
+		// `uniquingKeysWith:` rather than `uniqueKeysWithValues:` — the latter traps at runtime on
+		// a duplicate id, and this list comes from `/sync/pull`, which can repeat ids.
+		let categoriesById = Dictionary(
+			categories.compactMap { category in category.id.map { ($0, category) } },
+			uniquingKeysWith: { first, _ in first }
+		)
 
 		return Reports.Response.PeriodSummary(
 			periodLabel: ReportsPeriodFormatting.label(for: request.periodType, periodStart: bounds.start),
@@ -101,7 +110,7 @@ struct ReportsDefaultRepository: ReportsRepository {
 
 	private static func categoryBreakdown(
 		expenses: [TransactionRecord.Response.TransactionItem],
-		categoriesById: [String: TransactionCategory.Response.CategoryItem],
+		categoriesById: [String: Sync.Response.UserCategoryItem],
 		totalSpent: Double
 	) -> [Reports.Response.CategoryBreakdown] {
 		Dictionary(grouping: expenses) { $0.categoryId ?? "" }
@@ -122,7 +131,7 @@ struct ReportsDefaultRepository: ReportsRepository {
 
 	private static func topExpenses(
 		from expenses: [TransactionRecord.Response.TransactionItem],
-		categoriesById: [String: TransactionCategory.Response.CategoryItem],
+		categoriesById: [String: Sync.Response.UserCategoryItem],
 		limit: Int = 5
 	) -> [Reports.Response.Expense] {
 		expenses

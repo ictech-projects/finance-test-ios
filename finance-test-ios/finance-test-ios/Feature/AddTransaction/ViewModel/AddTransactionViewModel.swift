@@ -27,9 +27,9 @@ final class AddTransactionViewModel: ObservableObject {
 	@Published var note = ""
 	@Published var date = Date()
 	@Published private(set) var selectedAccount: Account.Response.AccountItem?
-	@Published private(set) var selectedCategory: TransactionCategory.Response.CategoryItem?
+	@Published private(set) var selectedCategory: Sync.Response.UserCategoryItem?
 	@Published private(set) var accounts: [Account.Response.AccountItem] = []
-	@Published private(set) var categories: [TransactionCategory.Response.CategoryItem] = []
+	@Published private(set) var categories: [Sync.Response.UserCategoryItem] = []
 	@Published var isDatePickerPresented = false
 	@Published var isAccountPickerPresented = false
 	@Published var amountErrorMessage: String?
@@ -40,14 +40,14 @@ final class AddTransactionViewModel: ObservableObject {
 	@Published private(set) var saveErrorMessage = ""
 
 	private let transactionRepository: any TransactionRepository
-	private let categoryRepository: any TransactionCategoryRepository
+	private let categoryRepository: any UserCategoryRepository
 	private let accountRepository: any AccountRepository
 	private let delegate: any AddTransactionDelegate
 
 	init(
 		date: Date = Date(),
 		transactionRepository: some TransactionRepository = TransactionDefaultRepository(),
-		categoryRepository: some TransactionCategoryRepository = TransactionCategoryDefaultRepository(),
+		categoryRepository: some UserCategoryRepository = UserCategoryDefaultRepository(),
 		accountRepository: some AccountRepository = AccountDefaultRepository(),
 		delegate: some AddTransactionDelegate
 	) {
@@ -58,7 +58,7 @@ final class AddTransactionViewModel: ObservableObject {
 		self.delegate = delegate
 	}
 
-	var categoriesForCurrentType: [TransactionCategory.Response.CategoryItem] {
+	var categoriesForCurrentType: [Sync.Response.UserCategoryItem] {
 		categories.filter { $0.type == type }
 	}
 
@@ -69,7 +69,7 @@ final class AddTransactionViewModel: ObservableObject {
 	func onLoad() async {
 		viewState = .loading
 
-		async let categoriesState = categoryRepository.getCategories(request: .init(type: nil, since: nil))
+		async let categoriesState = categoryRepository.getUserCategories()
 		async let accountsState = accountRepository.getAccounts(request: .init(since: nil))
 
 		do {
@@ -83,7 +83,7 @@ final class AddTransactionViewModel: ObservableObject {
 				return
 			}
 
-			categories = categoriesResponse.data?.items ?? []
+			categories = (categoriesResponse.data ?? []).filter { $0.deletedAt == nil }
 			accounts = accountsResponse.data?.items ?? []
 			selectedAccount = accounts.first(where: { $0.isDefault == true }) ?? accounts.first
 			selectDefaultCategoryIfNeeded()
@@ -121,7 +121,7 @@ final class AddTransactionViewModel: ObservableObject {
 		}
 	}
 
-	func selectCategory(_ category: TransactionCategory.Response.CategoryItem) {
+	func selectCategory(_ category: Sync.Response.UserCategoryItem) {
 		withAnimation(.easeInOut(duration: 0.15)) {
 			selectedCategory = category
 		}

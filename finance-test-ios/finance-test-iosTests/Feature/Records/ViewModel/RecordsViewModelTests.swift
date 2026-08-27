@@ -137,8 +137,8 @@ final class RecordsViewModelTests: MemoryLeakTrackingSuite {
 
 	private func makeSUT(
 		transactionRepository: TransactionMockRepository = TransactionMockRepository(),
-		categoryRepository: TransactionCategoryMockRepository = TransactionCategoryMockRepository(
-			result: .loaded(anyCategoryListSuccessResponse(items: recordsFixtureCategories()))
+		categoryRepository: UserCategoryMockRepository = UserCategoryMockRepository(
+			result: .loaded(anyUserCategoryListSuccessResponse(items: recordsFixtureCategories()))
 		),
 		accountRepository: AccountMockRepository = AccountMockRepository(
 			result: .loaded(anyAccountListSuccessResponse(items: recordsFixtureAccounts()))
@@ -158,11 +158,11 @@ final class RecordsViewModelTests: MemoryLeakTrackingSuite {
 
 /// Mirrors the ids `anyTransactionItem`'s default `accountId`/`categoryId` (and this suite's
 /// explicit overrides) expect to resolve to, via `CategoryAccountDisplayResolver`.
-private func recordsFixtureCategories() -> [TransactionCategory.Response.CategoryItem] {
+private func recordsFixtureCategories() -> [Sync.Response.UserCategoryItem] {
 	[
-		anyCategoryItem(id: "01K3CT0000000000000000CT01", name: "Dining & Drinks", type: .expense),
-		anyCategoryItem(id: "01K3CT0000000000000000CT02", name: "Freelance Income", type: .income),
-		anyCategoryItem(id: "01K3CT0000000000000000CT03", name: "Transport", type: .expense)
+		anyUserCategoryItem(id: "01K3CT0000000000000000CT01", name: "Dining & Drinks", type: .expense),
+		anyUserCategoryItem(id: "01K3CT0000000000000000CT02", name: "Freelance Income", type: .income),
+		anyUserCategoryItem(id: "01K3CT0000000000000000CT03", name: "Transport", type: .expense)
 	]
 }
 

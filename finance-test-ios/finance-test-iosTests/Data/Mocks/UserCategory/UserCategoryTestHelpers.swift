@@ -14,6 +14,17 @@ func anyCreateUserCategoryRequest(
 	UserCategory.Request.CreateUserCategory(name: name, type: type, icon: icon, color: color)
 }
 
+func anyUserCategoryListSuccessResponse(
+	items: [Sync.Response.UserCategoryItem] = [anyUserCategoryItem()]
+) -> GeneralResponse<[Sync.Response.UserCategoryItem]> {
+	GeneralResponse(
+		success: true,
+		statusCode: 200,
+		message: "User categories fetched.",
+		data: items
+	)
+}
+
 func anyAppliedUserCategoryChangeResult(
 	clientChangeId: String? = "c1",
 	id: String? = "01K3UT0000000000000000UT02",

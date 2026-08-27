@@ -35,13 +35,13 @@ final class RecordsViewModel: ObservableObject {
 	private(set) var availableAccountNames: [String] = []
 
 	private let transactionRepository: any TransactionRepository
-	private let categoryRepository: any TransactionCategoryRepository
+	private let categoryRepository: any UserCategoryRepository
 	private let accountRepository: any AccountRepository
 	private var entries: [Entry] = []
 
 	init(
 		transactionRepository: some TransactionRepository = TransactionDefaultRepository(),
-		categoryRepository: some TransactionCategoryRepository = TransactionCategoryDefaultRepository(),
+		categoryRepository: some UserCategoryRepository = UserCategoryDefaultRepository(),
 		accountRepository: some AccountRepository = AccountDefaultRepository(),
 		categoryFilter: String? = nil
 	) {
@@ -59,7 +59,7 @@ final class RecordsViewModel: ObservableObject {
 		viewState = .loading
 
 		async let transactionsState = transactionRepository.getTransactions(request: .init(since: nil))
-		async let categoriesState = categoryRepository.getCategories(request: .init(type: nil, since: nil))
+		async let categoriesState = categoryRepository.getUserCategories()
 		async let accountsState = accountRepository.getAccounts(request: .init(since: nil))
 
 		do {
@@ -75,7 +75,7 @@ final class RecordsViewModel: ObservableObject {
 			}
 
 			let resolver = CategoryAccountDisplayResolver(
-				categories: categoriesResponse.data?.items ?? [],
+				categories: (categoriesResponse.data ?? []).filter { $0.deletedAt == nil },
 				accounts: accountsResponse.data?.items ?? []
 			)
 

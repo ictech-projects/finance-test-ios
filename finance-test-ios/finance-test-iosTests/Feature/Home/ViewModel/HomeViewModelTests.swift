@@ -50,12 +50,12 @@ final class HomeViewModelTests: MemoryLeakTrackingSuite {
 
 	@Test
 	func onLoad_success_mapsExpenseBreakdownIntoCategoriesAndLimitsRecentTransactions() async {
-		let category = anyCategoryItem(id: "cat1", name: "Transport", type: .expense)
+		let category = anyUserCategoryItem(id: "cat1", name: "Transport", type: .expense)
 		let items = (0..<8).map { index in
 			anyHomeTransactionItem(id: "t\(index)", categoryId: "cat1", type: .expense, amount: "10.00", date: Self.thisMonthDateString)
 		}
 		let transactionRepository = TransactionMockRepository(result: .loaded(anyTransactionListSuccessResponse(items: items)))
-		let categoryRepository = TransactionCategoryMockRepository(result: .loaded(anyCategoryListSuccessResponse(items: [category])))
+		let categoryRepository = UserCategoryMockRepository(result: .loaded(anyUserCategoryListSuccessResponse(items: [category])))
 		let sut = makeSUT(transactionRepository: transactionRepository, categoryRepository: categoryRepository)
 
 		await sut.onLoad()
@@ -77,7 +77,7 @@ final class HomeViewModelTests: MemoryLeakTrackingSuite {
 
 	@Test
 	func onLoad_whenCategoriesRepositoryErrors_setsErrorState() async {
-		let sut = makeSUT(categoryRepository: TransactionCategoryMockRepository(result: .error(NSError(domain: "", code: -1))))
+		let sut = makeSUT(categoryRepository: UserCategoryMockRepository(result: .error(NSError(domain: "", code: -1))))
 
 		await sut.onLoad()
 
@@ -142,8 +142,8 @@ final class HomeViewModelTests: MemoryLeakTrackingSuite {
 		transactionRepository: TransactionMockRepository = TransactionMockRepository(
 			result: .loaded(anyTransactionListSuccessResponse(items: []))
 		),
-		categoryRepository: TransactionCategoryMockRepository = TransactionCategoryMockRepository(
-			result: .loaded(anyCategoryListSuccessResponse(items: []))
+		categoryRepository: UserCategoryMockRepository = UserCategoryMockRepository(
+			result: .loaded(anyUserCategoryListSuccessResponse(items: []))
 		),
 		accountRepository: AccountMockRepository = AccountMockRepository(
 			result: .loaded(anyAccountListSuccessResponse(items: []))

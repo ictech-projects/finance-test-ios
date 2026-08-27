@@ -7,9 +7,13 @@ import Foundation
 
 /// Pure, stateless aggregation of raw transactions + categories into a `ReportsSummary`.
 /// Performs no fetching — callers get transactions via `TransactionRepository` and categories via
-/// `TransactionCategoryRepository` (see `RecordsViewModel`/`AddTransactionViewModel` for that
-/// fetch pattern), then hand both arrays here. Extracted out of any ViewModel so the math is
+/// `UserCategoryRepository` (see `HomeViewModel`/`AddTransactionViewModel` for that fetch
+/// pattern), then hand both arrays here. Extracted out of any ViewModel so the math is
 /// independently unit-testable, matching `RecordsViewModel`'s client-side grouping precedent.
+///
+/// Categories are the user's own, not the global `GET /categories` catalog — a transaction's
+/// `categoryId` references a user category, so a global-id lookup buckets everything under
+/// `uncategorizedId`.
 enum ReportsAggregator {
 
 	static let uncategorizedId = "uncategorized"
@@ -23,7 +27,7 @@ enum ReportsAggregator {
 	///     with no match (or a nil `categoryId`) are bucketed under `uncategorizedId`.
 	static func summarize(
 		transactions: [TransactionRecord.Response.TransactionItem],
-		categories: [TransactionCategory.Response.CategoryItem]
+		categories: [Sync.Response.UserCategoryItem]
 	) -> ReportsSummary {
 		let categoriesById = Dictionary(
 			categories.compactMap { category in category.id.map { ($0, category) } },
@@ -54,7 +58,7 @@ enum ReportsAggregator {
 		for items: [(type: TransactionType, categoryId: String, amount: Double)],
 		type: TransactionType,
 		total: Double,
-		categoriesById: [String: TransactionCategory.Response.CategoryItem]
+		categoriesById: [String: Sync.Response.UserCategoryItem]
 	) -> [HomeCategoryBreakdown] {
 		let grouped = Dictionary(grouping: items, by: \.categoryId)
 

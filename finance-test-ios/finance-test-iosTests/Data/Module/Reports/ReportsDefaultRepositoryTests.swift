@@ -14,19 +14,19 @@ struct ReportsDefaultRepositoryTests {
 
 	@Test func getPeriodSummary_callsTransactionAndCategoryRepositoriesWithCorrectRequests() async throws {
 		let transactionRepository = TransactionMockRepository()
-		let categoryRepository = TransactionCategoryMockRepository()
+		let categoryRepository = UserCategoryMockRepository()
 		let sut = makeSUT(transactionRepository: transactionRepository, categoryRepository: categoryRepository)
 
 		_ = try await sut.getPeriodSummary(request: anyGetPeriodSummaryRequest())
 
 		#expect(transactionRepository.invocations == [.getTransactions(anyGetTransactionsRequest())])
-		#expect(categoryRepository.invocations == [.getCategories(anyGetCategoriesRequest())])
+		#expect(categoryRepository.invocations == [.getUserCategories])
 	}
 
 	@Test func getPeriodSummary_whenTransactionRepositoryErrors_skipsCategoryRepositoryAndReturnsError() async throws {
 		let dummyError = NSError(domain: "TestError", code: 999)
 		let transactionRepository = TransactionMockRepository(result: .error(dummyError))
-		let categoryRepository = TransactionCategoryMockRepository()
+		let categoryRepository = UserCategoryMockRepository()
 		let sut = makeSUT(transactionRepository: transactionRepository, categoryRepository: categoryRepository)
 
 		let result = try await sut.getPeriodSummary(request: anyGetPeriodSummaryRequest())
@@ -60,7 +60,7 @@ struct ReportsDefaultRepositoryTests {
 
 	@Test func getPeriodSummary_whenCategoryRepositoryErrors_returnsError() async throws {
 		let expectedError = ErrorResponse(success: false, statusCode: 500, message: "Server error", errors: nil)
-		let categoryRepository = TransactionCategoryMockRepository(result: .error(expectedError))
+		let categoryRepository = UserCategoryMockRepository(result: .error(expectedError))
 		let sut = makeSUT(categoryRepository: categoryRepository)
 
 		let result = try await sut.getPeriodSummary(request: anyGetPeriodSummaryRequest())
@@ -174,13 +174,13 @@ struct ReportsDefaultRepositoryTests {
 		let housing1 = anyTransactionItem(id: "h1", categoryId: "01K3CT0000000000000000CT01", type: .expense, amount: "30.00")
 		let housing2 = anyTransactionItem(id: "h2", categoryId: "01K3CT0000000000000000CT01", type: .expense, amount: "30.00")
 		let transport = anyTransactionItem(id: "t1", categoryId: "01K3CT0000000000000000CT03", type: .expense, amount: "40.00")
-		let housingCategory = anyCategoryItem(id: "01K3CT0000000000000000CT01", name: "Dining & Drinks", type: .expense)
-		let transportCategory = anyCategoryItem(id: "01K3CT0000000000000000CT03", name: "Transport", type: .expense)
+		let housingCategory = anyUserCategoryItem(id: "01K3CT0000000000000000CT01", name: "Dining & Drinks", type: .expense)
+		let transportCategory = anyUserCategoryItem(id: "01K3CT0000000000000000CT03", name: "Transport", type: .expense)
 		let transactionRepository = TransactionMockRepository(
 			result: .loaded(anyTransactionListSuccessResponse(items: [housing1, housing2, transport]))
 		)
-		let categoryRepository = TransactionCategoryMockRepository(
-			result: .loaded(anyCategoryListSuccessResponse(items: [housingCategory, transportCategory]))
+		let categoryRepository = UserCategoryMockRepository(
+			result: .loaded(anyUserCategoryListSuccessResponse(items: [housingCategory, transportCategory]))
 		)
 		let sut = makeSUT(transactionRepository: transactionRepository, categoryRepository: categoryRepository)
 
@@ -206,7 +206,7 @@ struct ReportsDefaultRepositoryTests {
 	// there's no reference to leak — `trackForMemoryLeak` doesn't apply here.
 	private func makeSUT(
 		transactionRepository: TransactionMockRepository = TransactionMockRepository(),
-		categoryRepository: TransactionCategoryMockRepository = TransactionCategoryMockRepository()
+		categoryRepository: UserCategoryMockRepository = UserCategoryMockRepository()
 	) -> ReportsDefaultRepository {
 		ReportsDefaultRepository(transactionRepository: transactionRepository, categoryRepository: categoryRepository)
 	}
